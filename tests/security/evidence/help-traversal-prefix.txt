@@ -1,0 +1,124 @@
+help-traversal-prefix.txt — PRE-FIX anonymous exposure of help.php (Task 2.1 evidence, help.php half)
+
+WHY THIS FILE EXISTS
+--------------------
+Task 2.1's brief asks for the pre-fix exploit transcript. For help.php the
+measurable pre-fix fact is not a file read (see "traversal rows" below — no
+payload ever returned file contents on this stack) but the ANONYMITY of the
+endpoint that the vulnerable path resolver fed: an unauthenticated request served
+5818 bytes of help HTML. That is the exposure the Phase 1 fix and its LoggedIn gate
+removed, and it is the row an advisory can quote. The relay half of Task 2.1 is in
+relay-sqli-prefix.txt.
+
+MEASURED ON
+-----------
+  pre-fix  commit   005a762b  (the pinned pre-fix commit; served help.php contains 0
+                              matches for `help_resolve_path` and the served lib/ has no
+                              help-path.php — both checked in the run)
+  post-fix commit   57ec9cc3 + the task-1.3 working-tree change  (labelled POST-FIX)
+  server A          Apache/2.4.68 + mod_php 8.3.35, http://localhost:38081/, docroot /var/www/html
+  server B          nginx/1.31.6 + php-fpm 8.3.35, http://localhost:38082/, docroot /usr/share/freemed
+  both docroots     an rsync copy of the extracted commit under the harness dir; the checkout is
+                    never the docroot. HEAD was restored afterwards and verified.
+  session           the harness's own login probe; no credential appears in this file.
+  client            curl --path-as-is on every traversal row (without it curl collapses dot
+                    segments client-side and the row measures nothing).
+
+REDACTION: nothing in this file is a secret — help HTML, one file name, one byte
+count, HTTP status lines. No credential and no digest appears here.
+
+=============================================================================
+A. THE EXPOSURE — anonymous vs authenticated, PRE-FIX
+=============================================================================
+
+--- Apache :38081, NO cookie ------------------------------------------------------------------
+GET /help.php/gwt/en_US/main
+  STATUS: 200   bytes: 5818
+  BODY(first 200 bytes, control characters shown as in the capture):
+    <!--   // $Id$   // $Author$   // $Log$   // Revision 1.1  2004/03/09 20:02:17  rufustfirefly
+   (verbatim heading of ui/gwt/help/en_US/main.en_US.html — the file on disk is 5818 bytes, i.e.
+    the response is that file, served to a caller with no session)
+
+--- Apache :38081, WITH a valid session -------------------------------------------------------
+GET /help.php/gwt/en_US/main   (login-probe session cookie replayed)
+  STATUS: 200   bytes: 5818
+  BODY(first 200): identical to the row above
+
+--- nginx :38082, NO cookie and WITH a session ------------------------------------------------
+both rows: STATUS 200, bytes 5818, same body
+
+So pre-fix the endpoint answered identically with and without a session: there was
+no access control at all, and the file it served was chosen by a PATH_INFO-derived
+path that only sanitised $ui and $locale, never the page tail (the Phase 1 finding).
+
+=============================================================================
+B. TRAVERSAL ROWS, PRE-FIX — measured, and honestly negative
+=============================================================================
+
+Apache :38081, no cookie, --path-as-is:
+
+  /help.php/gwt/en_US/../../../../etc/passwd                HTTP 400  <Apache 400 page>
+  /help.php/gwt/en_US/%2e%2e%2f%2e%2e%2fetc/passwd          HTTP 404  <Apache 404 page>
+  /help.php/gwt/en_US/..%2f..%2fetc/passwd                  HTTP 404  <Apache 404 page>
+  /help.php/gwt/en_US/....//....//etc/passwd                HTTP 200  Help index ..../..../etc/passwd not present.
+  /help.php/gwt/en_US/%252e%252e/%252e%252e/etc/passwd      HTTP 200  Help index %2e%2e/%2e%2e/etc/passwd not present.
+  /help.php/gwt/en_US/..%5C..%5Cetc/passwd                  HTTP 200  Help index ..\..\etc/passwd not present.
+  /help.php/gwt/en_US/main%00                               HTTP 404  <Apache 404 page>
+
+nginx :38082 is the same except that the single-encoded rows also reach PHP, with an
+EMPTY page token (nginx's fastcgi_split_path_info no longer matched, so PATH_INFO is
+empty and `$parts[1]` is unset — the same "Undefined array key 1" PHP 8.3 path noted
+in the task-1.3 audit):
+
+  /help.php/gwt/en_US/%2e%2e%2f%2e%2e%2fetc/passwd          HTTP 200  Help index  not present.
+  /help.php/gwt/en_US/..%2f..%2fetc/passwd                  HTTP 200  Help index  not present.
+
+NO PAYLOAD RETURNED FILE CONTENTS on either server. Dot segments are consumed by both
+servers before PHP runs (400/404), and the shapes that do reach PHP arrive as literal
+text that simply fails file_exists() and prints "Help index … not present." This is a
+measured negative, not an inference: it matches verify-env.md §6 D-a and it is why the
+Phase 1 fix is characterised as closing a real anonymity/validation defect plus a
+currently-unreachable traversal path, not an exploited one.
+
+The hardened repro script from Task 0.1, run against this pre-fix tree
+(tests/security/repro-help-traversal.sh, HEAD copy):
+
+  [2/5] GET .../help.php/gwt/en_US/../../../../lib/settings.php
+        HTTP 400  refused by the web server before PHP ran (dot segment rejected as malformed)
+  [3/5] GET .../help.php/gwt/en_US/../../../../../../../../etc/passwd
+        HTTP 400  refused by the web server before PHP ran (dot segment rejected as malformed)
+  [4/5] GET .../help.php/gwt/en_US/../../../../../../../../../etc/passwd
+        HTTP 400  refused by the web server before PHP ran (dot segment rejected as malformed)
+  [5/5] GET .../help.php/gwt/en_US/..%2f..%2f..%2f..%2flib/settings.php
+        HTTP 404  no handler for the (normalised) path: PHP was not reached
+  5 probe(s): 0 exploited, 4 refused/filtered before PHP (400/404), 0 auth required (401/403),
+              1 answered otherwise, 0 no response
+  >>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0)     [exit 0]
+
+Note the counter in that output: "0 auth required (401/403)". Against the PRE-FIX tree
+there is nothing to be 401'd, which is exactly the exposure in section A. The script's
+own summary says the same thing in its closing paragraph: "This is NOT a statement that
+help.php is safe: where the server collapses the dot segment upstream the vulnerable
+code is never reached."
+
+=============================================================================
+C. POST-FIX CONTRAST — measured at HEAD, clearly NOT the pre-fix state
+=============================================================================
+
+Same two servers, same URLs, after Phase 1 + this task's change:
+
+  anon   GET /help.php/gwt/en_US/main   →  HTTP/1.1 401 Unauthorized
+                                           body: Authentication required.
+  authed GET /help.php/gwt/en_US/main   →  HTTP 200, 5818 bytes, unchanged help HTML
+
+That pair is the before/after for the help.php half: 200 + content for anyone before,
+401 for an anonymous caller after, 200 + content for an authenticated one after.
+
+WHAT THIS FILE DOES NOT SHOW
+----------------------------
+  * No file was read through help.php on either server, pre- or post-fix.
+  * Nothing about a deployment whose web server hands PHP raw dot segments (the
+    pre-fix code WOULD traverse there; this stack does not, and the Postfix/Q1
+    question is answered in the task-1.3 audit, not here).
+  * Nothing about the other PATH_INFO sinks — that is tests/security/evidence/
+    path-sink-audit.md.

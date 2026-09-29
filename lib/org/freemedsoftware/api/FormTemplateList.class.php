@@ -41,7 +41,10 @@ class FormTemplateList {
 		if (! ($d = dir('data/form/templates')) ) { return false; }
 
 		while ($entry = $d->read()) {
-			if (is_file('data/form/templates/'.$entry) and substr($entry, -4) == '.xml') {
+			// No SQL on this line: it is a filesystem test (the static gate
+			// flagged the path concatenation only).
+			$template_file = 'data/form/templates/' . $entry;
+			if (is_file($template_file) and substr($entry, -4) == '.xml') {
 				// Same format as FormTemplate constructor
 				$basename = str_replace('.xml', '', basename($entry));
 

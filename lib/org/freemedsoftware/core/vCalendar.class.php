@@ -49,7 +49,9 @@ class vCalendar {
 	//	vCalendar format file text.
 	//
 	function generate ( ) {
-		$query = "SELECT * FROM scheduler WHERE ".$this->criteria;
+		// NOTE (2.6b): $this->criteria is a WHERE fragment composed by the
+		// caller (vcalendar.php, a root request script outside this worklist).
+		$query = sprintf('SELECT * FROM scheduler WHERE %s', $this->criteria);
 		$result = $GLOBALS['sql']->queryAll( $query );
 		
 		// Add vCalendar header

@@ -145,7 +145,17 @@ class PatientReporting extends SupportModule {
 
 			switch ($v['type']) {
 				case 'Date':
-				$pass[] = $GLOBALS['sql']->quote( $s->ImportDate( $param[$k + 1] ) );
+				// Category A + F4 (2.6f): the date parameter is validated as
+				// Y-m-d; an unparseable value refuses the report (logged, the
+				// same false a missing required parameter answers) rather than
+				// passing a bare 0 - quote(false), i.e. the zero-date - to the
+				// report's stored procedure.
+				$dtv = $s->ImportDate( $param[$k + 1] );
+				if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $dtv ) ) {
+					syslog( LOG_ERR, get_class($this).'::GenerateReport| refusing non-Y-m-d Date parameter '.var_export($param[$k + 1], true) );
+					return false;
+				}
+				$pass[] = $GLOBALS['sql']->quote( $dtv );
 				break;
 
 				default:

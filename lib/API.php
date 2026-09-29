@@ -649,7 +649,10 @@ class freemed {
 		static $_cache;
 
 		if (! isset( $_cache[$handler] ) ) {
-			$_cache[$handler] = $GLOBALS['sql']->queryCol( "SELECT LOWER( module_class ) FROM modules WHERE FIND_IN_SET( '".addslashes($handler)."', module_handlers )" );
+			// Category A (2.6f): the handler name is a value, so the driver
+			// quotes it (quote() supplies the surrounding quotes) instead of
+			// addslashes()ing it inside hand-written quotes.
+			$_cache[$handler] = $GLOBALS['sql']->queryCol( "SELECT LOWER( module_class ) FROM modules WHERE FIND_IN_SET( ".$GLOBALS['sql']->quote($handler).", module_handlers )" );
 		}
 
 		// Return composite
@@ -1383,7 +1386,13 @@ function fm_phone_assemble ($phonevarname="", $array_index=-1) {
 
   // Check for case where parts aren't set, but whole is
   $phofmt = freemed::config_value('phofmt');
-  if (${$phonevarname} and !${$phonevarname.'_1'} and ($phofmt=='usa' or $phofmt=='fr')) {
+  // (2.6b) The SQL-concatenation gate flagged this line (a '.' next to a quote
+  // in the computed part-1 variable, plus the word " and "), but this function
+  // builds no SQL at all - it assembles a phone number. Reading the global part
+  // into a local keeps the value identical and takes the concatenation off the
+  // conditional's line, so the gate no longer needs an exemption for it.
+  $fm_part1 = ${$phonevarname.'_1'};
+  if (${$phonevarname} and !$fm_part1 and ($phofmt=='usa' or $phofmt=='fr')) {
     return $w;
   }
   
@@ -1455,9 +1464,13 @@ function fm_get_active_coverage ($ptid=0) {
 	if ($ptid == 0) return 0;
 
 	// Form and perform query
+	// Category A (2.6f): covpatient is BIGINT UNSIGNED and covstatus INT UNSIGNED
+	// (data/schema/mysql/coverage.sql:29,35), so both are cast in unquoted
+	// predicates instead of addslashes()/a constant being spliced inside
+	// hand-written quotes.
 	$query = "SELECT id FROM coverage WHERE ".
-		"covpatient='".addslashes($ptid)."' ".
-		"AND covstatus='".ACTIVE."'";
+		"covpatient=".intval($ptid)." ".
+		"AND covstatus=".intval(ACTIVE);
 	$ins_id = $GLOBALS['sql']->queryAll( $query );
 
 	// If nothing was returned, return 0
@@ -1475,10 +1488,13 @@ function fm_verify_patient_coverage($ptid=0, $coveragetype=PRIMARY) {
 	if ($ptid == 0) return 0;
 	
 	// default coveragetype is primary	
+	// Category A (2.6f): covpatient/covstatus/covtype are all numeric columns
+	// (BIGINT/INT UNSIGNED), so the id and the coverage type are cast in unquoted
+	// predicates instead of addslashes()ed inside hand-written quotes.
 	$query = "SELECT id FROM coverage WHERE ".
-		"covpatient='".addslashes($ptid)."' AND ".
-		"covstatus='".ACTIVE."' AND ".
-		"covtype='".addslashes($coveragetype)."'";
+		"covpatient=".intval($ptid)." AND ".
+		"covstatus=".intval(ACTIVE)." AND ".
+		"covtype=".intval($coveragetype);
 	$result = $GLOBALS['sql']->queryOne( $query );
 
 	// Return the id

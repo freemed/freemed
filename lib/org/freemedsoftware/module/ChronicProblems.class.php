@@ -65,9 +65,16 @@ class ChronicProblems extends EMRModule {
 
 	function recent_text ( $patient, $recent_date = NULL ) {
 		// skip recent; need all for this one
-		$query = "SELECT * FROM ".$this->table_name." ".
-			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
-			"ORDER BY ".$this->order_fields;
+		// Category B: table/patient/order identifiers; Category A: patient id.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		$pfield = SqlIdent::name( $this->patient_field );
+		$order = SqlIdent::columns( $this->order_fields );
+		if ( $table === false or $pfield === false or $order === false ) {
+			syslog( LOG_ERR, get_class($this).'::recent_text| refusing invalid identifier '.var_export(array($this->table_name, $this->patient_field, $this->order_fields), true) );
+			return '';
+		}
+		$query = sprintf('SELECT * FROM %s WHERE %s = %s ORDER BY %s', $table, $pfield, $GLOBALS['sql']->quote($patient), $order);
 		$res = $GLOBALS['sql']->queryAll( $query );
 
 		// Get problems, and extract to an array

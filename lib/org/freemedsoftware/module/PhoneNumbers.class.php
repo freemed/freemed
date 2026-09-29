@@ -74,11 +74,19 @@ class PhoneNumbers extends SupportModule {
 	//	List of records
 	//
 	public function GetTypeNumber ( $type, $category, $link ) {
-		$query = "SELECT * FROM ".$this->table_name." ".
-			"WHERE phonetype='".addslashes($type)."' AND ".
-			"phonecategory='".addslashes($category)."' AND ".
-			"phonelink='".addslashes($link)."' ".
-			"ORDER BY phonestampadd DESC";
+		// Category B: table_name identifier; Category A: the three values.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetTypeNumber| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$query = sprintf('SELECT * FROM %s WHERE phonetype = %s AND phonecategory = %s AND phonelink = %s ORDER BY phonestampadd DESC',
+			$table,
+			$GLOBALS['sql']->quote($type),
+			$GLOBALS['sql']->quote($category),
+			$GLOBALS['sql']->quote($link)
+		);
 		$result = $GLOBALS['sql']->queryAll( $query );
 		return $result;
 	} // end public function GetTypeNumber
@@ -102,11 +110,19 @@ class PhoneNumbers extends SupportModule {
 	//	Get most recent number
 	//
 	public function GetRecentNumber ( $type, $category, $link ) {
-		$query = "SELECT phonenumber FROM ".$this->table_name." ".
-			"WHERE phonetype='".addslashes($type)."' AND ".
-			"phonecategory='".addslashes($category)."' AND ".
-			"phonelink='".addslashes($link)."' ".
-			"ORDER BY phonestampadd DESC";
+		// Category B: table_name identifier; Category A: the three values.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetRecentNumber| refusing invalid table_name '.var_export($this->table_name, true) );
+			return '';
+		}
+		$query = sprintf('SELECT phonenumber FROM %s WHERE phonetype = %s AND phonecategory = %s AND phonelink = %s ORDER BY phonestampadd DESC',
+			$table,
+			$GLOBALS['sql']->quote($type),
+			$GLOBALS['sql']->quote($category),
+			$GLOBALS['sql']->quote($link)
+		);
 		$result = $GLOBALS['sql']->queryOne( $query );
 		return $result['phonenumber'];
 	} // end public function GetRecentNumber

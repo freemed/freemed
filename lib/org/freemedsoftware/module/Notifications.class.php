@@ -85,8 +85,14 @@ class Notifications extends EMRModule {
 		// Only do this once a day
 		$date = ( $params['date'] ? $params['date'] : date('Y-m-d') );
 		if ($params['interval'] == 'daily') {
-			$query = "SELECT * FROM ".$this->table_name." ".
-				"WHERE ntarget='".addslashes($date)."'";
+			// Category B: table_name identifier; Category A: the date value.
+			// (Refused by log, R12.)
+			$table = SqlIdent::name( $this->table_name );
+			if ( $table === false ) {
+				syslog( LOG_ERR, get_class($this).'::notify_user| refusing invalid table_name '.var_export($this->table_name, true) );
+				return "Notifications: nothing to do";
+			}
+			$query = sprintf('SELECT * FROM %s WHERE ntarget = %s', $table, $GLOBALS['sql']->quote($date));
 			$res = $GLOBALS['sql']->queryAll($query);
 			if (!count($res)) {
 				return "Notifications: nothing to do";

@@ -1,0 +1,379 @@
+$Id$
+
+Relay call-set allowlist - the relay is deny-by-default, shipped LOG-ONLY
+
+
+1. SUMMARY
+
+   relay.php used to dispatch ANY method of ANY registered class, with arguments
+   taken from the request. Its only gate was "is someone logged in": the method
+   string went into lib/loader.php's CallMethod(), which resolves the namespace to
+   a file, instantiates the class and calls the method. So every quoting omission
+   anywhere in the tree was remotely reachable by anyone holding a session, and
+   nothing in the request distinguished a method the client actually calls from a
+   method that merely happens to exist.
+
+   The relay now consults an allowlist of relay method strings before it
+   dispatches (Relay::handle_request(), after the LoggedIn guard, so both
+   providers - Json and Xmlrpc - inherit it). A method that is not named in the
+   list is a MISS. The list lives in data/config/relay-allowlist.php; the matcher
+   is lib/org/freemedsoftware/core/Relay_Allowlist.class.php.
+
+   The check runs for EVERY method, including the org.freemedsoftware.public.*
+   namespace. That namespace still skips the login guard (relay.php's only
+   validation is the provider name, and the login flow runs before there is a
+   session), but it no longer skips this.
+
+   THE CONTROL IS relay.php's, AND ONE TRANSPORT DOES NOT INHERIT IT. The check
+   lives in Relay::handle_request(), and relay.php's two providers - Json and
+   Xmlrpc - reach their methods through it by construction (relay.php
+   instantiates Relay_<provider> and calls handle_request() on it). relay-gwt.php
+   is a THIRD transport that does not: it starts
+   AuthenticatedRemoteServiceServlet (relay-gwt.php:37-38), whose only guard is a
+   session check - CallMethod('org.freemedsoftware.public.Login.LoggedIn') at
+   lib/org/freemedsoftware/core/AuthenticatedRemoteServiceServlet.class.php:64 -
+   and it never consults Relay_Allowlist and never calls Relay::handle_request().
+   Its calls are therefore SESSION-guarded but NOT allowlisted. That matters when
+   reading this document's own numbers: the largest tier of the call set (112 of
+   the 323 patterns, the gwtphpmap tier) is evidence mined from the shipped GWT
+   service map, i.e. it is about calls that arrive on the transport this control
+   does not cover. Extending the control to that transport is a design change and
+   is NOT part of this one; it is recorded as an ungated surface in
+   doc/SECURITY_FOLLOWUP section 4.4.
+
+   The check runs for INVERSIONS of the relay too. A relay method that
+   re-dispatches a method named by its own caller is the same door with a second
+   handle: the outer method string is checked once, and the inner one would never
+   meet the allowlist. There are FIVE relay-reachable re-dispatchers in this
+   tree, and they name their inner call on TWO different axes. THREE of the five
+   are gated by this change:
+
+     * the METHOD axis - the method string itself is caller-supplied.
+       org.freemedsoftware.api.UserInterface.Multicall is that shape (it is a
+       listed method - a real client calls it - and it dispatches an array of
+       {method, parameters} itself), so it now gates every inner call through the
+       SAME decision point the relay uses (Relay_Allowlist::refuse(), with the
+       INNER scope). In the log-only stage an inner miss is logged and still
+       runs; under enforcement it is answered with INVALID_CALL in its own slot
+       and the rest of the batch still runs.
+
+     * the CLASS axis - the method name is a FIXED literal and the CLASS is
+       caller-chosen. The wrappers in api/ModuleInterface.class.php
+       (ModuleAddMethod, ModuleDeleteMethod, ModuleGetRecordMethod,
+       ModuleGetRecordsMethod, ModuleModifyMethod, ModuleSupportPicklistMethod,
+       EMRSupportPicklistMethod, ModuleRenderHtmlMethod, ModuleToTextMethod)
+       dispatch one of eight fixed literals against the module class the caller
+       passes, and the print wrappers (PrintToFax, PrintToPrinter, PrintToBrowser)
+       dispatch the fixed literal RenderToPDF against the module class named by
+       the patient_emr row they were pointed at. Listing the WRAPPER method
+       therefore cannot constrain the class, so each wrapper resolves the
+       concrete string it is about to dispatch -
+       org.freemedsoftware.module.<Class>.<literal> - and gates THAT. See
+       section 1a.
+
+       api/FormTemplate.class.php:ProcessData is the third GATED re-dispatcher:
+       its names come from the XML template file it was pointed at, not from the
+       request, and both of its axes (a core.* object method and a module.*
+       method) are gated the same way.
+
+   The other TWO re-dispatchers of this shape are NOT gated by this change. They
+   are routed, not fixed, and they are named here so that this section is not
+   read as a complete enumeration of what is closed:
+
+     * module/Forms.class.php:336-351 - control_module() takes the CLASS from
+       caller-supplied form data: its 'widget' branch calls
+       module_function($data['options'], 'widget', ...) at :345-349. The method
+       name it dispatches is the fixed literal 'widget' and the variable is the
+       class, so the outer check cannot see the inner call - the same shape as
+       the class axis section 1a describes.
+     * core/BaseModule.class.php:196-208 and :230-241 - _print() composes
+       module_function($parts[0], '_RenderToPDF', array($parts[1])) from
+       $_REQUEST['attachment'] (exploded on '|'): again a caller-chosen CLASS
+       with a fixed literal method.
+
+   Both are documented, with a fix shape, in doc/SECURITY_FOLLOWUP sections 4.1
+   and 4.2. They are taken together rather than file by file because both
+   converge on module_function(): one class-axis check there covers both.
+
+   ANY OTHER re-dispatcher carrying a caller-supplied method name or a
+   caller-chosen class belongs on that same entry point.
+
+
+1a. THE CLASS AXIS, AND THE NEVER-ALLOW LIST
+
+   The class axis is worth stating in full, because it is the axis a per-method
+   allowlist cannot see:
+
+     POST /relay.php/json/org.freemedsoftware.api.ModuleInterface.ModuleAddMethod
+     param0=<ANY module class>   param1=<data>
+
+   ModuleAddMethod is listed (a real client calls it) and it dispatches the fixed
+   literal 'add' against the class in param0. Before fix round 2 that reached
+   EVERY module class in the tree, including classes no pattern names. Each
+   wrapper now gates org.freemedsoftware.module.<Class>.<literal>.
+
+   TWO MORE class-axis re-dispatchers are on this surface and are NOT gated by
+   this change: module/Forms.class.php:336-351 control_module and
+   core/BaseModule.class.php:196-208/:230-241 _print (section 1 lists all five
+   with their shapes). They converge on module_function(), so the fix shape
+   doc/SECURITY_FOLLOWUP sections 4.1/4.2 give is one check there rather than
+   file by file. Until that lands, "the class axis is gated" means the three
+   gated re-dispatchers, not every class-axis path in the tree.
+
+   WHAT THAT MEANS FOR ENABLING ENFORCEMENT. The measured exposure is large: over
+   the 133 module class files, 866 (class, literal) pairs exist for the eight
+   literals and 803 of them are NOT in the shipped list (903 / 840 if you count
+   the print wrappers' RenderToPDF). So a wrapper call naming a module class
+   whose literal is not in 'patterns' is REFUSED once 'enforce' => true - that is
+   the point of the gate, and it is why the seed deliberately does NOT enumerate
+   this axis. Run the log-only stage (section 3) and let the miss log tell you
+   which of those pairs your site's workflows actually use; add those, not the
+   866. The full enumeration, with each pair's verdict, is the served section
+   "class axis" of tests/security/evidence/relay-callset.txt.
+
+   NEVER-ALLOW NAMESPACES. 'never_allow' in the data file is a list of namespace
+   prefixes that are refused EVEN IF 'patterns' names them, in BOTH stages, when
+   they arrive as an INNER call with a caller-supplied method name. The shipped
+   seed is 'org.freemedsoftware.core.'. This is not a new rule: the pre-2.8
+   Multicall() carried
+
+       if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) { ... return false; }
+
+   and the literal 'org.freemedsoftware.core.' is 25 characters, so the
+   comparison MATCHED and the guard refused every inner call in the `core`
+   namespace outright - in both stages. Fix round 1 removed it as "dead code"
+   (a false claim); fix round 2 reinstates it as data. Restoring it is what puts
+   the shipped log-only stage back at parity with pre-2.8: without it, an inner
+   core.* call proceeded where the old code refused it.
+
+   THE OUTER PATH IS ASYMMETRIC ON PURPOSE. An OUTER call in a never-allow
+   namespace is logged (LOG_WARNING) and NOT refused, so shipped outer behaviour
+   is exactly what it was before this control existed. (Two core.* methods are
+   genuinely reachable as outer calls and are in 'patterns': core.User.getName
+   and core.User.setPassword.) Only the inner, caller-supplied-name path refuses.
+   For the same reason, FormTemplate::ProcessData - whose names come from the
+   template FILE, not the request - is gated with the OUTER scope: the log-only
+   stage must never start refusing a call it served before the control existed.
+
+   THIS CONTROL SHIPS IN LOG-ONLY MODE. 'enforce' => false. A MISS IS LOGGED AT
+   LOG_WARNING AND THE CALL STILL EXECUTES. See section 2 - the reason is not
+   timidity, it is that the call set in the list has never been exercised by a
+   real client in this tree, and enforcing a call set no real client has used is
+   how a security control becomes a production outage.
+
+   This is NOT an authorization check. It answers "is this method part of the
+   relay's call set", not "may this user call it". Per-method access control
+   remains each module's job, and nothing here changes it.
+
+
+2. WHY THE DEFAULT IS LOG-ONLY, AND WHAT IT COSTS
+
+   The list was built from the best enumeration this tree can produce, and the
+   enumeration is committed with per-pattern provenance as
+   tests/security/evidence/relay-callset.txt. It is not the same thing as a real
+   client smoke pass: there is no compiled GWT client in this checkout, so no
+   browser session has ever exercised this call set. The tiers, in descending
+   order of confidence:
+
+     * live-probe - methods this mitigation has already driven against a running
+       server (the four fixed SQL-injection sites' methods, plus the batch-B /
+       batch-C / 2.6f probe sets). Real, measured, client-shaped calls.
+     * access-log - methods the stack's Apache access log shows being requested.
+       The brief warned that compiled JS may call methods which never appear in
+       source, and this is the source that catches exactly that: it is how
+       PaymentModule.GetLedger (34 requests), Vitals.RenderHtmlView (19) and
+       Vitals.locked (21) were found. Still probe traffic, not a client session -
+       the capture and its time window are in
+       tests/security/evidence/relay-accesslog.txt.
+     * gwtphpmap - lib/org/freemedsoftware/gwt/**/*.gwtphpmap.inc.php, the
+       shipped GWT service map's client-to-relay table. The strongest
+       machine-readable evidence of what the compiled client asks for.
+     * public-namespace - the public/* call sites in the client and the
+       templates, plus the remaining public methods of those same classes,
+       because relay.php's login-guard exemption means a missing entry breaks the
+       install or login flow itself.
+     * source-mine - literals resolved out of the client and UI trees, kept only
+       where the class file exists and the method is public. This is the tier
+       most likely to be incomplete for a real session.
+
+   With 'enforce' => false all of that is a measurement rather than a bet: an
+   entry this enumeration missed is logged and runs, and the log is the list of
+   what to add before turning enforcement on.
+
+
+3. THE SWITCH, AND HOW TO TURN ENFORCEMENT ON
+
+   data/config/relay-allowlist.php, 'enforce':
+
+       false   LOG-ONLY. A miss is logged at LOG_WARNING with the method, the
+               remote address and whether it was refused; the call executes.
+               This is the shipped value.
+       true    ENFORCING. A miss is logged the same way and answered with
+               INVALID_CALL, and the method does not run.
+
+   ...and 'never_allow', which is a SEPARATE list and is NOT governed by
+   'enforce':
+
+       A namespace prefix in 'never_allow' is refused in BOTH stages when it
+       arrives as an INNER call with a caller-supplied method name, even if
+       'patterns' names it. The shipped seed is 'org.freemedsoftware.core.',
+       which is the pre-2.8 Multicall() refusal (section 1a). On the OUTER path
+       the same namespace is logged at LOG_WARNING and NOT refused, so shipped
+       outer behaviour is unchanged. Two lines, two `grep`s:
+
+           Relay: method '...' is not in the relay allowlist (remote=..., ...)
+           Relay: method '...' is in a NEVER-ALLOW namespace 'org.freemedsoftware.core.'; ...
+
+       Removing a never-allow entry is a WIDENING of the call set and belongs in
+       the same review as removing a check; an entry that is malformed or so
+       broad it would refuse every inner call (e.g. 'org.freemedsoftware.') is
+       REJECTED at load with a LOG_WARNING and is not honoured.
+
+   Procedure - do not skip to step 4:
+
+     1. Deploy with 'enforce' => false (as shipped).
+     2. Verify by hand that the control is live: a method NOT in the list must
+        log. Any session, any unlisted method, e.g.
+            POST /relay.php/json/org.freemedsoftware.api.UserInterface.getRel
+        prints to syslog
+            Relay: method '...' is not in the relay allowlist
+            (remote=<ip>, LOG-ONLY, call still executed)
+        If nothing is logged, the control is not running and step 4 would be
+        theatre. (Set the test up the other way round if the site is already
+        enforcing: the line then says "refused (INVALID_CALL)" and the body is
+        the string INVALID_CALL.)
+     3. Use the system normally on the real compiled client - every screen,
+        report, print, export and the installer - for long enough to cover this
+        site's workflows, and watch for misses:
+            grep "Relay: method" /var/log/syslog
+        Add each method named there to 'patterns'. Copy the string from the log
+        line; matching is case-insensitive for the method name, so its case does
+        not have to match the class's spelling.
+     4. When the log is quiet, set 'enforce' => true.
+
+   IMPORTANT - A CONFIG EDIT IS NOT INSTANT, AND THE LAG IS PER WORKER. PHP
+   caches the data file through OPcache: with the default opcache.revalidate_freq
+   = 2 a worker can still serve the previous value for a couple of seconds after
+   the file changes, and TWO WORKERS CAN DISAGREE about which value is current.
+   So a SINGLE PROBE IS NOT EVIDENCE, in either direction - it is how both a
+   false "the control is broken" and a false PASS were produced while this
+   control was being verified. Reload PHP (or wait past opcache.revalidate_freq
+   on every worker) and probe MORE THAN ONCE before believing that the running
+   server agrees with the file you just edited, and before trusting either
+   answer.
+
+   IMPORTANT - A MISSING OR UNPARSEABLE DATA FILE DOES NOT ENFORCE. If
+   data/config/relay-allowlist.php is unreadable, or does not return an array,
+   or cannot be parsed at all (a typo while hand-editing `patterns` - the editing
+   this document instructs - raises a ParseError that `@include` does not
+   suppress), the relay logs a warning and falls back to log-only rather than
+   refusing every call. A parse failure is logged at LOG_ERR because it is a
+   deployment mistake, not an expected state. That is the outage-safe direction
+   for a control whose default is log-only, but it means that once a site
+   enforces, the file belongs in version control and in the backup.
+
+   THE MISS LINE CARRIES THE METHOD, THE REMOTE ADDRESS AND THE STAGE - AND
+   NOTHING ELSE. There is no user and no site identifier in it. On a
+   reverse-proxied host every client looks like the proxy, and on a multi-tenant
+   host one syslog cannot say whose miss it was: if that distinction matters for
+   your deployment, carry it in the log transport (a per-site syslog tag) or
+   record the forwarding header at the proxy, rather than expecting it in this
+   line.
+
+   KEEP THE LIST HONEST. If a call is refused that should have been allowed, add
+   a pattern. Do not remove the check, and do not widen a pattern to the whole
+   tree. A trailing `*` is supported and is a real widening; it can be written at
+   three widths, and the widest one is honoured:
+
+       org.freemedsoftware.module.SomeModule.*       a CLASS
+           - every method of that one class
+       org.freemedsoftware.module.SomeModule.Get*    a PREFIX
+           - every method name beginning `Get`
+       org.freemedsoftware.module.*                  a NAMESPACE
+           - EVERY method of EVERY class under that namespace
+
+   The NAMESPACE form is ACCEPTED - it is the brief's own example of a `*`
+   pattern and it is narrower than a whole-tree rule - but it is NEVER ACCEPTED
+   IN SILENCE: the load logs it at LOG_WARNING and names how many method
+   declarations it covers, because a wildcard accepted with no log line cannot be
+   told apart from the control being switched off. A pattern BROADER than those -
+   a bare `*`, org.freemedsoftware.*, org.freemedsoftware, or a bare namespace
+   with no trailing `*` such as org.freemedsoftware.api - is REJECTED at load
+   with a LOG_WARNING and does not take effect, as is a `*` anywhere but the end
+   of a pattern (a wildcard the matcher does not implement; honouring it
+   literally would leave the operator believing a rule was in force that matches
+   nothing), and as is an exact pattern that is not exactly
+   org.freemedsoftware.<ns>.<Class>.<Method> (a deeper spelling names no relay
+   method and would match nothing).
+
+   EXTENDING IT: `patterns` is a list of exact relay method strings, or the same
+   with a trailing `*` to match any method string with that prefix
+   ('org.freemedsoftware.module.SomeModule.*'). The shipped seed uses no `*`
+   patterns: it is 323 resolved method strings. Matching is literal - the dots
+   are dots, not regular-expression wildcards - and case-insensitive, mirroring
+   PHP's own method dispatch, so a client that writes `Picklist` for a class that
+   declares `picklist` is not refused.
+
+   DEPLOYMENTS THAT ADD THEIR OWN MODULES should add that module's methods to
+   this file in the same commit as the module. The controlled extension point is
+   this file; the alternative is patching Relay.class.php, which is what the data
+   file exists to avoid.
+
+
+4. RELEASE NOTE
+
+   Release note - relay call-set allowlist
+
+   The JSON and XML-RPC relays no longer dispatch arbitrary methods. relay.php
+   would call any method of any registered class with request-supplied
+   arguments, gated only on being logged in, so a quoting mistake anywhere in the
+   tree was remotely reachable. The relay now checks the requested method against
+   an allowlist (data/config/relay-allowlist.php) before dispatching.
+
+   The control ships in log-only mode: a method that is not in the list is
+   logged at LOG_WARNING and still runs, so this release cannot break a working
+   UI. Operators who want the control enforced should run the enable procedure in
+   section 3 - the log-only period is what produces the list of methods to add.
+   No configuration is required to keep the previous behaviour, and no
+   database change is involved: the list is a file in the installation.
+
+   Three changes in this release are worth a line of their own, because they
+   change what the control covers rather than only where it runs:
+
+     * The fixed-literal wrappers in api/ModuleInterface.class.php (add, del,
+       GetRecord, GetRecords, mod, picklist, RenderHtmlView, to_text, and the
+       print wrappers' RenderToPDF) used to reach ANY module class the caller
+       named. They now gate the concrete method string they dispatch, so
+       enforcement covers the class a caller chooses and not only the method.
+     * The inner-call refusal of the `core` namespace - which Multicall() carried
+       before this control existed and which an earlier revision of this change
+       removed - is back, now as a documented 'never_allow' entry in the data
+       file. Next to it, calls in that namespace on the OUTER path are logged and
+       not refused, so no outer call that worked before is refused now.
+     * api/PatientInterface.class.php::MoveEmrAttachments gates the module hook it
+       dispatches (`additional_move`) on the class the caller's chosen record
+       resolves to, and it does so BEFORE THE FIRST WRITE of the loop. A refusal
+       under enforcement is therefore ATOMIC for that attachment: nothing is
+       written, no annotation is moved and the hook does not run, and the refusal
+       is reported through the method's own return value. This matters because the
+       gate sat after those writes in an earlier revision of this change, which
+       would have left a refused call with the record already moved. In the
+       shipped log-only stage nothing changes: the miss is logged and the call
+       runs, so the stage measures which (module class, literal) pairs a site
+       actually uses before anyone enforces them.
+
+
+5. SEE ALSO
+
+   Both enforcement states are recorded, with the exact commands, the syslog
+   lines they produced and the response bodies, in
+   tests/security/evidence/relay-allowlist.txt. The call set and the provenance
+   of every pattern in it is tests/security/evidence/relay-callset.txt, generated
+   by tests/security/relay-callset-enum.php from five inputs, one of which - the
+   stack's access log - is captured in
+   tests/security/evidence/relay-accesslog.txt. The matcher's behaviour is pinned
+   by tests/security/relay_allowlist.test.php, which runs in php:8.3-cli with no
+   database and no network.
+
+   The repository has no CHANGELOG or release-notes file; the paragraph in
+   section 4 is the release note text to publish.

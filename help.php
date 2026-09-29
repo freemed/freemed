@@ -22,39 +22,29 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 include_once ( 'lib/freemed.php' );
+include_once ( 'lib/help-path.php' );
 
 error_reporting ( );
 set_error_handler("help_standard_error_handler");
 
-unset ( $parts ); unset ( $file );
-$parts = explode ( '/', $_SERVER['PATH_INFO'] );
-$ui = $parts[1];
-$locale = !empty($parts[2]) ? $parts[2] : "en_US";
-
-// Check for sanitized parameters
-if (!preg_match("/^[[:alpha:]]+$/", $ui) || !preg_match("/^[[:alpha:]_]+$/", $locale)) {
-	print "Hack attempt.\n";
-	die();
-}
-
-$path = str_replace ( $parts[0].'/'.$parts[1].'/'.$parts[2], '', $_SERVER['PATH_INFO'] );
-// Strip leading slash if it exists ...
-if ( substr( $path, 0, 1 ) == '/' ) {
-	$path = substr ( $path, - (strlen($path)-1) );
-}
-
-$fullpath = dirname(__FILE__)."/ui/${ui}/help/${locale}/${path}";
-
-if ( file_exists( $fullpath . "." . $locale . ".html" ) ) {
-	$fullpath .= "." . $locale . ".html";
-}
-
-if ( !file_exists( $fullpath ) ) {
-	print "Help index ${path} not present.";
+// Help is not public content: require an authenticated session.
+if ( ! CallMethod ( 'org.freemedsoftware.public.Login.LoggedIn' ) ) {
+	syslog( LOG_INFO, "help.php: anonymous request for ".$_SERVER['PATH_INFO']." denied" );
+	Header ( "HTTP/1.1 401 Unauthorized" );
+	print "Authentication required.";
 	exit;
 }
 
-readfile( $fullpath );
+$fullpath = help_resolve_path ( $_SERVER['PATH_INFO'], dirname(__FILE__) );
+
+if ( $fullpath === false ) {
+	syslog( LOG_INFO, "help.php: rejected path ".$_SERVER['PATH_INFO'] );
+	Header ( "HTTP/1.1 404 Not Found" );
+	print "Help index not present.";
+	exit;
+}
+
+readfile ( $fullpath );
 
 //----------------- Functions ----------------------------------------------
 

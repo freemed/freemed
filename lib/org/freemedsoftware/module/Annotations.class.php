@@ -117,7 +117,16 @@ class Annotations extends EMRModule {
 	//
 	public function GetAnnotations ( $id ) {
 		$emr = $GLOBALS['sql']->queryOne( "SELECT annotation FROM patient_emr WHERE id=". ($id + 0) );
-		$q = "SELECT a.*, u.userdescrip AS user_description FROM annotations a LEFT OUTER JOIN user u ON a.auser=u.id WHERE FIND_IN_SET( a.id, '${emr}' )";
+		// Deferred item B-2 (final wave, review B): `annotation` is a TEXT
+		// column read back out of the database and interpolated raw inside
+		// hand-written quotes - a second-order splice. It holds a
+		// comma-separated id list, so the list is normalised to integers, and
+		// the driver then quotes the normalised list with the hand-written
+		// quotes REMOVED (D2: never both). The value the query can carry is
+		// therefore digits and commas only. The normalisation is kept on top of
+		// quote() so a column holding junk still yields a valid id list.
+		$emr_ids = join(',', array_map('intval', explode(',', (string) $emr)));
+		$q = "SELECT a.*, u.userdescrip AS user_description FROM annotations a LEFT OUTER JOIN user u ON a.auser=u.id WHERE FIND_IN_SET( a.id, ".$GLOBALS['sql']->quote($emr_ids)." )";
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAnnotations
 

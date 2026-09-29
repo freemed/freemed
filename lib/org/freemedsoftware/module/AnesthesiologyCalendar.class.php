@@ -74,9 +74,17 @@ class AnesthesiologyCalendar extends SupportModule {
 	} // end method SingleBook
 
 	function DeleteDate( $anesth, $date ) {
-		$query = "DELETE FROM ".$this->table_name." ".
-			"WHERE anphysician=".$GLOBALS['sql']->quote( $anesth )." AND ".
-			"andate=".$GLOBALS['sql']->quote( $date );
+		// Category B: table_name identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::DeleteDate| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$query = sprintf('DELETE FROM %s WHERE anphysician=%s AND andate=%s',
+			$table,
+			$GLOBALS['sql']->quote( $anesth ),
+			$GLOBALS['sql']->quote( $date )
+		);
 		$result = $GLOBALS['sql']->query( $query );
 	} // end method DeleteDate
 

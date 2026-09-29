@@ -141,8 +141,6 @@ class Authorizations extends EMRModule {
 		
 		$user = $GLOBALS['sql']->quote(freemed::user_cache()->user_number);
 		
-		
-		
 		$selection_q = "auth.id,p.id as patient_id,CONCAT( p.ptlname, ', ', p.ptfname, ' ', p.ptmname ) AS patient_name"
 			.",'".$this->MODULE_NAME."' as status_name,'".get_class($this)."' as status_module"
 			.",case when '2010-07-08 12:33:24' >=(auth.authdtend - INTERVAL 5 DAY) then 'Will Expire' "
@@ -151,13 +149,27 @@ class Authorizations extends EMRModule {
 			.",auth.authdtend as stamp ";
 		$selection_q_count = " count(*) as count ";	
 		
-		$query = "select ".($isCountQuery?$selection_q_count:$selection_q)." from "
-			.$this->table_name." auth "
-			."left join patient p on p.id=auth.authpatient "
-			."where "
-			."('".$today."' >=(auth.authdtend - INTERVAL 5 DAY) || (auth.authvisitsused/auth.authvisits*100)>95 "
-			." and auth.active='active' and auth.user=".$user.") "
-			.($patient?" and auth.authpatient=".$GLOBALS['sql']->quote($patient):" order by auth.authpatient ");
+		// Category B: table identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::getActionItemsQuery| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		// Category C: every predicate is composed with a driver-quoted value
+		// here, and the statement is assembled with sprintf, so no raw fragment
+		// (or unquoted value) is concatenated into it.
+		$criteria = sprintf(
+			"(%s >=(auth.authdtend - INTERVAL 5 DAY) || (auth.authvisitsused/auth.authvisits*100)>95  and auth.active='active' and auth.user=%s)",
+			$GLOBALS['sql']->quote($today),
+			$user
+		);
+		$query = sprintf(
+			"select %s from %s auth left join patient p on p.id=auth.authpatient where %s %s",
+			($isCountQuery?$selection_q_count:$selection_q),
+			$table,
+			$criteria,
+			($patient ? sprintf('and auth.authpatient=%s', $GLOBALS['sql']->quote($patient)) : 'order by auth.authpatient')
+		);
 		return $query;
 	}
 	

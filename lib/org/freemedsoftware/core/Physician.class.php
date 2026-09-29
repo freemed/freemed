@@ -90,20 +90,25 @@ class Physician {
 		}
 
 		// If no degrees are given, they are not a medical doctor.
+		// $d is only ever set by the loop above - a physician whose phydegrees
+		// names no degree leaves it unset - and count(null) is a TypeError on
+		// PHP 8, while the is_array($d) reads below warn on the unset variable.
+		// Normalise it once, here, in the same shape as the guard.
+		$d = ((isset($d) and is_array($d)) ? $d : array());
 		if (count($d) < 1) { $dr = false; }
 
 		if ($use_salutation) {
 			return ( $dr ? 'Dr. ' : '' ).
 			$this->phyfname . " " . $this->phymname .
 			( (!empty($this->phymname)) ? " " : "" ) . $this->phylname.
-			( (!$dr and is_array($d)) ? ', '.join(', ', $d) : '' );
+			( (!$dr and !empty($d)) ? ', '.join(', ', $d) : '' );
 		}
 
 		return $this->phyfname . " " .
 		( (!empty($this->phymname)) ? substr($this->phymname, 0, 1).". " : "" ) . 
 		$this->phylname .
 		// handle degrees
-		( is_array($d) ? ', '.join(', ', $d) : '' );
+		( !empty($d) ? ', '.join(', ', $d) : '' );
 	} // end method fullName
 
 	// Method: to_text

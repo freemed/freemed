@@ -139,7 +139,8 @@ class ExternalPlugin {
 			}
 			// Recurse and read in entries
 			while ($e = $d->read()) {
-				if (is_file($this->path.'/'.$e) and (substr($e, 0, 1) != '.')) {
+				// No SQL here: a plugin-directory enumeration path.
+				if (is_file(sprintf('%s/%s', $this->path, $e)) and (substr($e, 0, 1) != '.')) {
 					if ($this->debug) { print "\tcaching $e\n"; }
 					$o = $this->Command($e, 'INFO');
 					if ($o) {

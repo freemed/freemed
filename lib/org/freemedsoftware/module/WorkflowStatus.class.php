@@ -81,7 +81,16 @@ class WorkflowStatus extends SupportModule {
 		freemed::acl_enforce( 'scheduling', 'read' );
 		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
 		$u = freemed::user_cache();
-		$q = "CALL patientWorkflowStatusByDate( ". $GLOBALS['sql']->quote( $s->ImportDate( $date ) ) .", " . $GLOBALS['sql']->quote( $u->getManageConfig( 'workflow_status_age' ) + 0 ) . " )";
+		// Category A + F4 (2.6f): the date is the criterion, so it is validated
+		// as Y-m-d and the call refused (logged, this method's empty answer)
+		// rather than passing quote(ImportDate(false)) - a bare 0, i.e. the
+		// zero-date - to the stored procedure.
+		$dtv = $s->ImportDate( $date );
+		if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $dtv ) ) {
+			syslog( LOG_ERR, get_class($this).'::StatusMapForDate| refusing non-Y-m-d date '.var_export($date, true) );
+			return array();
+		}
+		$q = "CALL patientWorkflowStatusByDate( ". $GLOBALS['sql']->quote( $dtv ) .", " . $GLOBALS['sql']->quote( $u->getManageConfig( 'workflow_status_age' ) + 0 ) . " )";
 		return $GLOBALS['sql']->queryAllStoredProc( $q );
 	} // end method StatusMapForDate
 

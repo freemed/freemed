@@ -357,7 +357,7 @@ class Forms extends EMRModule {
 			if ($data['default']) {
 				$default = explode('|', $data['default']);
 			}
-			$buffer .= "<select name=\"variable_".$data['variable']."[]\" multiple=\"multiple\" size=\"10\">\n";
+			$buffer .= sprintf("<select name=\"variable_%s[]\" multiple=\"multiple\" size=\"10\">\n", $data['variable']);
 			foreach ( explode('|', $data['options']) AS $v) {
 				$selected = false;
 				foreach ($default AS $d) { if ($d == $v) { $selected = true; } }

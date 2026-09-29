@@ -63,7 +63,14 @@ class ModuleFieldCheckerType extends SupportModule {
 	}
 	
 	public function getModuleInfo($module){
- 		$query = "SELECT * FROM ".$this->table_name." WHERE module='".$module."'";
+		// Category B: table_name identifier; Category A: the module value.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::getModuleInfo| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$query = sprintf('SELECT * FROM %s WHERE module = %s', $table, $GLOBALS['sql']->quote($module));
 		$result = $GLOBALS['sql']->queryRow( $query );
 		return $result;
 	}

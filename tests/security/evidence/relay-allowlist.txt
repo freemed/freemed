@@ -1,0 +1,1820 @@
+# tests/security/evidence/relay-allowlist.txt
+#
+# Task 2.8 - the relay deny-by-default allowlist, both enforcement states,
+# measured live. Generated from real command output; nothing below is
+# hand-written except this header.
+#
+# COMMIT / SERVER / CONFIG EACH ROW CAME FROM
+#   checkout commit  : 2a55da8fb0fe974660f32b6073d941a276e4b5cf
+#   branch           : security/mitigation-2026-09
+#   served tree      : the harness's rsync copy of that checkout (sync-code.sh),
+#                      which is what the web server serves. The served data file
+#                      was byte-identical to the checkout's before Phase A and
+#                      again after Phase C (Phase C prints the cmp result, and the
+#                      pattern count it prints is 323 - the shipped count).
+#   server           : http://localhost:38081 (Apache + mod_php, docroot
+#                      /var/www/html). The fpm/nginx stack on :38082 was not used
+#                      for these rows: only the Apache container has the syslog
+#                      sink the relay's LOG_WARNING lines land in, and the two
+#                      stacks share the document root.
+#   syslog           : /tmp/freemed-syslog.log inside the Apache container (a
+#                      minimal UNIX-datagram sink; the image ships no syslogd, so
+#                      PHP's syslog() would otherwise go nowhere). Lines are
+#                      quoted as captured, including the <132> = LOG_WARNING
+#                      priority of the allowlist line and the <134> = LOG_INFO
+#                      priority of the relay's own pre-existing
+#                      "method = ..., provider = Json" line.
+#   database         : MariaDB 10.11 in freemed-verify-db, the reduced Phase 0.3
+#                      seed. The pinned fingerprint is at the end and is unchanged
+#                      from the pre-flight baseline.
+#   session          : obtained with the harness's /login-probe.php
+#                      (curl -s -c /tmp/fm.jar ...), which calls the public
+#                      Login.Validate/LoggedIn through CallMethod. No credential
+#                      appears here; Login.Validate's relay response body is the
+#                      literal `true`.
+#   probe script     : relay-allowlist-probe.sh, scratch only (never committed).
+#                      It edits ONLY the SERVED copy of
+#                      app/data/config/relay-allowlist.php, and only between
+#                      phases. The repository's file is never touched.
+#   repro script     : tests/security/repro-relay-sqli.sh (in the checkout), run
+#                      with RELAY_COOKIE_JAR / BASE / TIMEOUT.
+#
+# REDACTION
+#   No credentials, no 32-hex PASSWORD DIGEST, no PHI. The single edit to captured
+#   output is `username = admin` -> `username = <user>` in one syslog line.
+#   `remote=192.168.128.1` is the Docker bridge gateway and is kept: the remote
+#   address is the part of the log line an operator acts on. The only long hex runs
+#   in this file are the two checkout commits named in its own headers
+#   (2a55da8fb0fe974660f32b6073d941a276e4b5cf and
+#   28810521888ccc47c2b713df4cc1baf70b03d3c6), plus ONE 32-hex value that is not a
+#   credential and not a digest of anything secret: the Phase-C database-fingerprint
+#   md5 `eda1b343b1027332fbd269c0c3171863`, which is a fingerprint of COUNTS and
+#   row ids (not of row content) and is quoted in full inside that block below.
+#   (This sentence used to read "no 32-hex value appears anywhere" - false as
+#   written, because of that fingerprint; corrected in the final fix wave, item
+#   2.10(a), and no other line was changed for it.) The database comparison itself
+#   is stated as a clean `diff`, not as a digest standing in for it.
+#
+# WHAT IS *NOT* PROVEN BY THIS FILE
+#   The compiled-GWT click-through smoke pass. There is no compiled client in
+#   this checkout, so no browser session ever exercised this call set. Every row
+#   below was driven by the harness's own probes. That gap is the reason the
+#   shipped default is log-only; see data/config/relay-allowlist.php and
+#   doc/RELAY_ALLOWLIST.
+#
+# =============================================================================
+# PREREQUISITE - a config edit is not instant, and the lag is PER WORKER
+# =============================================================================
+#   OPcache is enabled in both containers with validate_timestamps=On and
+#   revalidate_freq=2 (the php.ini-production default), so after editing
+#   'enforce' a worker can still serve the OLD config for a moment. Two Apache
+#   children can disagree: the first draft of this script alternated between a
+#   worker that had revalidated and one that had not, and produced a false "the
+#   control is not working" plus a false PASS on a row that should have been
+#   refused. So Phase B reloads PHP (apache2ctl graceful -> new workers with an
+#   empty OPcache) after each edit, which is exactly the "or reload PHP" remedy
+#   the operator documentation gives, and every phase still MEASURES convergence
+#   (the "running PHP reflects it after Ns" lines) rather than assuming it.
+#
+# =============================================================================
+# NOTE - the enumeration artifacts
+# =============================================================================
+#   tests/security/evidence/relay-callset.txt says "Generated at commit
+#   2a55da8f...", i.e. the commit whose data file its 323 rows seeded. Its five
+#   inputs are named in its own header; the fourth, the stack's access log, is
+#   captured in tests/security/evidence/relay-accesslog.txt.
+#   Reproducibility, measured:
+#       php tests/security/relay-callset-enum.php <head-sha> <branch> \
+#           tests/security/evidence/relay-accesslog.txt > /tmp/regen.txt
+#       diff <(grep -v '^# Generated at commit\|^# Branch:' /tmp/regen.txt) \
+#            <(grep -v '^# Generated at commit\|^# Branch:' relay-callset.txt)
+#       => no output: all 323 rows and their per-pattern provenance are reproduced
+#          exactly from the committed inputs.
+#   The ONLY line that moves is "# Generated at commit", which is self-referential:
+#   it names the commit whose tree the generator ran against, so it changes the
+#   moment HEAD moves past that commit. Regenerating this file AT commit 2a55da8f
+#   (the commit its data file seeded) is byte-identical including that line; at
+#   any later commit, that line and only that line differs.
+#   The access log is read as a COMMITTED CAPTURE (a file passed in), never from
+#   the container, so the artifact does not drift with the container's log.
+#
+# =============================================================================
+# PHASE A - the SHIPPED state: enforce = false (LOG-ONLY)
+# =============================================================================
+== Phase A: SHIPPED state (enforce = false, LOG-ONLY) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served data file : app/data/config/relay-allowlist.php
+   served enforce   : 'enforce' => false,
+
+-- A0 the SHIPPED default, as the running PHP actually sees it --
+      enforce=false          running PHP reflects it after 1s (observed: LOG-ONLY, call still executed)
+
+-- A1 login (login-probe establishes the session) --
+  Login.Validate()=true
+  Login.LoggedIn()=true
+  ASSERTED: Login.LoggedIn()=true
+
+-- A2 LISTED, with session: the 2.2-2.5 method must still answer --
+  UserInterface.GetUsers(param0=Ada) returns its rows            ASSERTED
+      body: [["Ada  Admin, ","1"]] [http=200]
+      syslog: 2026-09-28 19:25:32 <134>Sep 28 19:25:32 freemed[12767]: method = org.freemedsoftware.api.UserInterface.GetUsers, provider = Json
+
+-- A3 UNLISTED, with session: log-only means it STILL RUNS --
+  UserInterface.getRel (UNLISTED) is NOT refused: it executes    ASSERTED
+      body: {"---":"","Catholic":"0","Jewish":"1","Eastern Orthodox":"2","Baptist":"3","Methodist":"4","Lutheran":"5","Presbyterian":"6","United Church of God":"7","Episcopalian":"8","Adventist":"9","Assembly of God":"10","Brethren":"11","Christian Scientist":"12","Church of Christ":"13","Church of God":"14","D
+      allowlist entries matching UserInterface.getRel: 0
+      syslog: 2026-09-28 19:25:32 <134>Sep 28 19:25:32 freemed[12768]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
+      syslog: 2026-09-28 19:25:32 <132>Sep 28 19:25:32 freemed[12768]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+  module.Vitals.GetList (UNLISTED) is NOT refused either         ASSERTED
+      body: <br /> <b>Fatal error</b>:  Uncaught Error: Maximum call stack size of 8339456 bytes (zend.max_allowed_stack_size - zend.reserved_stack_size) reached. Infinite recursion? in /var/www/html/lib/net/php/pear/Services/JSON.php:241 Stack trace: #0 [internal function]: Services_JSON-&gt;encode('DB Error: 
+      log-only changes nothing at all: this call still produces its pre-existing
+      serializer fatal (a DB_Error reaching Services_JSON::encode), exactly as before.
+      allowlist entries matching module.Vitals.GetList: 0
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[13231]: method = org.freemedsoftware.module.Vitals.GetList, provider = Json
+      syslog: 2026-09-28 19:25:33 <132>Sep 28 19:25:33 freemed[13231]: Relay: method 'org.freemedsoftware.module.Vitals.GetList' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+
+-- A4 UNLISTED public.*, no cookie: log-only, so the login-guard exemption still applies --
+  public.Login.NotARealMethod (UNLISTED) is NOT refused by the allowlist ASSERTED
+      body: <br /> <b>Fatal error</b>:  Uncaught TypeError: call_user_func_array(): Argument #1 ($callback) must be a valid callback, class Login does not have a method &quot;NotARealMethod&quot; in /var/www/html/lib/loader.php:66 Stack trace: #0 /var/www/html/lib/org/freemedsoftware/core/Relay.class.php(81): C
+      NOT INVALID_SESSION either => the public.* login exemption is unchanged.
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12769]: method = org.freemedsoftware.public.Login.NotARealMethod, provider = Json
+      syslog: 2026-09-28 19:25:33 <132>Sep 28 19:25:33 freemed[12769]: Relay: method 'org.freemedsoftware.public.Login.NotARealMethod' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+
+-- A5 LISTED public.*, NO cookie: the login bypass is unchanged --
+  public.Login.GetLanguages, no cookie, returns the languages    ASSERTED
+      body: [["Deutsch","de_DE"],["English","en_US"],["Spanish (Mexico)","es_MX"],["Francais","fr_FR"],["Polski","pl_PL"]] [http=200]
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12770]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+
+-- A6 LISTED public.*, NO cookie: the login POST itself (password not printed) --
+  public.Login.Validate, no cookie, authenticates                ASSERTED
+      body: true [http=200]
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: method = org.freemedsoftware.public.Login.Validate, provider = Json
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: username = <user>
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: SessionPopulate called
+      syslog: 2026-09-28 19:25:33 <134>Sep 28 19:25:33 freemed[12771]: SessionPopulate called, proceeding
+
+residual mismatches in this phase: 0
+PHASE_A_EXIT=0
+
+# =============================================================================
+# PHASE B - enforce = true
+# =============================================================================
+== Phase B: ENFORCING state (enforce = true) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+      reloading PHP (apache2ctl graceful): a per-worker OPcache is why the file's
+      mtime alone is not enough — this is the remedy doc/RELAY_ALLOWLIST gives operators.
+   served enforce   : 'enforce' => true,
+   php sees         : true patterns=323
+
+-- B0 convergence: a config edit is not instant (OPcache revalidate_freq) --
+      enforce=true           running PHP reflects it after 1s (observed: refused (INVALID_CALL))
+
+-- B1 the login flow itself (this call is listed) --
+  ASSERTED: login-probe still authenticates under enforcement
+
+-- B2 LISTED, with session: still answers (not a blanket refusal) --
+  UserInterface.GetUsers(param0=Ada) STILL returns its rows      ASSERTED
+      body: [["Ada  Admin, ","1"]] [http=200]
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14348]: method = org.freemedsoftware.api.UserInterface.GetUsers, provider = Json
+
+-- B3 UNLISTED, with session: INVALID_CALL, and a log line --
+  UserInterface.getRel (UNLISTED) is REFUSED                     ASSERTED
+      body: INVALID_CALL [http=200]
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14349]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
+      syslog: 2026-09-28 19:25:36 <132>Sep 28 19:25:36 freemed[14349]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+  module.Vitals.GetList (UNLISTED) is REFUSED                    ASSERTED
+      body: INVALID_CALL [http=200]
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14350]: method = org.freemedsoftware.module.Vitals.GetList, provider = Json
+      syslog: 2026-09-28 19:25:36 <132>Sep 28 19:25:36 freemed[14350]: Relay: method 'org.freemedsoftware.module.Vitals.GetList' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      note the improvement: the pre-existing serializer fatal this call produced in
+      log-only mode (A3) is replaced by a clean refusal. Strictly less surface.
+
+-- B4 UNLISTED public.*, no cookie: INVALID_CALL (the check is NOT skipped for public.*) --
+  public.Login.NotARealMethod (UNLISTED) is REFUSED              ASSERTED
+      body: INVALID_CALL [http=200]
+      syslog: 2026-09-28 19:25:36 <134>Sep 28 19:25:36 freemed[14346]: method = org.freemedsoftware.public.Login.NotARealMethod, provider = Json
+      syslog: 2026-09-28 19:25:36 <132>Sep 28 19:25:36 freemed[14346]: Relay: method 'org.freemedsoftware.public.Login.NotARealMethod' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+
+-- B5 SERVED-LIST EDIT: delist public.Login.GetLanguages, then call it with no cookie --
+      Every public.* method of the shipped classes is in the shipped list by design, so the
+      only way to show an UNLISTED public.* method that WOULD otherwise work is to delist one
+      in the SERVED copy. The repository's file is not touched.
+      served entries for public.Login.GetLanguages now: 0
+      enforce=true+delist    running PHP reflects it after 1s (observed: refused (INVALID_CALL))
+  public.Login.GetLanguages, DELISTED, enforcing, no cookie -> REFUSED ASSERTED
+      body: INVALID_CALL [http=200]
+      syslog: 2026-09-28 19:25:38 <134>Sep 28 19:25:38 freemed[14443]: method = org.freemedsoftware.api.UserInterface.getRel, provider = Json
+      syslog: 2026-09-28 19:25:38 <132>Sep 28 19:25:38 freemed[14443]: Relay: method 'org.freemedsoftware.api.UserInterface.getRel' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      syslog: 2026-09-28 19:25:39 <134>Sep 28 19:25:39 freemed[14444]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+      syslog: 2026-09-28 19:25:39 <132>Sep 28 19:25:39 freemed[14444]: Relay: method 'org.freemedsoftware.public.Login.GetLanguages' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+
+   ...the SAME delisted call with the check back in log-only mode:
+      enforce=false          running PHP reflects it after 1s (observed: LOG-ONLY, call still executed)
+  public.Login.GetLanguages, DELISTED, log-only, no cookie -> RUNS and logs ASSERTED
+      body: [["Deutsch","de_DE"],["English","en_US"],["Spanish (Mexico)","es_MX"],["Francais","fr_FR"],["Polski","pl_PL"]] [http=200]
+      syslog: 2026-09-28 19:25:41 <134>Sep 28 19:25:41 freemed[14479]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+      syslog: 2026-09-28 19:25:41 <132>Sep 28 19:25:41 freemed[14479]: Relay: method 'org.freemedsoftware.public.Login.GetLanguages' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+
+residual mismatches in this phase: 0
+PHASE_B_EXIT=0
+
+# =============================================================================
+# PHASE C - restore the served data file from the checkout
+# =============================================================================
+== Phase C: restore the served data file from the checkout ==
+   served enforce   : 'enforce' => false,
+   pattern entries  : 323
+   byte-identical to the checkout: YES
+
+residual mismatches in this phase: 0
+PHASE_C_EXIT=0
+
+# =============================================================================
+# REGRESSION - tests/security/repro-relay-sqli.sh (the 2.2-2.5 hostile repro)
+# =============================================================================
+#   command : RELAY_COOKIE_JAR=/tmp/fm.jar BASE=http://localhost:38081 TIMEOUT=20 \
+#               ./tests/security/repro-relay-sqli.sh
+#   exit    : 0
+#   Why this is here: it is the acceptance bar's "the relay must not have become
+#   a blanket refusal". The reachability bodies below are each of the four fixed
+#   methods still returning its legitimate answer, from the same served tree the
+#   allowlist runs in. Elided for length: the POST lines, the URL-encoded request
+#   bodies and the per-response HTTP codes - the script prints all of them and
+#   the transport is documented in its own header.
+--- org.freemedsoftware.public.Login.LoggedIn (session assertion)
+    body(no leak marker matched, excerpt as received): true
+--- reachability: no filters, must return the user rows the query can find
+--- org.freemedsoftware.api.UserInterface.GetUsers (reachability)
+    body(no leak marker matched, excerpt as received): [["Ada  Admin, ","1"],["Cal  Clerk, ","2"]]
+    asserted: the reachability response (a row-bearing JSON array) contains [["
+--- benign control: a literal that must select nothing
+--- org.freemedsoftware.api.UserInterface.GetUsers (benign control)
+    body(no leak marker matched, excerpt as received): null
+--- injection: param1 = the $usertype filter (concatenated raw)
+--- org.freemedsoftware.api.UserInterface.GetUsers (injection)
+    body(no leak marker matched, excerpt as received): null
+    >>> SITE VERDICT [org.freemedsoftware.api.UserInterface.GetUsers]: NO EXPLOIT OBSERVED for this method - all 3 calls dispatched, the control answered as modelled and the injected call returned no digest, no unexpected row and no MySQL error text
+--- reachability: the seeded association, must return its module row
+--- org.freemedsoftware.api.ModuleSearch.picklist (reachability)
+    body(no leak marker matched, excerpt as received): {"DemoPayments":"Demo Payments Module"}
+    asserted: the reachability response contains DemoPayments
+--- benign control: an association that matches no module row
+--- org.freemedsoftware.api.ModuleSearch.picklist (benign control)
+    body(no leak marker matched, excerpt as received): null
+--- injection: param1 = the $moduleType filter (concatenated raw)
+--- org.freemedsoftware.api.ModuleSearch.picklist (injection)
+    body(no leak marker matched, excerpt as received): null
+    >>> SITE VERDICT [org.freemedsoftware.api.ModuleSearch.picklist]: NO EXPLOIT OBSERVED for this method - all 3 calls dispatched, the control answered as modelled and the injected call returned no digest, no unexpected row and no MySQL error text
+--- reachability: the seeded template type, must return its entemplate row
+--- org.freemedsoftware.module.EncounterNotesTemplate.getTemplates (reachability)
+    body(no leak marker matched, excerpt as received): [{"id":"1","tempname":"Demo Progress Template","tempuser":"0","notetype":"Progress Note"}]
+    asserted: the reachability response contains "tempname"
+--- benign control: a type that matches no entemplate row
+--- org.freemedsoftware.module.EncounterNotesTemplate.getTemplates (benign control)
+    body(no leak marker matched, excerpt as received): []
+--- injection: param0 = $type (pnotesttype), concatenated raw
+--- org.freemedsoftware.module.EncounterNotesTemplate.getTemplates (injection)
+    body(no leak marker matched, excerpt as received): []
+    >>> SITE VERDICT [org.freemedsoftware.module.EncounterNotesTemplate.getTemplates]: NO EXPLOIT OBSERVED for this method - all 3 calls dispatched, the control answered as modelled and the injected call returned no digest, no unexpected row and no MySQL error text
+--- reachability: the seeded payrec row, must render its payment
+--- org.freemedsoftware.api.Remitt.RenderStatementXML (reachability)
+    body(no leak marker matched, excerpt as received): "<?xml version=\"1.0\"?>\n<remitt doctype=\"statementxml\">\n\n\t<!-- global information -->\n\n<global>\n<generator>\n<program>FreeMED<\/program>\n<version>0.8.8<\/version>\n<\/generator>\n<currentda
+    asserted: the reachability response contains <patpay>150.25
+--- benign control: a procedure key with no payrec row
+--- org.freemedsoftware.api.Remitt.RenderStatementXML (benign control)
+    body(no leak marker matched, excerpt as received): "<?xml version=\"1.0\"?>\n<remitt doctype=\"statementxml\">\n\n\t<!-- global information -->\n\n<global>\n<generator>\n<program>FreeMED<\/program>\n<version>0.8.8<\/version>\n<\/generator>\n<currentda
+    asserted: the control response contains <patpay>0
+    asserted: the control response contains No payment has been received
+    asserted: the control response does not contain Paid By: Patient
+--- injection: param0 = $procedure, concatenated raw into WHERE payrecproc=
+--- org.freemedsoftware.api.Remitt.RenderStatementXML (injection)
+    body(no leak marker matched, excerpt as received): "<?xml version=\"1.0\"?>\n<remitt doctype=\"statementxml\">\n\n\t<!-- global information -->\n\n<global>\n<generator>\n<program>FreeMED<\/program>\n<version>0.8.8<\/version>\n<\/generator>\n<currentda
+    asserted: the injected call's response contains <payhistory>
+    >>> SITE VERDICT [org.freemedsoftware.api.Remitt.RenderStatementXML]: NO EXPLOIT OBSERVED for this method - all 3 calls dispatched, the control answered as modelled and the injected call returned no digest, no unexpected row and no MySQL error text
+13 probe(s) sent (4 sites x 3), 0 vulnerable response(s), 0 inconclusive (0 withheld single digest, 0 did not dispatch)
+sites cleared: org.freemedsoftware.api.UserInterface.GetUsers org.freemedsoftware.api.ModuleSearch.picklist org.freemedsoftware.module.EncounterNotesTemplate.getTemplates org.freemedsoftware.api.Remitt.RenderStatementXML
+sites not cleared: <none>
+>>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0)
+    What WAS measured: the supplied session answered Login.LoggedIn() == "true"; all
+    What was NOT measured: nothing here is evidence about an unauthenticated caller
+
+# =============================================================================
+# DATABASE FINGERPRINT - unchanged before and after everything above
+# =============================================================================
+#   (the SELECT ... UNION ALL from tests/security/evidence/seed-verify.sql, plus
+#    the config row count, which must not grow)
++-------------+-----++
+| tbl | n | ids |
++-------------+-----++
+| entemplate | 1 | 1 |
+| payrec | 1 | 3 |
+| patient_emr | 1 | 5 |
+| modules | 135 | 134 distinct module_class |
+| patient | 0 | NULL |
+| procrec | 0 | NULL |
+| vitals | 0 | NULL |
+| user | 2 | 1,2 |
+| config | 34 | acl_patient,auto_print_ptrcpt,bypass_comm_err,calbreakhour,calehr,calinterval,calintervalheight,calshow24hourclock,calshr,check_pump_status,clinic_mode,fax_nocover,fed_pov_inc,fed_pov_level,form_autosave,form_autosave_interval,form_review_reminder,max_billable,metric_system,mirth_enable,mirth_endpoint,remitt_cbpass,remitt_cbuser,remitt_elig,remitt_pass,remitt_url,remitt_user,sliding_fee,work_list,xmpp_host,xmpp_notify,xmpp_pass,xmpp_port,xmpp_user |
++-------------+-----++
+
+
+# =============================================================================
+# FIX ROUND 1 - the C1 inner gate (api/UserInterface.class.php:Multicall)
+# =============================================================================
+#   checkout commit  : 28810521888ccc47c2b713df4cc1baf70b03d3c6 plus the fix-round-1
+#                      working tree. These rows were captured from the working tree
+#                      BEFORE the fix-round-1 commits were made; the commit SHAs are
+#                      named in the task-2.8-report.md "Fix round 1" section.
+#   branch           : security/mitigation-2026-09
+#   served tree      : the harness's rsync copy (sync-code.sh). Phase C prints
+#                      `byte-identical to the checkout: YES` for
+#                      data/config/relay-allowlist.php, and cmp confirms the same for
+#                      lib/org/freemedsoftware/core/Relay.class.php and
+#                      lib/org/freemedsoftware/api/UserInterface.class.php.
+#   server           : http://localhost:38081 (Apache + mod_php, docroot
+#                      /var/www/html) - the container that has the syslog sink.
+#   syslog           : /tmp/freemed-syslog.log. NOTE: when this round started the sink
+#                      was gone (a container restart by another workstream had removed
+#                      both /dev/log and the listener process), so requests produced no
+#                      syslog line at all. It was re-started with the harness's own
+#                      vcal-work/syslog-sink.pl (`docker exec -d ... perl
+#                      /tmp/syslog-sink.pl /tmp/freemed-syslog.log`, then `chmod 777
+#                      /dev/log`), and every syslog line quoted below is from after
+#                      that. Rows measured before the sink was alive are deliberately
+#                      NOT included.
+#   database         : MariaDB 10.11 in freemed-verify-db. The pinned fingerprint was
+#                      taken before Phase A and again after the regression run, and is
+#                      identical:
++-------------+-----+---------------------------+
+| tbl         | n   | ids                       |
+| entemplate  | 1   | 1                         |
+| payrec      | 1   | 3                         |
+| patient_emr | 1   | 5                         |
+| user        | 2   | 1,2                       |
+| patient     | 0   | NULL                      |
+| procrec     | 0   | NULL                      |
+| vitals      | 0   | NULL                      |
+| modules     | 135 | 134 distinct module_class |
+| config      | 34  | NULL                      |
++-------------+-----+---------------------------+
+#                      `diff` between the normalised before and after outputs: NO
+#                      OUTPUT (the two are identical line for line; the comparison is
+#                      recorded in the report rather than as a digest here, so that
+#                      THIS SECTION keeps the rule above: no 32-hex run appears in it.
+#                      The file does contain one 32-hex value, the DB-fingerprint md5
+#                      recorded in the FIX ROUND 3 block - named in the REDACTION
+#                      header at the top, which is where that exception is stated).
+#                      No config row was created.
+#   session          : the harness's /login-probe.php. No credential appears in this
+#                      section; Login.Validate's relay body is the literal `true`.
+#   probe script     : ra-fix1-probe.sh, scratch only (never committed). It edits ONLY
+#                      the SERVED copy of app/data/config/relay-allowlist.php, and only
+#                      between phases; Phase C restores it from the checkout.
+#   redaction        : no credentials, no 32-hex digests, no PHI. Nothing below is
+#                      hand-edited; each block is the probe's own output.
+#                      `remote=192.168.128.1` is the Docker bridge gateway and is kept,
+#                      as everywhere else in this file.
+#
+# THE BATCH (one request, three inner calls; the UNLISTED one is in the MIDDLE, so a
+# refusal that aborted the batch would also lose the call AFTER it):
+#   POST /relay.php/json/org.freemedsoftware.api.UserInterface.Multicall
+#   param0=[{"method":"...UserInterface.GetUsers","parameters":["Ada"]},
+#           {"method":"...UserInterface.GetUserType","parameters":[]},
+#           {"method":"...UserInterface.GetCurrentUsername","parameters":[]}]
+#   ...UserInterface.Multicall IS listed (1 shipped entry); ...GetUsers and
+#   ...GetCurrentUsername are listed; ...GetUserType is NOT (0 shipped entries).
+#
+# =============================================================================
+# PHASE A - SHIPPED state (enforce = false, LOG-ONLY): the inner call still RUNS
+# =============================================================================
+== Phase A: SHIPPED state (enforce = false, LOG-ONLY) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served data file : app/data/config/relay-allowlist.php
+   served enforce   : 'enforce' => false,
+
+-- A1 login (login-probe establishes the session) --
+  Login.Validate()=true
+  Login.LoggedIn()=true
+  ASSERTED: Login.LoggedIn()=true
+
+-- A2 the DIRECT unlisted call is the baseline (log-only: runs) --
+  UserInterface.GetUserType (UNLISTED, direct) EXECUTES            ASSERTED
+      body: "super" [http=200]
+      syslog: 2026-09-28 20:49:14 <132>Sep 28 20:49:14 freemed[254]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+
+-- A3 THE C1 PROOF, log-only: Multicall batch [listed, UNLISTED, listed] --
+  inner slot 0 (LISTED GetUsers) still runs                        ASSERTED
+      body: [[["Ada  Admin, ","1"]],"super","Administrator"] [http=200]
+  inner slot 1 (UNLISTED GetUserType) RUNS in log-only             ASSERTED
+      body: [[["Ada  Admin, ","1"]],"super","Administrator"] [http=200]
+  inner slot 2 (LISTED GetCurrentUsername) still runs              ASSERTED
+      body: [[["Ada  Admin, ","1"]],"super","Administrator"] [http=200]
+      allowlist entries matching ...UserInterface.GetUserType: 0
+      allowlist entries matching ...UserInterface.Multicall:    1
+      syslog: 2026-09-28 20:49:14 <132>Sep 28 20:49:14 freemed[250]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+      inner-miss log lines naming GetUserType in this request: 1
+
+-- A4 LISTED public.*, NO cookie: the login bypass is unchanged --
+  public.Login.GetLanguages, no cookie, returns the languages      ASSERTED
+      body: [["Deutsch","de_DE"],["English","en_US"],["Spanish (Mexico)","es_MX"],["Francais","fr_FR"],["Polski","pl_PL"]] [http=200]
+      syslog: 2026-09-28 20:49:14 <134>Sep 28 20:49:14 freemed[251]: method = org.freemedsoftware.public.Login.GetLanguages, provider = Json
+
+residual mismatches in this phase: 0
+
+# =============================================================================
+# PHASE B - ENFORCING (enforce = true): THE C1 BYPASS IS DEAD
+# =============================================================================
+#   Read `the UNLISTED inner call is DEAD: no 'super' anywhere` together with the
+#   review's proof from the enforcing state:
+#       === ENFORCING: unlisted+session (expect INVALID_CALL) ===
+#       INVALID_CALL
+#       === ENFORCING: Multicall -> unlisted inner method ===
+#       ["super"]
+#   The same shape now answers
+#       [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"]
+#   i.e. the unlisted inner method is refused and the refusal is PER CALL: the listed
+#   call BEFORE it and the listed call AFTER it both still dispatch. The OUTER method
+#   (Multicall) is listed, so the only `Relay: method` line the request produces is the
+#   INNER gate speaking, in the enforcing wording.
+== Phase B: ENFORCING state (enforce = true) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served enforce   : 'enforce' => true,
+   php sees         : true patterns=323
+
+-- B1 the login flow itself (this call is listed) --
+  ASSERTED: login-probe still authenticates under enforcement
+
+-- B2 the DIRECT unlisted call is now REFUSED (the baseline) --
+  UserInterface.GetUserType (UNLISTED, direct) -> INVALID_CALL     ASSERTED
+      body: INVALID_CALL [http=200]
+      syslog: 2026-09-28 20:49:19 <132>Sep 28 20:49:19 freemed[535]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+
+-- B3 THE C1 PROOF, ENFORCING: Multicall batch [listed, UNLISTED, listed] --
+  the UNLISTED inner call is DEAD: no 'super' anywhere             ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  inner slot 1 is refused with INVALID_CALL in its own slot        ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  inner slot 0 (LISTED) still returns its rows (per-call)          ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  inner slot 2 (after the refusal) STILL runs (batch not aborted)  ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+      syslog: 2026-09-28 20:49:19 <132>Sep 28 20:49:19 freemed[536]: Relay: method 'org.freemedsoftware.api.UserInterface.GetUserType' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+      inner-miss log lines naming GetUserType in this request: 1
+      (the OUTER Multicall is listed, so it produces no miss line of its own:
+       every 'Relay: method' line above is the INNER gate speaking.)
+
+residual mismatches in this phase: 0
+
+# =============================================================================
+# PHASE C - the served tree restored
+# =============================================================================
+== Phase C: restore the served data file from the checkout ==
+   served enforce   : 'enforce' => false,
+   pattern entries  : 323
+   byte-identical to the checkout: YES
+
+residual mismatches in this phase: 0
+
+# =============================================================================
+# WHAT THIS SECTION PROVES, AND WHAT IT DOES NOT
+# =============================================================================
+#   Proves (measured, both states, real HTTP, a real session, in the Apache stack the
+#   allowlist runs in):
+#     * in the enforcing state the Multicall re-dispatch of an UNLISTED method is
+#       refused with INVALID_CALL placed in that slot, no 'super' is returned, and the
+#       neighbouring LISTED inner calls still dispatch - before AND after the refusal
+#       (per-call, not batch-wide);
+#     * in the shipped log-only state the same inner call still executes and is logged
+#       with the identical miss line and the log-only wording, so the log-only stage
+#       measures the INNER call set as well as the outer one;
+#     * the outer relay check is unchanged (the direct unlisted call is the baseline in
+#       both states), the login flow still authenticates in both states, and a listed
+#       public.* call still works with no cookie;
+#     * the served tree is byte-identical to the checkout afterwards.
+#   Does NOT prove:
+#     * anything about a real compiled GWT client (there is none in this checkout); the
+#       batch above is probe-shaped, not client-shaped - the gap named in this file's
+#       header still stands;
+#     * ROUND 1 ONLY: that the eight ModuleInterface re-dispatch wrappers are gated.
+#       They were NOT gated in round 1 (each dispatches a FIXED literal method
+#       ('add'|'del'|'GetRecord'|'GetRecords'|'mod'|'picklist'|'RenderHtmlView'|
+#       'to_text') against a CALLER-CHOSEN module class - a re-dispatch on the CLASS
+#       axis rather than the method-name axis). The figure quoted here in round 1 was
+#       "129 of the 146 (module, literal) pairs that exist are NOT in the shipped
+#       list"; THAT FIGURE DOES NOT REPRODUCE and has been corrected below and in the
+#       task-2.8-report.md "Fix round 2" section (N3). The gate landed in fix round 2
+#       (R32) and the both-states proof is in the FIX ROUND 2 section at the end of
+#       this file.
+#     * the XML-RPC provider or the JSON-body transport (unchanged from the original
+#       evidence: the check is in the shared handle_request()).
+
+# =============================================================================
+# FIX ROUND 2 (Task 2.8): the CLASS AXIS (R32), the reinstated never-allow
+# refusal (R36), the FormTemplate re-dispatcher (N2) and the corrected
+# class-axis measurement (N3)
+# =============================================================================
+#   branch           : security/mitigation-2026-09
+#   generated at     : the working tree carrying fix round 2, i.e. the commits
+#                      named in the task-2.8-report.md "Fix round 2" section (the
+#                      full SHAs are named there, not here, so this file keeps
+#                      its redaction rule).
+#   served tree      : the harness's rsync copy (sync-code.sh). Phase D prints
+#                      `cmp ... IDENTICAL` for all six files this round touches.
+#   server           : http://localhost:38081 (Apache + mod_php, docroot
+#                      /var/www/html) - the container that has the syslog sink.
+#   syslog           : /tmp/freemed-syslog.log (the sink was already running; no
+#                      line below predates it).
+#   database         : MariaDB 10.11 in freemed-verify-db. The pinned fingerprint
+#                      was taken before Phase A and again after the regression
+#                      run and is identical:
++-------------+-----+---------------------------+
+| tbl         | n   | ids                       |
+| entemplate  | 1   | 1                         |
+| payrec      | 1   | 3                         |
+| patient_emr | 1   | 5                         |
+| user        | 2   | 1,2                       |
+| patient     | 0   | NULL                      |
+| procrec     | 0   | NULL                      |
+| vitals      | 0   | NULL                      |
+| modules     | 135 | 134 distinct module_class |
+| config      | 34  | NULL                      |
++-------------+-----+---------------------------+
+#                      `diff` between the before and after outputs: NO OUTPUT. No
+#                      config row was created.
+#   regression       : RELAY_COOKIE_JAR=/tmp/fm.jar BASE=http://localhost:38081
+#                      bash tests/security/repro-relay-sqli.sh -> exit 0,
+#                      "sites cleared: ...GetUsers ...ModuleSearch.picklist
+#                      ...EncounterNotesTemplate.getTemplates
+#                      ...Remitt.RenderStatementXML", "sites not cleared: <none>".
+#   hermetic suite   : 162 rows, all pass on this tree (104 before this round). It
+#                      exits 1 with 26 NAMED failing rows on the pre-round-2 tree,
+#                      and exits 1 with 3 named failing rows on the
+#                      class-present/relay-unwired tree.
+#   gates            : make security-check -> "security-sql-concat-check: clean",
+#                      "security-path-guard-check: clean", exit 0. No gate script
+#                      was edited by this round.
+#   probe script     : ra-fix2-probe.sh, scratch only (never committed). It edits
+#                      ONLY the SERVED copies: app/data/config/relay-allowlist.php
+#                      (phases B and D) and app/lib/.../api/ModuleInterface.class.php
+#                      (phases C and D). Phase D restores all six from the checkout.
+#   redaction        : no credentials, no 32-hex digests, no PHI. Nothing below is
+#                      hand-edited; each block is the probe's own output.
+#                      `remote=192.168.128.1` is the Docker bridge gateway and is
+#                      kept, as everywhere else in this file.
+#
+# THE TWO CLASS-AXIS CALLS (R32). SAME wrapper, SAME literal, DIFFERENT class:
+#   POST /relay.php/json/org.freemedsoftware.api.ModuleInterface.ModuleGetRecordsMethod
+#     param0=i18nLanguages param1=100   -> org.freemedsoftware.module.i18nLanguages.GetRecords
+#                                          IS in the shipped list (1 entry)
+#     param0=PatientTag    param1=100   -> org.freemedsoftware.module.PatientTag.GetRecords
+#                                          is NOT (0 entries)
+#   The WRAPPER itself is listed (1 entry). Neither request ever names a module
+#   method in PATH_INFO: the class travels in param0, which is why a per-method
+#   list could not constrain it.
+#
+# THE R36 CALLS. The pre-2.8 Multicall guard is the rule under test:
+#     if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) { ...; return false; }
+#   `printf '%s' 'org.freemedsoftware.core.' | wc -c` -> 25, so the comparison
+#   MATCHED and the guard refused every inner `core` call in BOTH stages. Round 1
+#   removed it calling it dead code; this round reinstates it as the data file's
+#   'never_allow' list, applied with the INNER scope, and the OUTER path logs the
+#   same namespace without refusing (documented asymmetry).
+#   INNER : Multicall batch [listed, core.User.GetName, listed]. core.User.GetName
+#           is ITSELF in the shipped list (1 entry), so a refusal there can only
+#           be the never-allow rule.
+#   OUTER : a direct call to the same core.User.GetName.
+
+# -----------------------------------------------------------------------------
+# PHASE A - SHIPPED state (enforce = false, LOG-ONLY)
+# -----------------------------------------------------------------------------
+
+== Phase A: SHIPPED state (enforce = false, LOG-ONLY) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served data file : app/data/config/relay-allowlist.php
+   served enforce   : 'enforce' => false,
+   served never_allow: ),
+
+-- A0 login (login-probe establishes the session) --
+  Login.Validate()=true
+  Login.LoggedIn()=true
+  ASSERTED: Login.LoggedIn()=true
+
+-- A1 the SHIPPED default, as the running PHP actually sees it --
+      enforce=false          running PHP reflects it after 1s (observed: LOG-ONLY, call still executed)
+
+-- A R32 LISTED pair: ModuleGetRecordsMethod(module.i18nLanguages) --
+  A LISTED module.i18nLanguages.GetRecords executes                ASSERTED
+      body: [{"abbrev":"de_DE","language":"Deutsch","id":"2"},{"abbrev":"en_US","language":"English","id":"1"},{"abbrev":"es_MX","language":"Spanish (Mexico)","id":"4"},{"abbrev":"fr_FR","language":"Francais","id":"3"},{"abbrev":"pl_PL","language":"Polski","id":"5"}] [http=200]
+      shipped-list entries matching org.freemedsoftware.module.i18nLanguages.GetRecords: 1
+
+-- A R32 UNLISTED pair: ModuleGetRecordsMethod(module.PatientTag) --
+      shipped-list entries matching org.freemedsoftware.module.PatientTag.GetRecords: 0
+      syslog: 2026-09-28 21:20:05 <132>Sep 28 21:20:05 freemed[1013]: Relay: method 'org.freemedsoftware.module.PatientTag.GetRecords' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+[]
+[http=200]
+  R32 log-only: BOTH pairs must have EXECUTED (the miss is logged only).
+  A R32 UNLISTED pair EXECUTES in log-only (no INVALID_CALL)       ASSERTED
+      body: [] [http=200]
+  A R32 UNLISTED pair is NOT refused in log-only                   ASSERTED
+      body: [] [http=200]
+      allowlist entries matching org.freemedsoftware.api.ModuleInterface.ModuleGetRecordsMethod: 1
+        (the WRAPPER is listed; only the caller-chosen class makes the concrete string a miss)
+      syslog: 2026-09-28 21:20:05 <132>Sep 28 21:20:05 freemed[1014]: Relay: method 'org.freemedsoftware.module.PatientTag.GetRecords' is not in the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+
+-- A2 R32 second wrapper, LISTED pair: ModuleToTextMethod(module.Pharmacy) --
+  A LISTED module.Pharmacy.to_text executes                        ASSERTED
+      body: " (, )" [http=200]
+
+-- A3 R36 INNER, in the SHIPPED LOG-ONLY stage: the pre-2.8 refusal is back --
+  A inner slot 0 (LISTED GetUsers) still runs                      ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  A inner slot 1 (core.User.GetName, LISTED) is REFUSED in log-only ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  A inner slot 2 (after the refusal) STILL runs (batch not aborted) ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+      shipped-list entries matching org.freemedsoftware.core.User.getName: 1
+        (so the refusal is the NEVER-ALLOW rule, not a miss: it beats 'patterns')
+      syslog: 2026-09-28 21:20:06 <131>Sep 28 21:20:06 freemed[1011]: Relay: method 'org.freemedsoftware.core.User.GetName' is in a NEVER-ALLOW namespace 'org.freemedsoftware.core.'; an INNER call with a CALLER-SUPPLIED method name is REFUSED REGARDLESS OF 'patterns', in BOTH stages (remote=192.168.128.1)
+
+-- A4 R36 OUTER: the same namespace on the outer path is LOGGED, NOT REFUSED --
+  A outer core.User.GetName still answers                          ASSERTED
+      body: "admin" [http=200]
+  A outer core.User.GetName is NOT refused                         ASSERTED
+      body: "admin" [http=200]
+      syslog: 2026-09-28 21:20:06 <132>Sep 28 21:20:06 freemed[1012]: Relay: method 'org.freemedsoftware.core.User.GetName' is in a NEVER-ALLOW namespace 'org.freemedsoftware.core.'; this is NOT a caller-supplied inner call, so it is LOGGED AND NOT REFUSED HERE (the normal allowlist decision still applies; remote=192.168.128.1)
+
+-- A5 N2 (FormTemplate::ProcessData): no live path in this checkout --
+      ProcessData's names come from an XML template FILE (data/form/templates/<name>.xml).
+      No such file ships in this checkout, and the class is not in the shipped list, so
+      the relay cannot name it directly either. Its gates are asserted at source level in
+      tests/security/relay_allowlist.test.php ('N2 — the FormTemplate re-dispatcher ...').
+
+residual mismatches in this phase: 0
+
+# -----------------------------------------------------------------------------
+# PHASE B - ENFORCING state (enforce = true), SAME calls
+# -----------------------------------------------------------------------------
+== Phase B: ENFORCING state (enforce = true) ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served enforce   : 'enforce' => true,
+   php sees         : true patterns=323 never_allow=org.freemedsoftware.core.
+
+-- B0 the login flow itself (this call is listed) --
+  Login.Validate()=true
+  Login.LoggedIn()=true
+  ASSERTED: Login.LoggedIn()=true
+
+-- B1 convergence: a config edit is not instant (OPcache revalidate_freq) --
+      enforce=true           running PHP reflects it after 1s (observed: refused (INVALID_CALL))
+
+-- B R32 LISTED pair: ModuleGetRecordsMethod(module.i18nLanguages) --
+  B LISTED module.i18nLanguages.GetRecords executes                ASSERTED
+      body: [{"abbrev":"de_DE","language":"Deutsch","id":"2"},{"abbrev":"en_US","language":"English","id":"1"},{"abbrev":"es_MX","language":"Spanish (Mexico)","id":"4"},{"abbrev":"fr_FR","language":"Francais","id":"3"},{"abbrev":"pl_PL","language":"Polski","id":"5"}] [http=200]
+      shipped-list entries matching org.freemedsoftware.module.i18nLanguages.GetRecords: 1
+
+-- B R32 UNLISTED pair: ModuleGetRecordsMethod(module.PatientTag) --
+      shipped-list entries matching org.freemedsoftware.module.PatientTag.GetRecords: 0
+      syslog: 2026-09-28 21:20:14 <132>Sep 28 21:20:14 freemed[1576]: Relay: method 'org.freemedsoftware.module.PatientTag.GetRecords' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+"INVALID_CALL"
+[http=200]
+
+-- B2 R32 UNLISTED pair is now REFUSED (same wrapper, same literal, other class) --
+  B R32 UNLISTED pair -> INVALID_CALL                              ASSERTED
+      body: "INVALID_CALL" [http=200]
+      the miss line names the CONCRETE string the wrapper dispatched, not the wrapper:
+      syslog: 2026-09-28 21:20:14 <132>Sep 28 21:20:14 freemed[1577]: Relay: method 'org.freemedsoftware.module.PatientTag.GetRecords' is not in the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+
+-- B3 R32 LISTED pair still EXECUTES (not a blanket refusal of the wrapper) --
+  B LISTED module.i18nLanguages.GetRecords still executes          ASSERTED
+      body: [{"abbrev":"de_DE","language":"Deutsch","id":"2"},{"abbrev":"en_US","language":"English","id":"1"},{"abbrev":"es_MX","language":"Spanish (Mexico)","id":"4"},{"abbrev":"fr_FR","language":"Francais","id":"3"},{"abbrev":"pl_PL","language":"Polski","id":"5"}] [http=200]
+  B LISTED pair is not refused                                     ASSERTED
+      body: [{"abbrev":"de_DE","language":"Deutsch","id":"2"},{"abbrev":"en_US","language":"English","id":"1"},{"abbrev":"es_MX","language":"Spanish (Mexico)","id":"4"},{"abbrev":"fr_FR","language":"Francais","id":"3"},{"abbrev":"pl_PL","language":"Polski","id":"5"}] [http=200]
+  B LISTED module.Pharmacy.to_text still executes                  ASSERTED
+      body: " (, )" [http=200]
+
+-- B4 R36 INNER, ENFORCING: identical verdict to the log-only stage --
+  B inner slot 0 (LISTED) still returns its rows                   ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  B inner slot 1 (core.User.GetName) is REFUSED                    ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  B inner slot 2 (after the refusal) STILL runs                    ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+      syslog: 2026-09-28 21:20:15 <131>Sep 28 21:20:15 freemed[1575]: Relay: method 'org.freemedsoftware.core.User.GetName' is in a NEVER-ALLOW namespace 'org.freemedsoftware.core.'; an INNER call with a CALLER-SUPPLIED method name is REFUSED REGARDLESS OF 'patterns', in BOTH stages (remote=192.168.128.1)
+
+-- B5 R36 OUTER, ENFORCING: still logged and NOT refused --
+  B outer core.User.GetName still answers (listed, and the OUTER path never refuses it) ASSERTED
+      body: "admin" [http=200]
+  B outer core.User.GetName is NOT refused                         ASSERTED
+      body: "admin" [http=200]
+      syslog: 2026-09-28 21:20:15 <132>Sep 28 21:20:15 freemed[1576]: Relay: method 'org.freemedsoftware.core.User.GetName' is in a NEVER-ALLOW namespace 'org.freemedsoftware.core.'; this is NOT a caller-supplied inner call, so it is LOGGED AND NOT REFUSED HERE (the normal allowlist decision still applies; remote=192.168.128.1)
+
+residual mismatches in this phase: 0
+
+# -----------------------------------------------------------------------------
+# PHASE C - ABLATION
+# -----------------------------------------------------------------------------
+== Phase C: ABLATION — serve the PRE-round-2 ModuleInterface.class.php, still enforcing ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served enforce   : 'enforce' => true,
+   served ModuleInterface has the gate: 0 call site(s) (expect 0)
+   served ModuleInterface == git HEAD version: YES
+
+-- C1 the pre-change file restores the CLASS-AXIS bypass under enforcement --
+      the R36 inner refusal is NOT in ModuleInterface, so it must be UNCHANGED here:
+  C (control) inner core.User.GetName is STILL refused (R36 lives in Relay_Allowlist) ASSERTED
+      body: [[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"] [http=200]
+  C the UNLISTED class-axis pair is NO LONGER refused (the gate is the cause) ASSERTED
+      body: [] [http=200]
+  C ...it EXECUTES again, exactly as in log-only                   ASSERTED
+      body: [] [http=200]
+      syslog for the ablated request (the miss line is still written by Relay_Allowlist,
+      which is unchanged; only the DISPATCH decision was in ModuleInterface):
+  C (control) the LISTED pair still executes                       ASSERTED
+      body: [{"abbrev":"de_DE","language":"Deutsch","id":"2"},{"abbrev":"en_US","language":"English","id":"1"},{"abbrev":"es_MX","language":"Spanish (Mexico)","id":"4"},{"abbrev":"fr_FR","language":"Francais","id":"3"},{"abbrev":"pl_PL","language":"Polski","id":"5"}] [http=200]
+
+   restoring the served ModuleInterface from the checkout ...
+   served ModuleInterface has the gate again: 15 call site(s)
+
+residual mismatches in this phase: 0
+
+# -----------------------------------------------------------------------------
+# PHASE D - RESTORE
+# -----------------------------------------------------------------------------
+== Phase D: restore the served tree from the checkout ==
+   server           : http://localhost:38081   (syslog sink container: freemed-verify-apache)
+   served enforce   : 'enforce' => false,
+   pattern entries  : 323 (a pattern ends with an alphanumeric method name;
+                      the never_allow entry ends in a dot and is NOT counted)
+   cmp data/config/relay-allowlist.php                      IDENTICAL
+   cmp lib/org/freemedsoftware/core/Relay.class.php         IDENTICAL
+   cmp lib/org/freemedsoftware/core/Relay_Allowlist.class.php IDENTICAL
+   cmp lib/org/freemedsoftware/api/UserInterface.class.php  IDENTICAL
+   cmp lib/org/freemedsoftware/api/ModuleInterface.class.php IDENTICAL
+   cmp lib/org/freemedsoftware/api/FormTemplate.class.php   IDENTICAL
+
+residual mismatches in this phase: 0
+
+# -----------------------------------------------------------------------------
+# PHASE E - THE PRE-2.8 PARITY PROBE (R36): the removed guard FIRED, in the
+#           SHIPPED log-only stage, on this very stack
+# -----------------------------------------------------------------------------
+#   Round 1 removed Multicall()'s guard as "dead code". The claim was that
+#   `substr($v['method'], 0, 25) == 'org.freemedsoftware.core.'` compared 25
+#   characters against a 24-character literal, so it could never match. The
+#   literal is 25 characters, so this probe serves the PRE-2.8 file
+#   (lib/org/freemedsoftware/api/UserInterface.class.php as of the commit before
+#   fix round 1) into the served tree, in the SHIPPED state, and sends the SAME
+#   batch as PHASE A3/B4 - with the LISTED org.freemedsoftware.core.User.GetName
+#   in the middle slot.
+#
+#   $ git -C $REPO show <pre-round-1-commit>:lib/org/freemedsoftware/api/UserInterface.class.php \
+#         > app/lib/org/freemedsoftware/api/UserInterface.class.php   # served copy only
+#   $ docker exec freemed-verify-apache apache2ctl graceful
+#   $ curl -s -b $JAR -X POST --data-urlencode "param0=$BATCH" \
+#         http://localhost:38081/relay.php/json/org.freemedsoftware.api.UserInterface.Multicall
+#
+#     served UserInterface == <pre-round-1-commit>: YES
+#     served enforce: 'enforce' => false,          <- the SHIPPED log-only stage
+#     served has the 25/24 guard: 1
+#     POST Multicall batch [listed, core.User.GetName, listed]:
+#     false
+#     [http=200]
+#     syslog for that request:
+#        2026-09-28 21:29:39 <134>... freemed[2244]: method = org.freemedsoftware.api.UserInterface.Multicall, provider = Json
+#        2026-09-28 21:29:39 <131>... freemed[2244]: Invalid method called org.freemedsoftware.core.User.GetName
+#     restored: served UserInterface == checkout: YES
+#
+#   Read against PHASE A3 (the same batch, the same stage, the current code):
+#     * the pre-2.8 guard REFUSED the inner core call and aborted the batch
+#       (`false`, the whole response) - so it was LIVE, not dead, and it refused
+#       in the shipped stage;
+#     * the reinstated rule refuses the same call in the same stage - but PER SLOT
+#       (`[[["Ada  Admin, ","1"]],"INVALID_CALL","Administrator"]`, slots 0 and 2
+#       still dispatch) instead of aborting the batch, and it writes a structured
+#       line at the same LOG_ERR priority instead of `Invalid method called ...`.
+#       That is the ONE deviation from pre-2.8, it is deliberate, and it is the
+#       C1 decision (per-call refusal) applied to the reinstated rule.
+#   So the shipped behaviour is back at parity with pre-2.8 (an inner core.* call
+#   is refused), with a strictly less disruptive failure shape.
+#
+
+# -----------------------------------------------------------------------------
+# WHAT THE CLASS-AXIS PHASES PROVE
+# -----------------------------------------------------------------------------
+#   LOG-ONLY (A): both class-axis calls EXECUTE. The unlisted one
+#     (module.PatientTag.GetRecords) returns its own `[]` and the SAME request
+#     writes the miss line naming the CONCRETE string the wrapper dispatched -
+#     `Relay: method 'org.freemedsoftware.module.PatientTag.GetRecords' is not in
+#     the relay allowlist (..., LOG-ONLY, call still executed)` - which is the
+#     discovery mechanism the operator procedure depends on.
+#   ENFORCING (B): the SAME call answers "INVALID_CALL" (the string, in the body),
+#     the miss line now says `refused (INVALID_CALL)`, and the LISTED sibling
+#     (module.i18nLanguages.GetRecords, same wrapper, same literal) still returns
+#     its full payload - so the refusal is per CLASS, not a blanket refusal of the
+#     wrapper. module.Pharmacy.to_text (a second wrapper, LISTED) also still
+#     executes in both states.
+#   ABLATION (C): with the PRE-round-2 api/ModuleInterface.class.php served (and
+#     `served ModuleInterface == git HEAD version: YES`) and enforcement STILL ON,
+#     module.PatientTag.GetRecords EXECUTES AGAIN (`[]`, no INVALID_CALL) while the
+#     R36 inner refusal is unchanged - the R36 rule lives in Relay_Allowlist, which
+#     the ablation did not touch. That isolates the gate as the cause: it is the
+#     round-2 wrapper code, not the stack or the config, that refuses the call.
+#   RESTORE (D): all six files cmp-identical to the checkout, 'enforce' => false,
+#     323 pattern entries (the never_allow entry is not counted as a pattern).
+#
+# WHAT THE R36 PHASES PROVE
+#   INNER, log-only (A3): slot 1 of the batch answers INVALID_CALL even though
+#     org.freemedsoftware.core.User.getName IS in 'patterns' - the never-allow rule
+#     beats the list - while slots 0 and 2 (listed) still dispatch, i.e. the
+#     refusal is per call. The syslog line is the INNER wording:
+#     `... is in a NEVER-ALLOW namespace 'org.freemedsoftware.core.'; an INNER call
+#      with a CALLER-SUPPLIED method name is REFUSED REGARDLESS OF 'patterns', in
+#      BOTH stages ...`
+#   INNER, enforcing (B4): byte-identical body, identical line. THAT is the
+#     "refused in both stages" claim: stage-independent, which is what the removed
+#     guard was.
+#   OUTER, both stages (A4/B5): core.User.GetName answers "admin" in BOTH, never
+#     INVALID_CALL, and the syslog carries the OUTER wording:
+#     `... this is NOT a caller-supplied inner call, so it is LOGGED AND NOT REFUSED
+#      HERE (the normal allowlist decision still applies) ...`
+#     So the shipped outer behaviour is unchanged by the reinstated rule.
+#
+# THE MEASUREMENT (N3, corrected) - the class axis, from
+# tests/security/relay-callset-enum.php (which classifies with the REAL matcher,
+# Relay_Allowlist::allowed, against the shipped 323 patterns):
+#
+#   DEFINITION: every lib/org/freemedsoftware/module/*.class.php (133 files),
+#   inheritance walked (module class -> its extends chain -> core/EMRModule ->
+#   BaseModule -> Module; SupportModule -> BaseModule), PUBLIC methods only (what
+#   call_user_func reaches). A pair exists when the class OR AN ANCESTOR declares
+#   the literal. Only the first row is the report's stated definition.
+#
+#     8 literals (add, del, GetRecord, GetRecords, mod, picklist, RenderHtmlView,
+#       to_text), all 133 module class files      : 866 pairs, 803 NOT listed, 63 listed
+#     +RenderToPDF (the print wrappers' literal)  :  37 pairs,  37 NOT listed,  0 listed
+#     8 literals, restricted to classes the SHIPPED LIST names : 423 / 360 NOT / 63
+#     8 literals, literal declared in the module file ITSELF    :   7 /   6 NOT /  1
+#
+#   (fix round 3, N3) The "restricted to classes the SHIPPED LIST names" row
+#   was published as 448 / 385 / 63. That figure was WRONG under its own label:
+#   the generator's 'named' accumulator (and its 'own_file' sibling) sat outside
+#   the `!$is_pdf` guard, so it also counted the 25 RenderToPDF pairs whose
+#   class the shipped list names -- while the label says the EIGHT literals.
+#   448 - 25 = 423, which is what the generator now prints and what round 1 had
+#   measured. Corrected in three places (this file, the report's FR4 table,
+#   evidence/relay-callset.txt) and pinned by test rows that read the figure
+#   back AND recompute it from the enumeration's own rows.
+#
+#   The round-1 report stated "146 (module class, literal) pairs exist and 129 of
+#   them are not in the shipped list". NEITHER NUMBER REPRODUCES. 146 implies 17
+#   listed pairs; the count of shipped patterns naming one of the eight literals is
+#   63 in the module namespace (70 across all namespaces, the 7 extra being
+#   api.UserInterface.{add,del,mod,GetRecord,GetRecords}, api.ModuleSearch.picklist
+#   and api.PatientInterface.Picklist). NOTE THE COINCIDENCE the controller asked to
+#   be named: 146 is ALSO, exactly, the "source-mine" tier count in the same
+#   report's section 1 (`source-mine=146` of 323) - so a future reader who sees
+#   "146" in this file's context should check which of the two it is.
+#   The corrected exposure is therefore about SIX times the figure the report
+#   carried (803 unlisted of 866, not 129 of 146). It supports the same verdict
+#   more strongly, and it is the quantitative case for the R32 gate that landed in
+#   this round. The served section "class axis" of
+#   tests/security/evidence/relay-callset.txt lists all 903 pairs with each pair's
+#   listed/unlisted verdict.
+
+# -----------------------------------------------------------------------------
+# THE COMPLETE RE-DISPATCHER SEARCH (N2)
+# -----------------------------------------------------------------------------
+#   Round 1's search was scoped to the 86 class names in the shipped list and
+#   therefore never opened lib/org/freemedsoftware/api/FormTemplate.class.php. This
+#   round re-ran it over the whole non-vendored tree (lib/, lib/org/**,
+#   the root request scripts; excluding the vendored adodb / Cache_Lite / PEAR /
+#   smarty / FPDF / log4php / gwt trees) for the shapes a name-to-dispatch takes:
+#   call_user_func*, CallMethod, CreateObject(...)->${var}(), $obj->$m(...) /
+#   ->{...}, module_function, __call. Every hit, with a verdict:
+#
+#   file:line                                   verdict
+#   ------------------------------------------  ---------------------------------
+#   1  api/UserInterface.class.php:Multicall    GATED HERE (round 1, C1). CLASS
+#                                               axis? no - METHOD axis: the inner
+#                                               method string is caller-supplied.
+#                                               refuse($inner_method, NULL, true).
+#   2  api/ModuleInterface.class.php            GATED HERE (round 2, R32). CLASS
+#      (11 dispatch sites: 9 wrappers +        axis: the literal is fixed, the
+#      2 print loops' RenderToPDF sites in      module class is caller-chosen.
+#      PrintToFax/Printer/Browser)              15 _allowlist_gate() call sites.
+#   3  api/FormTemplate.class.php:ProcessData   GATED HERE (round 2, N2), BOTH
+#      - object: axis  (core.<obj>.<mth>)       axes, OUTER scope by design: the
+#      - module: method: axis                   names come from the XML template
+#      - link: axis (get_field / to_text)       FILE, not the request. Provenance
+#                                               argument in the class comment and
+#                                               in the report; no live path exists
+#                                               in this checkout (no XML template
+#                                               ships), so it is asserted at source
+#                                               level only.
+#   4  api/FormTemplate.class.php:387           NOT REACHABLE for a name from the
+#      $this->patient->${field}()               request: $field comes from the same
+#                                               template data, and the object is
+#                                               this class's own Patient instance
+#                                               (one class, so the reachable method
+#                                               set is Patient's). Documented, and
+#                                               it is the same provenance class as
+#                                               #3. NOT gated.
+#   5  lib/API.php:419,421 (handler_breakpoint) DISPATCH IS REGISTRY-DRIVEN, not
+#      module_function($class,$handler)         caller-named: $class/$handler come
+#                                               from freemed::module_handler($name),
+#                                               a SELECT over modules.module_handlers
+#                                               (deployment data). The NAME argument
+#                                               in the relay-reachable path is the
+#                                               fixed literal 'Tickler'
+#                                               (api/Tickler.class.php:45, which IS
+#                                               listed) - so report row 10's first
+#                                               reason ("the relay cannot name
+#                                               freemed::") was WRONG and is
+#                                               corrected here; the second reason
+#                                               (registry-driven names) is the one
+#                                               that carries the verdict. NOT gated.
+#                                               In this install module_handler
+#                                               ('Tickler') matches 0 rows, so the
+#                                               path is inert on the harness.
+#   6  api/UserInterface.class.php -- 19       FIXED literal on a FIXED class:
+#      module_function('ACL', X) call sites:    module_function('ACL', X), 'ACL' a
+#      267, 382, 392, 398, 403, 447, 448, 449,  literal and X a literal, so NEITHER
+#      503, 505, 512, 515, 520, 528, 529, 531,  axis is caller-named. NOT a
+#      536, 537, 539.                           re-dispatcher. (fix round 4) THIS
+#      THE SAME SHAPE, 13 MORE SITES IN 7        LABEL SAYS WHAT IT IS A COUNT OF:
+#      OTHER FILES:                              the shape is "fixed literal on a
+#        core/User.class.php:278 'annotations'   fixed class", of which the tree has
+#        module/ACL.class.php:124 'patientacl'   32 real call sites -- the 19 ACL
+#        module/Prescription.class.php:122        ones above, plus the 13 listed. The
+#          'pharmacymaintenance'                 round-2 label named ONLY the ACL
+#        module/ProcedureModule.class.php:       calls, which understated the count.
+#          290 'FacilityModule'                  The 19 line numbers are corrected
+#          296 'CptMaintenance'                  here too: round 2's list (238, 353,
+#          302/308/314 'CptModifiersMaintenance' 363, 369, 374, 418-510) was 29
+#          330 'TypeOfServiceMaintenance'        lines stale, shifted by the R36
+#        module/ScannedDocuments.class.php:295   commit's own comment edits above
+#          'faxcontacts'                         them -- each old number +29 is the
+#        module/WorkListsModule.class.php:292    real one. The inventory is a TOKEN
+#          'schedulerpatientstatus'              scan (comments and strings cannot
+#        public/Login.class.php:190              inflate it), and none of the 32 is
+#          'facilitymodule'                      a re-dispatcher: neither the class
+#        public/Login.class.php:207              nor the method comes from the
+#          'i18nlanguages'                       request.
+#   7  module/Reporting.class.php:219 and       METHOD name is data-driven but the
+#      module/PatientReporting.class.php:173    CLASS is $this and the name is
+#      'GenerateReport_'.ucfirst(type)          constrained to the
+#                                               GenerateReport_* prefix from the
+#                                               reports registry (DB), not the
+#                                               request. Reachable via the listed
+#                                               module.Reporting.GenerateReport and
+#                                               module.PatientReporting.GenerateReport
+#                                               -> verdict: bounded by construction
+#                                               to that one class's GenerateReport_*
+#                                               methods. NOT gated (disclosed).
+#   8  module/Forms.class.php:74,156,200,254    call_user_func(array($this,
+#      'control_'.$v['type'])                   'control_'.$type)): CLASS is $this,
+#                                               METHOD is the fixed prefix
+#                                               'control_', the suffix comes from
+#                                               the FormTemplate control
+#                                               definitions, and it is guarded by
+#                                               method_exists($this, ...). Bounded to
+#                                               that one class's control_* methods.
+#                                               NOT gated (disclosed). NOTE: Forms
+#                                               IS reachable through the class axis
+#                                               (#2), which is why the ROUND-1
+#                                               report's "Forms: not relay-reachable,
+#                                               0 patterns" was an over-simplification.
+#   9  module/Forms.class.php:345               CLASS axis under template data:
+#      module_function($data['options'],       module_function($options, 'widget').
+#      'widget')                                Fixed literal, data-driven class.
+#      (fix round 3) ROUTE AND REACHABILITY
+#                                               CORRECTED. Round 2 called this
+#                                               "reached only from FormTemplate
+#                                               control rendering" and its
+#                                               re-review named RenderHtmlView as
+#                                               the entry. The FOUR real callers
+#                                               are Forms::addform/add/modform/mod
+#                                               (Forms.class.php:72/75, 154/157,
+#                                               194/201, 252/255) via
+#                                               call_user_func(array($this,
+#                                               'control_'.$v['type']));
+#                                               EMRModule::RenderHtmlView renders a
+#                                               Smarty template and contains no
+#                                               control_* call and no dynamic
+#                                               dispatch, so it does NOT reach this
+#                                               line. MEASURED, both stages (PHASE
+#                                               A3/B4): every entry hop EXECUTES in
+#                                               the shipped log-only stage (miss
+#                                               logged) and is REFUSED
+#                                               (INVALID_CALL) under enforcement;
+#                                               and even in log-only the inner line
+#                                               is NOT reached in this checkout --
+#                                               Forms::add/addform die on
+#                                               ereg_replace() (removed in PHP 7)
+#                                               and Forms::mod dies on the removed
+#                                               freemed::get_link_rec(), while
+#                                               modform needs a form_results row AND
+#                                               a control template file, neither of
+#                                               which ships. Verdict: needs no gate
+#                                               -- under enforcement it is
+#                                               unreachable by construction -- but
+#                                               it is exactly what an OUTER-scope
+#                                               gate is for the day an entry point
+#                                               is repaired (that is why #3 was
+#                                               gated with the OUTER scope).
+#                                               ROUTED to Task 4.3.
+#  10  core/BaseModule.class.php:203,237        CLASS axis from the REQUEST:
+#      module_function($parts[0],               $parts = explode('|',
+#      '_RenderToPDF')                          $_REQUEST['attachment']). Fixed
+#                                               literal '_RenderToPDF'. (fix round
+#                                               3) CLAIM CORRECTED: round 2 said
+#                                               "not relay-reachable today". That
+#                                               is FALSE in the stage the product
+#                                               SHIPS in. The outer hop IS
+#                                               relay-dispatchable -- `module.
+#                                               <AnyClass>._print` has 0 shipped
+#                                               entries, which is exactly what
+#                                               makes it dispatchable while
+#                                               enforce = false: MEASURED (PHASE
+#                                               A2) log-only logs the miss and RUNS
+#                                               _print (it died on the missing TeX
+#                                               template), and (PHASE B3)
+#                                               enforcement answers INVALID_CALL
+#                                               BEFORE _print runs. So under
+#                                               enforcement the inner dispatch is
+#                                               unreachable by construction (the
+#                                               only hop that reaches _print is
+#                                               refused) and no gate is needed for
+#                                               that stage; in log-only the inner
+#                                               class name is the same tier as the
+#                                               ~840 unlisted pairs. If a
+#                                               deployment EVER lists _print, this
+#                                               is the gate it needs. ROUTED to
+#                                               Task 4.3.
+#  11  core/EMRModule.class.php:610 and         FIXED literal + FIXED class
+#      core/SupportModule.class.php:764         (TableMaintenance.ImportStockData).
+#      CallMethod('...ImportStockData', ...)    NOT a re-dispatcher.
+#  12  core/FreemedDb.class.php:80,82 (__call)  METHOD name from the CALLER'S PHP
+#                                               call site, not from the request;
+#                                               it re-dispatches onto the MDB2/DB
+#                                               object, whose methods are the SQL
+#                                               layer's own. NOT reachable from a
+#                                               request-supplied name. Documented.
+#  13  core/FPDF.class.php:903,1613             INTERNAL: $this->$mtd() where $mtd
+#                                               is a font/encoding handler name
+#                                               chosen by FPDF's own code from its
+#                                               data files. NOT request-named.
+#  14  core/EMRModule.class.php:240 and         PROPERTY reads ($this->$var), not
+#      core/SupportModule.class.php:206         dispatches.
+#  15  core/Parser_HL7v2.class.php:144          $type = substr($segment,0,3) then
+#      call_user_func_array([$this,'_'.$type])  array($this, '_'.$type): the CLASS
+#                                               is $this and the method is
+#                                               '_'.$type, where $type is validated
+#                                               by the switch above (only MSH/EVN
+#                                               reach this line). NOT reachable
+#                                               from a relay-named method.
+#  16  acl/adodb/**, acl/Cache_Lite/**          VENDORED (adodb Active Record and
+#                                               Cache_Lite property/method magic).
+#                                               Outside the control's scope, and no
+#                                               relay method reaches them with a
+#                                               caller-supplied name.
+#  17  api/PatientInterface.class.php:286       GATED HERE (fix round 3, R32). THE
+#      module_function($resolve['class'],       SAME CLASS AXIS as #2: the literal
+#      'additional_move')                       'additional_move' is fixed and the
+#                                               class arrives from the `modules`
+#                                               row that the caller's chosen
+#                                               patient_emr id resolves to, so
+#                                               listing the OUTER method cannot
+#                                               constrain it. _allowlist_gate(
+#                                               $resolve['class'],'additional_move')
+#                                               -> refuse($concrete, NULL, true).
+#                                               ABSENT from round 2's table (round
+#                                               1's F7 table carried it as row 6);
+#                                               that omission is what fix round 3
+#                                               corrects.
+#      (reached? MEASURED)                       NOT REACHED in this tree, for TWO
+#                                               pre-existing reasons that are
+#                                               independent of the gate: (i)
+#                                               MoveEmrAttachments reads an
+#                                               UNDEFINED LOCAL `$patient`, so its
+#                                               resolve query is
+#                                               `p.patient = NULL` and never
+#                                               matches; (ii) even with a matching
+#                                               row, freemed::module_get_meta()
+#                                               returns false for every registered
+#                                               module (it reads $row['MODULE_CLASS']
+#                                               / $row['META_INFORMATION']; the
+#                                               registry rows carry neither). Either
+#                                               one sends the loop down the
+#                                               pre-existing SqlIdent refusal path
+#                                               and `continue`s BEFORE the dispatch.
+#                                               PHASE A1 measures that on the
+#                                               unmodified product code; the gate's
+#                                               behaviour once the dispatch IS
+#                                               reached is measured live in both
+#                                               stages, plus an ABLATION, by the
+#                                               probe harness in PHASE A2/B/C. The
+#                                               two blockers are recorded for Task
+#                                               4.3, not fixed in this round.
+#                                               (fix round 4) PLACEMENT: the gate
+#                                               CALL is BEFORE THE FIRST WRITE in
+#                                               the loop -- resolve (read) 329,
+#                                               gate 367, module-table UPDATE 373,
+#                                               annotations UPDATE 377,
+#                                               module_function 380 -- so a
+#                                               refusal is ATOMIC: nothing of that
+#                                               attachment is written. Round 3 had
+#                                               it after both UPDATEs, so a refused
+#                                               call had already moved the record.
+#                                               Both orders are measured on the
+#                                               same call, same stage, same probe
+#                                               edits, in "FIX ROUND 4 - the
+#                                               positive control and the placement"
+#                                               (PHASE E3 vs the E5 ablation).
+#  18  api/Agata7.class.php:156                 CLASS axis under STORED REPORT DATA --
+#      module_function($detail, 'widget', $k)   BUT NOT A DEPLOYMENT ARTEFACT. $detail
+#                                               comes from $v['value'] of a report
+#                                               DEFINITION that SHIPS
+#                                               (data/report/<name>.report, read via
+#                                               getReport()); setReportPath() is called
+#                                               with $report, the CALLER's own argument,
+#                                               so a caller naming a shipped report needs
+#                                               nothing deployed. org.freemedsoftware.
+#                                               api.Agata7.* has 0 shipped entries, so the
+#                                               outer hop is REFUSED under enforcement and
+#                                               dispatchable in the shipped log-only stage
+#                                               -- the same tier as #9.
+#                                               (fix round 4, N2) THE REASON BELOW IS
+#                                               CORRECTED, THE VERDICT IS KEPT. Round 3
+#                                               said "no *.report definition ships
+#                                               (data/report/ holds .jrxml only)". That is
+#                                               FALSE: 7 *.report definitions ship, and
+#                                               TWO of them -- billed_contacts and
+#                                               provider_patient_list, each line 26 --
+#                                               carry <value>Provider:module:
+#                                               providermodule</value>, which selects
+#                                               ($type,$detail) = ('module',
+#                                               'providermodule') and arms exactly this
+#                                               dispatch. The MEASURED first stop is
+#                                               EARLIER than this row said and is a PHP 8
+#                                               PARSE ERROR: freemed::quickform_i18n(
+#                                               &$form) at api/Agata7.class.php:127 is a
+#                                               call-time pass-by-reference, so the class
+#                                               cannot be loaded at all (php -l fails, and
+#                                               a live relay attempt answers
+#                                               `Parse error: syntax error, unexpected
+#                                               token "&" ... on line 127`). The
+#                                               0-entry half is MEASURED IN BOTH
+#                                               STAGES (A18.3/A18.4 below): under
+#                                               enforcement the outer hop is refused
+#                                               before the inner dispatch BY
+#                                               CONSTRUCTION, exactly as for #9/#10,
+#                                               and the parse error is never reached.
+#                                               THIS FILE IS APPLICATION CODE. The plan's
+#                                               R14 non-goal covers the VENDORED
+#                                               lib/agata7/** tree (bundled fpdf / pclzip
+#                                               / nusoap), NOT
+#                                               lib/org/freemedsoftware/api/Agata7.class.php,
+#                                               which is in this sweep's api/ scope; so
+#                                               this row could not have been omitted on
+#                                               non-goal grounds, and the verdict below
+#                                               does not rest on any non-goal.
+#                                               Verdict (KEPT, and better supported than
+#                                               before): needs an OUTER-scope gate the day
+#                                               the parse error is repaired; ROUTED to
+#                                               Task 4.3. Round 2's table omitted it. The
+#                                               measurement is "FIX ROUND 4 (N2)" below.
+#
+#   CONCLUSION of the search (fix round 3: 18 rows, not 16): the four
+#   relay-reachable re-dispatchers are #1, #2, #17 and #3, and all four are gated
+#   through Relay_Allowlist::refuse() on both axes. #4, #5, #8, #9, #10 and #18 are
+#   name-to-dispatch shapes that are NOT gated, each for a stated reason: #4/#5/#8/
+#   #9/#18 take their name from stored data or a registry rather than from the
+#   request, and #10's inner name is only reachable in the log-only stage (its
+#   outer hop is unlisted, so enforcement refuses it before _print runs). #9, #10
+#   and #18 are the three that WOULD need an OUTER-scope gate the day any of their
+#   entry points becomes listable/reachable, and they are listed for the follow-on
+#   work (Task 4.3). This replaces round 1's sentence "No undisclosed instance
+#   remains" and its row-2 justification "so the reachable METHOD set is those
+#   eight literals - closed by construction": that justification does not hold,
+#   because a fixed-literal hop lands on a method that re-opens to a data-named
+#   method. Round 2's own table replaced those, but it dropped #17 (which round 1
+#   HAD), omitted #18 entirely, and stated #9/#10's reachability wrongly; fix round
+#   3 corrects all four of those and measures what it states (PHASE A/B/C below).
+#
+#   (fix round 4) ROW #18'S REASON WAS STILL WRONG AND IS NOW MEASURED. Its verdict
+#   is KEPT (0 shipped entries for org.freemedsoftware.api.Agata7.*, so the inner hop
+#   is refused before dispatch under enforcement -- the same tier as #9/#10, and now
+#   measured in BOTH stages), but the reason it gave was false: 7 *.report
+#   definitions ship, two of them arm exactly this dispatch, and $report is the
+#   CALLER's own argument -- so this is not a "deployment artefact", and the real
+#   first stop is a PHP 8 parse error at api/Agata7.class.php:127. The measurement is
+#   in "FIX ROUND 4 (N2)" below; no other row's verdict is touched by it.
+
+# -----------------------------------------------------------------------------
+# WHAT THIS SECTION DOES NOT PROVE
+# -----------------------------------------------------------------------------
+#   * that FormTemplate::ProcessData's gates WORK END TO END against a real
+#     template. No XML template ships in this checkout (data/form/templates/ does
+#     not exist), so the path cannot be driven live; its gates are asserted at
+#     source level in the hermetic suite. The provenance argument (names come from
+#     the template FILE) is an argument about the code, not a measurement.
+#   * that the class-axis gate covers a module class reached through a route other
+#     than module_function() (it does not claim to: the gate is on the wrappers'
+#     own dispatch).
+#   * anything about a compiled GWT client; the class-axis probes above are
+#     probe-shaped, exactly like the client-shaped gap named in this file's header.
+#   * the XML-RPC provider (the check is in the shared handle_request(); the JSON
+#     provider is what was probed).
+#   * (fix round 3) that a SUCCESSFUL `additional_move` dispatch happens. ~~The only
+#     module class in this tree with a PUBLIC additional_move is
+#     module.ScannedDocuments (MessagesModule and EMRModule declare it protected),
+#     and the probe's registry row cannot name it: the modules table rejects a
+#     second row with that module_class (measured: `ERROR 1062 ... Duplicate entry
+#     'ScannedDocuments' for key 'acl_value_aco_sections'`, and the lower-case
+#     variant too). The LISTED leg therefore shares its class with the unlisted leg
+#     and the observable is the gate's DECISION, exactly the shape the round-2 R32
+#     proof used -- the same family of limit as "cannot show a successful
+#     RenderToPDF dispatch on a resolvable class".~~
+#     **(fix round 4) CORRECTED -- IT IS DRIVABLE, AND "FIX ROUND 4" BELOW DRIVES
+#     IT.** The claim above is struck: a `modules` row naming
+#     module_class='ScannedDocuments' INSERTs successfully (measured, PHASE E0.1);
+#     the `modules_insert` trigger skips its section insert because the seeded
+#     `acl_aco_sections` row for that value already exists (id 100), so nothing
+#     collides. (Corrected again in fix round 4: the 1062 the round-3 report quoted
+#     does NOT reproduce in either spelling -- the lower-case `'scanneddocuments'`
+#     ALSO inserts on this stack (measured, same rollback: 136 rows while open, 135
+#     after). What produced that 1062 is not established by this round; what IS
+#     established is that no constraint stops a `modules` row naming this class, and
+#     that is why the dispatch below can be driven.) With the class nameable, the successful dispatch is
+#     driven: the class loads, a PUBLIC `additional_move` is found and invoked, and
+#     the record is written -- so the R32 A/B now has the positive control it lacked,
+#     and both of the round-3 legs (class-not-found / no such method) are replaced by
+#     measured outcomes on a real class.
+#   * (fix round 3) that the INNER hops of search rows #9 (Forms::control_module),
+#     #10 (BaseModule::_print) and #18 (Agata7::CreateForm) execute. What is
+#     measured is where each chain STOPS on this stack, not where it would land.
+
+# -----------------------------------------------------------------------------
+# FIX ROUND 3 - the PatientInterface dispatch site (R32), the two reachability
+#              corrections (N2), and the corrected class-axis figure (N3)
+# -----------------------------------------------------------------------------
+#   Everything below is a MEASUREMENT on this stack (Apache :38081, MariaDB
+#   127.0.0.1:33306, branch security/mitigation-2026-09, served tree ./app synced
+#   from the checkout). The scratch driver is ra-fix3-probe.sh (never committed);
+#   its phase output is quoted verbatim. "syslog:" lines are real lines from the
+#   container's syslog sink.
+#
+#   Commit provenance: the tree measured is the content of the fix-round-3 commit
+#   series -- base 49551849 plus the four round-3 commits on this branch (the
+#   report's fix-round-3 section lists them). The served copy was re-synced from
+#   the checkout before each phase and `cmp`-verified against it in PHASE D, so no
+#   row below describes a tree other than the committed one. The single exception
+#   is stated per row: PHASE A2/B/C run the PROBE-HARNESS file (the product file
+#   plus the two edits listed under "PROBE-HARNESS EDITS"), which is scratch and is
+#   never committed.
+#
+#   THE PROBE-HARNESS EDITS (PHASE A2). Search row #17's dispatch is NOT reachable
+#   in the shipped tree (PHASE A1 measures that), so the gate cannot be exercised
+#   through it without giving the harness a reachable dispatch. The served copy of
+#   PatientInterface.class.php got TWO labelled edits -- applied to the ROUND-3
+#   file AND to the PRE-ROUND-3 file, so the A/B differs only by the gate:
+#     (i)  the resolve query's `$patient` (an undefined local)  ->  `$patientFrom`
+#     (ii) freemed::module_get_meta( $resolve['class'], 'patient_field' )
+#          (always false)                                      ->  'payrecpatient'
+#   `changed lines: 2 (expect 2)`. The GATE ITSELF is byte-identical to the
+#   committed file wherever it runs: the ablation file is the pre-round-3 file with
+#   the same two edits and differs from the round-3 probe file by the gate block
+#   only (79 changed lines, all of them the gate + its comment).
+#   The probe also owns TWO TEMPORARY database rows (a `modules` row whose
+#   module_table/module_class the probe points at the class under test, and a
+#   `patient_emr` row whose id the request picks) plus ONE list entry in the SERVED
+#   copy of data/config/relay-allowlist.php (the shipped list names no
+#   *.additional_move pair at all). Everything is removed again in PHASE D.
+#
+# PHASE A1 - SHIPPED CODE, SHIPPED DATA, SHIPPED STAGE: the dispatch is not
+#            reached, and the reason is a measurement
+#   `served PatientInterface == the checkout : YES`
+#   `shipped-list entries matching '*.additional_move' : 0`
+#   Call: MoveEmrAttachments(5, 1, [5])   (the shipped patient_emr row id=5)
+#     A1 the call answers the method's own false                  ASSERTED
+#         body: false [http=200]
+#     A1 it is NOT refused by the relay (the outer method is listed)  ASSERTED
+#     syslog: PatientInterface::MoveEmrAttachments| refusing update:
+#             module_table=NULL patient_field=NULL are not valid SQL identifiers
+#     syslog: 0 "Relay: method" line(s) since the mark
+#   The refusal is the PRE-EXISTING SqlIdent guard and it fires BEFORE the gate, so
+#   the loop `continue`s and the gate never runs -- 0 gate lines, no dispatch. The
+#   two blockers (undefined `$patient`; module_get_meta() always false) are the same
+#   ones recorded in table row #17.
+#
+# PHASE A2 - PROBE HARNESS, SHIPPED STAGE (log-only): the gate's two decisions
+#   `the temporary registry row: payrec  ZZProbeUnlisted`, `patient_emr: 7777 payrec 987654321 7777`
+#   `the probe-only list entry: 'org.freemedsoftware.module.PatientTag.additional_move',`
+#     A2.1 LEG U, unlisted class, LOG-ONLY
+#         A2.1 the unlisted pair EXECUTES in log-only (the dispatch is attempted) ASSERTED
+#     syslog: Relay: method 'org.freemedsoftware.module.ZZProbeUnlisted.additional_move'
+#             is not in the relay allowlist (remote=..., LOG-ONLY, call still executed)
+#     the dispatch the response names (the class is the caller-chosen one):
+#       module_function('ZZProbeUnlisted', 'additional_move', Array)
+#         #0 .../api/PatientInterface.class.php(365): module_function('ZZProbeUnlisted', ...)
+#         #1 .../loader.php(68): PatientInterface->MoveEmrAttachments(7777, 1, Array)
+#     A2.2 LEG L, the SAME call, the pair LISTED by the probe entry, LOG-ONLY
+#         A2.2 the listed pair EXECUTES (the dispatch is attempted)  ASSERTED
+#         module_function('PatientTag', 'additional_move', Array)
+#     syslog: 0 "Relay: method" line(s) -- listing the pair removes the miss line.
+#
+# PHASE B - PROBE HARNESS, ENFORCING (enforce = true)
+#     B1 LEG U (unlisted): `the registry row names the UNLISTED class again`
+#        (shipped-list entries for it: 0)
+#         B1 the unlisted pair is NOT dispatched (no class-not-found fatal) ASSERTED
+#         B1 ...and the answer is not INVALID_CALL (the refusal is per attachment) ASSERTED
+#         B1 the method reports the refusal through its own return value ASSERTED
+#             body: false [http=200]
+#     syslog: Relay: method 'org.freemedsoftware.module.ZZProbeUnlisted.additional_move'
+#             is not in the relay allowlist (remote=..., refused (INVALID_CALL))
+#     B2 LEG L (listed, same call): `shipped-list entries: 1`
+#         B2 the listed pair is still dispatched (not a blanket refusal) ASSERTED
+#         module_function('PatientTag', 'additional_move', Array)
+#     syslog: 0 "Relay: method" lines
+#     => the gate refuses the UNLISTED class and allows the LISTED one, on the same
+#        call, in the enforcing stage; in the log-only stage both were logged and run.
+#
+# PHASE C - ABLATION: the PRE-round-3 PatientInterface (49551849) with the SAME two
+#           probe edits, still enforcing. The ABLATED file is the only difference.
+#   `served PatientInterface has the gate: 0 _allowlist_gate call site(s) (expect 0)`
+#   `the ablation file is the pre-round-3 tree with the SAME two probe edits: YES`
+#     C1 LEG U (unlisted class): the dispatch HAPPENS again => the gate is the cause
+#         C1 the unlisted pair is dispatched again (class-not-found fatal is back) ASSERTED
+#         C1 ...and is NOT refused (the gate is what refused it in B1) ASSERTED
+#       module_function('ZZProbeUnlisted', 'additional_move', Array)
+#         #0 .../api/PatientInterface.class.php(286): module_function('ZZProbeUnlisted', ...)
+#     (line 286 is the pre-round-3 dispatch line; no gate line was written at all,
+#      because without the gate nothing calls refuse())
+#     C2 (control) LEG L (listed): still dispatched, not refused  -- ASSERTED
+#     C3 (control) the R36 never-allow refusal still fires (it lives in
+#        Relay_Allowlist, not in this file):
+#         syslog: Relay: method 'org.freemedsoftware.core.User.GetName' is in a
+#                 NEVER-ALLOW namespace 'org.freemedsoftware.core.' ...
+#   => serving the pre-round-3 file restores the dispatch under enforcement. The gate
+#      is the cause of B1; it is not a blanket refusal (B2/C2), and it does not
+#      displace R36 (C3).
+#
+# PHASE A2/A3 + B3/B4 - the two reachability claims that round 2 got WRONG (N2)
+#   #10 BaseModule::_print (the OUTER hop is `org.freemedsoftware.module.<Class>._print`)
+#     LOG-ONLY  (A2, print_method=probe-none):
+#         A2 the unlisted outer hop EXECUTES in log-only (_print runs) ASSERTED
+#         body: .../data/tex/.tex<br/> Could not load  TeX template. [http=200]
+#       syslog: Relay: method 'org.freemedsoftware.module.PatientTag._print' is not in
+#               the relay allowlist (remote=..., LOG-ONLY, call still executed)
+#     ENFORCING (B3):
+#         B3 the unlisted outer hop -> INVALID_CALL                        ASSERTED
+#         B3 ...and _print did NOT run (no TeX template output)             ASSERTED
+#       syslog: ... 'org.freemedsoftware.module.PatientTag._print' ... refused (INVALID_CALL)
+#     => _print IS relay-dispatchable in the stage the product ships in, and refusing
+#        the only hop that reaches it is what makes its inner `module_function(
+#        $parts[0], '_RenderToPDF')` unreachable BY CONSTRUCTION under enforcement. In
+#        this stack _print dies on the missing TeX template BEFORE the attachment-driven
+#        inner dispatch, so the inner name never runs here at all.
+#   #9 Forms::control_module (the real callers: Forms::addform/add/modform/mod)
+#     `The four real callers of control_module: Forms.class.php 72/75, 154/157,
+#      194/201, 252/255 -- call_user_func(array($this,'control_'.$v['type']))`
+#     LOG-ONLY (A3):
+#         A3a ModuleModifyMethod('Forms') -> module_function('Forms','mod')
+#             body: Fatal error: Uncaught Error: Call to undefined method
+#                   freemed::get_link_rec() in .../module/Forms.class.php:231
+#            syslog: 'org.freemedsoftware.module.Forms.mod' ... LOG-ONLY, call still executed
+#         A3b module.Forms.add directly
+#             body: Fatal error: Uncaught Error: Call to undefined function
+#                   ereg_replace() in .../module/Forms.class.php:131
+#            syslog: 'org.freemedsoftware.module.Forms.add' ... LOG-ONLY, call still executed
+#         A3c ModuleRenderHtmlMethod('Forms',1) -- the route the round-2 re-review named
+#             body: /var/www/html/data/emrview/form_results.tpl<br/> Could not load
+#                   form_results template. [http=200]
+#            syslog: 'org.freemedsoftware.module.Forms.RenderHtmlView' ... LOG-ONLY, ...
+#     ENFORCING (B4): all three -> INVALID_CALL, and none of the three bodies appears
+#         B4a ... Forms::mod did not run / B4b ... Forms::add did not run /
+#         B4c ... RenderHtmlView did not run                            ASSERTED
+#     => the outer hops all dispatch in the shipped stage, but the INNER
+#        module_function($data['options'],'widget') line is not reached even there:
+#        add/addform die on ereg_replace() (removed in PHP 7), mod dies on the removed
+#        freemed::get_link_rec(), modform needs a form_results row and a template FILE
+#        (data/form/ does not exist). RenderHtmlView -- the route round 2 named -- runs
+#        and fails on the missing data/emrview template, and its body contains no
+#        control_* call and no dynamic dispatch, so it never reaches control_module.
+#        Under enforcement every entry hop is refused => unreachable by construction.
+#
+# PHASE D - RESTORE (served tree + database)
+#   `0`            (temporary rows left after DELETE: 0)
+#   `served enforce   : 'enforce' => false,`
+#   `pattern entries  : 323`
+#   cmp ... IDENTICAL x7 (data/config/relay-allowlist.php,
+#     api/PatientInterface.class.php, core/Relay.class.php,
+#     core/Relay_Allowlist.class.php, api/UserInterface.class.php,
+#     api/ModuleInterface.class.php, api/FormTemplate.class.php)
+#   -- database fingerprint (after) --     [VERBATIM, tab-separated]
+#       entemplate      1       1
+#       payrec  1       3
+#       patient_emr     1       5
+#       user    2       1,2
+#       patient 0       NULL
+#       procrec 0       NULL
+#       vitals  0       NULL
+#       modules 135     134
+#       config  34      NULL
+#   `database fingerprint md5 BEFORE (...): eda1b343b1027332fbd269c0c3171863`
+#   `fingerprint md5 AFTER : eda1b343b1027332fbd269c0c3171863`
+#   All five phases reported `residual mismatches in this phase: 0`.
+#   NOTE the fingerprint is a fingerprint of COUNTS and ids, so it pins the temporary
+#   rows' removal; it is not a row-level hash of the whole database.
+
+# -----------------------------------------------------------------------------
+# FIX ROUND 3 (N3) - the corrected class-axis figure, and what now pins it
+# -----------------------------------------------------------------------------
+#   `the 8 literals, restricted to classes the shipped list names` was published as
+#   448 / 385 / 63 in three places (the report's FR4 table, this file line 846, and
+#   evidence/relay-callset.txt line 27). It was WRONG under its own label: the
+#   generator's 'named' accumulator (and its 'own_file' sibling) sat outside the
+#   `!$is_pdf` guard, so it also counted the 25 RenderToPDF pairs whose class the
+#   shipped list names, while the label -- and the comment directly above the
+#   accumulator -- both say the EIGHT literals. 448 - 25 = 423.
+#
+#   Regenerated with the corrected generator:
+#     $ php tests/security/relay-callset-enum.php c6c4f306 security/mitigation-2026-09 \
+#         tests/security/evidence/relay-accesslog.txt > /tmp/enum-r3.txt
+#     relay-callset-enum: class axis (8 literals): 866 pairs, 803 not in the shipped list, 63 in it
+#     relay-callset-enum: 323 relay method strings (575 raw strings before resolution)
+#     #     all 133 module class files          : 866 pairs, 803 NOT in the shipped list, 63 in it
+#     #   +RenderToPDF (...): 37 pairs, 37 NOT in the shipped list, 0 in it
+#     #   the 8 literals, restricted to classes the shipped list names : 423 pairs, 360 NOT listed, 63 listed
+#     #   the 8 literals, declared in the module file ITSELF           : 7 pairs, 6 NOT listed, 1 listed
+#     $ diff tests/security/evidence/relay-callset.txt /tmp/enum-r3.txt
+#     27c27
+#     < ... 448 pairs, 385 NOT listed, 63 listed
+#     ---
+#     > ... 423 pairs, 360 NOT listed, 63 listed
+#   => the ONLY change the regeneration makes is the one corrected figure;
+#      903 '#class-axis' rows, 866/803/63, 37/37/0 and 7/6/1 are untouched.
+#   The corrected value is now pinned by test rows that (a) read the artifact's four
+#   published figures back and (b) RECOMPUTE the 'named' restriction from the
+#   artifact's own rows plus the shipped patterns, so a header that disagrees with
+#   the rows it emits goes red.
+
+# =============================================================================
+# FIX ROUND 4 (N2) - row #18's corrected reason, measured
+# -----------------------------------------------------------------------------
+#   The round-3 re-review is right: row #18's stated reason was false in the tree
+#   that is committed and served. It said
+#
+#     "NOT drivable on this stack: no *.report definition ships (data/report/ holds
+#      .jrxml only) and setReportPath() builds the path from the caller's report
+#      NAME, so the definition is a deployment artefact."
+#
+#   Both clauses are wrong. The VERDICT is unchanged (0 shipped entries for the
+#   outer hop => under enforcement the inner hop is unreachable BY CONSTRUCTION, so
+#   no gate is required for that stage; the gate it would need the day it becomes
+#   reachable is an OUTER-scope one), and it is better supported by the measurement
+#   below than by the reason it replaced. Everything quoted is a measurement on this
+#   stack (Apache :38081, MariaDB 127.0.0.1:33306, branch
+#   security/mitigation-2026-09, served tree ./app rsynced from the checkout); the
+#   scratch driver is ra-fix4-probe.sh (never committed), its phases are quoted
+#   verbatim, and no credential appears in it.
+#
+#   `served tree      : /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/app (rsync of the checkout)`
+#   `shipped-list entries matching 'org.freemedsoftware.api.Agata7' : 0`
+#   `served PatientInterface == the checkout : YES`
+#
+# -- A18.0 the definitions SHIP (the round-3 row said none does) --
+#      tracked files in data/report          : 25
+#      ...of which *.report                  : 7
+#         data/report/billed_contacts.report
+#         data/report/duplicate_patient.report
+#         data/report/outstanding_patient_amount.report
+#         data/report/patient_account_activity.report
+#         data/report/patient_statement.report
+#         data/report/provider_patient_list.report
+#         data/report/upcoming_notifications.report
+#      ...and *.jrxml                        : 18
+#      the SERVED copy: 25 files, 7 *.report
+#   `git ls-files data/report | grep -c '\.report$'` = 7, and all seven are in the
+#   served copy as well. The "no *.report ships" clause is refuted from the tree.
+#
+# -- A18.1 the two definitions that ARM exactly this dispatch --
+#      data/report/billed_contacts.report:26:            <value>Provider:module:providermodule</value>
+#      data/report/provider_patient_list.report:26:      <value>Provider:module:providermodule</value>
+#   CreateForm walks $report['Report']['Parameters'][k]['value'] and splits it at
+#   ':' into ($type,$detail) = ('module','providermodule'), then dispatches
+#   module_function($detail, 'widget', $k) at Agata7.class.php:156 -- so a caller who
+#   names a SHIPPED report reaches the module_function() hop with a definition from
+#   this checkout. setReportPath() is called as
+#   `$this->api->setReportPath( FREEMED_DIR . '/data/report/'.$report.'.report' )`
+#   with $report = CreateForm's OWN argument, so nothing has to be deployed: the
+#   "deployment artefact" clause is refuted too.
+#
+# -- A18.2 the MEASURED first stop: a PHP 8 parse error at class load --
+#      $ php -l lib/org/freemedsoftware/api/Agata7.class.php
+#      Parse error: syntax error, unexpected token "&" in lib/org/freemedsoftware/api/Agata7.class.php on line 127
+#      Errors parsing lib/org/freemedsoftware/api/Agata7.class.php
+#      line 127 is: freemed::quickform_i18n(&$form);
+#   Call-time pass-by-reference was removed in PHP 5.4, so the class cannot be loaded
+#   at all: every Agata7 method is dead in this tree, and the relay attempt stops
+#   EARLIER than the row said.
+#
+# -- A18.3 LIVE, log-only (the stage the product ships in): the 0-entry outer hop RUNS --
+#      body: <br /> <b>Parse error</b>:  syntax error, unexpected token &quot;&amp;&quot;
+#            in <b>/var/www/html/lib/org/freemedsoftware/api/Agata7.class.php</b> on line <b>127</b><br /> [http=200]
+#      syslog: 2026-09-28 22:13:06 <132> ... Relay: method
+#              'org.freemedsoftware.api.Agata7.CreateForm' is not in the relay
+#              allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+#
+# -- A18.4 LIVE, enforcing: the same outer hop is REFUSED, the parse error never happens --
+#      body: INVALID_CALL [http=200]
+#      syslog: 2026-09-28 22:13:15 <132> ... Relay: method
+#              'org.freemedsoftware.api.Agata7.CreateForm' is not in the relay
+#              allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+#   => both stages are measured for this row now (the re-review's item (iii)); in the
+#      shipped stage the chain stops at the parse error, and under enforcement it
+#      stops one step earlier, at the relay, before the inner module_function() hop.
+#      The served config was restored to the shipped value at the end of the phase
+#      (`settle` reports LOG-ONLY again) and the fingerprint is unchanged.
+#
+# -- WHY THE ROUTING REASON DOES NOT DEPEND ON THE R14 NON-GOAL --
+#   The plan's R14 non-goal vendored `lib/agata7/**` (5 allowlist entries: the
+#   bundled fpdf / pclzip / nusoap trees). `lib/org/freemedsoftware/api/Agata7.class.php`
+#   is FreeMED's OWN application file, inside this sweep's `api/` scope -- the same
+#   directory as api/UserInterface.class.php, api/ModuleInterface.class.php and
+#   api/PatientInterface.class.php, all of which the sweep does cover. So row #18
+#   could not have been left out on non-goal grounds; it is routed to Task 4.3
+#   because the gate it would need is the OUTER scope, not because of any non-goal.
+#   The honest, actionable form of the row is: THE DEFINITIONS SHIP, so the day the
+#   parse error at :127 is repaired this becomes drivable in the log-only stage from
+#   a shipped definition whose $detail a caller can select among; the enforcing stage
+#   stays closed by the 0-entry outer hop.
+#
+#   `residual mismatches in this phase: 0`
+#   The database fingerprint was taken before and after the phase and is IDENTICAL,
+#   field for field (verified by `diff`, not asserted) -- this phase creates no row
+#   and edits only the SERVED config, which it restores to the checkout's copy. Its
+#   digest is stated in the round-4 report, which is where the earlier rounds kept
+#   it too: this section carries no 32-hex run at all (the REDACTION header at the
+#   top names the file's one 32-hex value, which is in the FIX ROUND 3 block).
+
+# =============================================================================
+# FIX ROUND 4 - the positive control for the R32 gate, and its PLACEMENT
+# -----------------------------------------------------------------------------
+#   TWO findings from the round-3 re-review, closed by measurement here:
+#
+#   (1) THE POSITIVE CONTROL. Round 3 reported that a SUCCESSFUL `additional_move`
+#       dispatch cannot be demonstrated, "because the only public class implementing
+#       it cannot be named (`modules` rejects a duplicate `module_class`)". That is
+#       not a limit: a `modules` row naming module_class='ScannedDocuments' INSERTs
+#       (see E0.1), and PHASE E drives the successful dispatch through it. The
+#       round-3 A/B's two legs both DIED (LEG U on class-not-found, LEG L because
+#       PatientTag has no additional_move), so its observable was only the gate's
+#       decision. The legs below end in real outcomes on a real class.
+#
+#   (2) THE PLACEMENT. The gate sat AFTER the two UPDATEs, so a refusal under
+#       enforcement left the attachment already moved - a partial application. It is
+#       now BEFORE the first write, which is possible because the class it gates
+#       comes from the resolve query, which only READS. The ablation (E5) serves the
+#       round-3 file with the SAME probe edits and measures the difference.
+#
+#   Everything below is a measurement on this stack (Apache :38081, MariaDB
+#   127.0.0.1:33306, branch security/mitigation-2026-09, served tree ./app rsynced
+#   from the checkout, then edited only in the served copy). The scratch driver is
+#   ra-fix4-probe.sh (never committed); its phase output is quoted verbatim.
+#
+#   THE PROBE STATE, and why it is what it is:
+#     * one `modules` row: module_class='ScannedDocuments' (the re-reviewer's
+#       finding), module_table='zzprobe_r4', module_path pointing at the REAL class
+#       file. There are now two rows naming that class, which is itself the point.
+#     * one table `zzprobe_r4` with one row: THE WRITE OBSERVABLE. The method's write
+#       is `UPDATE <module_table> SET <patient_field> = $patientTo WHERE id = <oid>`,
+#       and both names come from the registry row and the probe edit -- so the probe
+#       points them at a table of its own and reads the column back. No foreign key,
+#       no real record, nothing to restore, and the column is the only thing that
+#       changes. This replaces round 3's `payrec` observable, which cannot work on
+#       this seed: `payrec.payrecpatient` has a FOREIGN KEY to `patient`, and this
+#       stack's `patient` table has a trigger calling STRING_TO_PHONE, a function it
+#       does not define, so no patient row can be inserted for the write to be legal.
+#     * one `patient_emr` row: patient=7777, module='zzprobe_r4', oid=3, id=7777
+#       (the id the request picks). Inserted with FOREIGN_KEY_CHECKS=0 for the same
+#       reason: a `patient` row cannot be inserted on this stack at all -- the
+#       `patient` table's trigger calls STRING_TO_PHONE, which this schema does not
+#       define (`ERROR 1305 (42000): FUNCTION freemed.STRING_TO_PHONE does not exist`,
+#       measured), so the probe's write target is a table it owns rather than a
+#       clinical row.
+#     * the two PROBE-HARNESS EDITS (patch-probe-pi-r4.sh: the undefined `$patient`
+#       -> `$patientFrom`, and freemed::module_get_meta(...) -> the probe's own
+#       column name), applied IDENTICALLY to the round-4 file and to the round-3
+#       file, so each A/B differs only by the gate's presence or position.
+#
+#   NOTE ON THE FIX ROUND 3 BLOCK ABOVE: that block's PHASE A2/B/C transcript is the
+#   round-3 file's own run, and its line numbers (PatientInterface.class.php 365 and
+#   286) belong to THAT tree, exactly as its commit-provenance note says. The gate
+#   moved three lines down when it was placed before the writes, so the dispatch line
+#   in this tree is 380 and the gate CALL is 367; the same call, the same class axis
+#   and the same two stages are re-measured in this section, which supersedes those
+#   two line numbers (and nothing else about that block).
+#
+# -- E0.1 the modules table ACCEPTS a second row naming ScannedDocuments --
+#      inserted_exact_case modules rows = 1
+#      modules rows while open       = 136
+#      modules rows after ROLLBACK   = 135
+#   Exact case, inside a transaction that was ROLLED BACK (so the measurement leaves
+#   nothing). No 1062. The `modules_insert` trigger's own section insert finds NO
+#   conflicting value: `data/schema/mysql/acl.sql:219` does carry a
+#   `(100,'ScannedDocuments',91,'Scanned Document',0)` seed row for
+#   `acl_aco_sections`, but that row is NOT in the live table. Measured read-only at
+#   this harness: `acl_aco_sections` has 145 rows, `MAX(id)` 157, zero rows whose
+#   `value` starts with 'scanned' in any case, and no row with the exact value
+#   'ScannedDocuments'; `acl_aco` has 725 rows and zero whose `section_value` starts
+#   with 'scanned'. So the trigger takes its `section_exists = 0` branch and CREATES
+#   a fresh section row plus its five `acl_aco` rows (the round-4 re-review measured
+#   that fresh row as id 162); the ids it allocates come from
+#   `acl_aco_sections_seq`, whose counter is 161 - ahead of the table's `MAX(id)` 157
+#   - so the new row's id is not the seeded 100. No ACO rows were seeded.
+#   (Corrected in the final fix wave, item 2.10(b): the previous sentence said the
+#   trigger SKIPPED its insert because a seeded row already existed, which is not
+#   what the trigger does here. The conclusion the block rests on - the INSERT
+#   succeeds and there is no 1062 - is unchanged.)
+#   THE LOWER-CASE VARIANT DOES NOT REPRODUCE THE ROUND-3 1062 EITHER (measured with
+#   the same rollback, module_class='scanneddocuments':
+#      lower_case rows=136              <- inserted; ROLLBACK left modules at 135
+#      acl_aco_sections LIKE 'scanneddocuments' -> 0 rows
+#   `SELECT id,value FROM acl_aco_sections WHERE value LIKE 'scanneddocuments'`
+#   returns nothing, because the trigger never tries to insert a section for a class
+#   it can match case-insensitively -- the same skip as above.) So the round-3
+#   report's `ERROR 1062 ... for key 'acl_value_aco_sections'` is NOT reproduced
+#   here, in either spelling, and this round does not claim to explain it: what it
+#   measured is that nothing stops a `modules` row that names this class. That
+#   correction matters because the round-3 reason was used to declare the positive
+#   control impossible.
+#
+# -- E0.2 the probe state, built --
+#      the two probe edits, changed lines: 2 (expect 2)
+#      modules: zzprobe_r4 ScannedDocuments
+#      patient_emr: 7777 zzprobe_r4 3 7777
+#      zzprobe_r4.probe_moved=0
+#      annotations rows matching the annotations UPDATE = 0
+#      26:class ScannedDocuments extends EMRModule {
+#      139:    function additional_move ( $id, $from, $to ) {
+#                      return true;
+#      the served list names NO additional_move pair at all: 0
+#
+# -- E1 POSITIVE CONTROL, log-only, the pair LISTED in the served copy --
+#      served-list entries for the pair now: 1
+#        E1 the dispatch RUNS (no fatal, no refusal) and the method's own value comes back  ASSERTED
+#        body: 1 [http=200]
+#        E1 ...and it is not refused                                        ASSERTED
+#        E1 ...and it is not the class-not-found fatal                       ASSERTED
+#      syslog: 0 "Relay: method" line(s) since the mark
+#      zzprobe_r4.probe_moved=8888          <- THE RECORD WAS MOVED: the hook ran
+#   This is the positive control the round-3 A/B did not have. The dispatch reaches
+#   module.ScannedDocuments.additional_move, the class loads and the method is found
+#   and invoked -- a missing class or method is a FATAL at this site, not a quiet
+#   skip, and the body carries neither. The body is the INT 1 rather than `true`
+#   because the method's own `$success &= (boolean) $result` turns its boolean into
+#   an int before returning; additional_move's return value is discarded by the
+#   caller, so the observable for "the dispatch succeeded" is the combination
+#   measured here: no fatal, no miss line, and the write performed.
+#
+# -- E2 log-only, the pair DELISTED: the log-only stage MEASURES the inner hop --
+#        E2 the unlisted pair STILL RUNS in log-only (the dispatch happens)  ASSERTED
+#        body: 1 [http=200]
+#      syslog: 2026-09-28 22:11:47 <132> ... Relay: method
+#              'org.freemedsoftware.module.ScannedDocuments.additional_move' is not in
+#              the relay allowlist (remote=192.168.128.1, LOG-ONLY, call still executed)
+#      zzprobe_r4.probe_moved=8888
+#   => the shipped stage names the INNER hop in the same log an operator greps, which
+#      is the two-stage rollout's whole point, and still runs it.
+#
+# -- E3 ENFORCING, the pair DELISTED: refused, and NOTHING WAS WRITTEN --
+#      the observable BEFORE the refused call:
+#        zzprobe_r4.probe_moved=0
+#        E3 the unlisted pair is REFUSED (reported through $success)         ASSERTED
+#        body: false [http=200]
+#        E3 ...and the dispatch did NOT happen                               ASSERTED
+#      syslog: 2026-09-28 22:11:50 <132> ... Relay: method
+#              'org.freemedsoftware.module.ScannedDocuments.additional_move' is not in
+#              the relay allowlist (remote=192.168.128.1, refused (INVALID_CALL))
+#      the observable AFTER the refused call (the placement claim):
+#        zzprobe_r4.probe_moved=0        <- THE WRITE DID NOT HAPPEN
+#   => with the gate before the first write, the refusal is ATOMIC for that
+#      attachment. (Round 3's order would have written it; E5 shows that.)
+#
+# -- E4 ENFORCING, the pair LISTED: still dispatched (not a blanket refusal) --
+#        E4 the listed pair is dispatched under enforcement (the method's own value comes back)  ASSERTED
+#        body: 1 [http=200]
+#      syslog: 0 "Relay: method" line(s) since the mark
+#      zzprobe_r4.probe_moved=8888
+#
+# -- E5 ABLATION: the ROUND-3 file (gate AFTER the UPDATEs), same probe edits, same stage --
+#      the ablated file is 4efd6bbb + the SAME two probe edits: YES
+#      ...and it differs from the round-4 probe file by the gate block only: 32 changed line(s)
+#      the ablated file's statement order (gate = _allowlist_gate):
+#        342:  $result = $GLOBALS['sql']->query( "UPDATE " . $table_q . ...
+#        346:  $result = $GLOBALS['sql']->query( "UPDATE annotations SET apatient = " ...
+#        361:  if ( ! $this->_allowlist_gate ( $resolve['class'], 'additional_move' ) ) {
+#      the gate in the ablated file sits BEFORE the first write: 0 (expect 0)
+#        E5 the unlisted pair is refused here too (same decision, same stage) ASSERTED
+#        body: false [http=200]
+#        E5 ...and no dispatch happened                                        ASSERTED
+#      syslog: 2026-09-28 22:11:55 <132> ... refused (INVALID_CALL)
+#      the observable BEFORE the refused call:
+#        zzprobe_r4.probe_moved=0       <- the driver resets it at the head of EVERY
+#                                          leg (`obs_reset` -> `UPDATE <probe> SET
+#                                          probe_moved=0 WHERE id=3`, ra-fix4-probe.sh
+#                                          :113, scratch-only), so this leg did not
+#                                          inherit E4's 8888; quoted from the same run
+#                                          as E3's identically-shaped before-line
+#                                          (item 2.10(d), added in the final fix wave)
+#      the observable AFTER the refused call:
+#        zzprobe_r4.probe_moved=8888    <- THE ABLATED ORDER WROTE IT FIRST
+#   => same call, same class, same stage, same two probe edits, same list state: the
+#      ONLY difference is where the gate sits. With round 3's order the refusal lands
+#      after the writes; with round 4's it lands before every one of them. So the
+#      placement finding is closed, not merely documented, and the statement order in
+#      the shipped file is the reason.
+#
+#   `residual mismatches in this phase: 0`
+#   PHASE F then restored every piece of state and proved it:
+#      probe modules rows left = 0 / probe patient_emr left = 0 / probe tables left = 0
+#      tables in freemed = 217
+#      served enforce   : 'enforce' => false,      pattern entries  : 323
+#      cmp: data/config/relay-allowlist.php, api/PatientInterface.class.php,
+#           core/Relay.class.php, core/Relay_Allowlist.class.php,
+#           api/UserInterface.class.php, api/ModuleInterface.class.php,
+#           api/FormTemplate.class.php -- IDENTICAL x7
+#      fingerprint (after): entemplate 1/1, payrec 1/3, patient_emr 1/5, user 2/1,2,
+#           patient 0/NULL, procrec 0/NULL, vitals 0/NULL, modules 135/134,
+#           config 34/NULL
+#   The fingerprint is IDENTICAL, field for field, to the pre-flight baseline taken
+#   before any probe ran (verified by `diff`; the digest is in the round-4 report,
+#   because this section carries no 32-hex run at all - the REDACTION header at the
+#   top names the file's one 32-hex value, in the FIX ROUND 3 block). The two extra
+#   `patient` rows the earlier `payrec` design would have needed are NOT part of the
+#   final state: `patient` is 0 rows, as it was, and the probe's own table is dropped.
+#
+#   SCOPE LIMIT OF THAT FINGERPRINT (item 2.10(c), added in the final fix wave).
+#   "Every piece of state" is true OF THE NINE TABLES THE FINGERPRINT IS COMPUTED
+#   OVER (entemplate, payrec, patient_emr, user, patient, procrec, vitals, modules,
+#   config). It is NOT a statement about the ACL tables, and it cannot be: the
+#   `modules_insert` trigger writes `acl_aco_sections` and `acl_aco` (plus both
+#   `*_seq` counters) on every probe INSERT, and `modules_delete` removes section
+#   rows BY VALUE - so a probe that deletes its own `modules` row also removes any
+#   pre-existing section for that class. Measured now, read-only, at this harness:
+#   row-level ACL state is clean (`acl_aco_sections` 145 rows, `acl_aco` 725 rows,
+#   zero rows whose value/section_value starts with 'scanned' in either) but the
+#   counters have moved (`acl_aco_sections_seq` id 161 against a table `MAX(id)` of
+#   157; `acl_aco_seq` id 769). So the word "every" must be read as scoped, and a
+#   probe that INSERTs a `modules` row should re-read the ACL tables in its
+#   baseline. Harness state only: no product, exposure or verdict consequence.
+
+# -- THE HERMETIC PIN FOR BOTH ROUND-4 FINDINGS (tests/security/relay_allowlist.test.php) --
+#   The served-copy rows above are not the only pin. The suite that runs with no
+#   database and no network now carries:
+#     * 2 rows that assert the gate CALL precedes the FIRST write and the
+#       annotations UPDATE in api/PatientInterface.class.php's MoveEmrAttachments;
+#     * 9 rows that call the REAL private _allowlist_gate through Reflection, on an
+#       instance of the real class, in both enforcement states (the stage is injected
+#       through Relay_Allowlist's own private $config, the slot the relay reads, and
+#       restored at the end of the section), so the gate's runtime DECISION is pinned
+#       hermetically rather than only in a served copy.
+#   `all passed (191 rows)` at this tree's HEAD (was 180 after fix round 3), and both
+#   additions are falsified:
+#     * gate DELETED from the class  -> `17 FAILED of 191`, exit 1 (all 9 Reflection
+#       rows, both placement rows, and the gate's source-shape rows);
+#     * the ROUND-3 file served in its place (gate after both UPDATEs, everything
+#       else identical) -> `2 FAILED of 191`, exit 1, and the two are exactly the
+#       placement rows -- so they pin the POSITION and not something else.
+
+# =============================================================================
+# RECORDED HERE BECAUSE THIS FILE IS TRACKED EVIDENCE (ledger item 21, final fix wave)
+# =============================================================================
+#   `lib/org/freemedsoftware/core/EMRModule.class.php`'s `GetList()` carries a
+#   COMMENTED-OUT ACL check at `:787-791` (the method opens at `:786`), re-read at
+#   this HEAD (`doc/SECURITY_FOLLOWUP` §6.6 e) writes the same path as
+#   `core/EMRModule.class.php:787-791`):
+#
+#       // ACL
+#       //if (!$this->acl_access ( 'view', $patient ) ) {
+#       //  syslog(LOG_INFO, "ACL: Access denied for $patient (...)"); 
+#       //  return false;
+#       //}
+#
+#   It is deliberately left in that state - NOT re-enabled - and it is recorded
+#   HERE because the Task 2.8 report's deviations list cited it as "recorded in code
+#   as evidence" while no such marker string exists anywhere in the tracked tree
+#   (`grep -rn` over the checkout returns nothing, and that report lives in the
+#   gitignored .superpowers/ tree), so the claim needed a durable home. Its use is
+#   exactly what the report says it is: an in-tree demonstration that a module
+#   method reachable through the relay has NO authorization check on it, i.e. the
+#   relay's session gate (`Login.LoggedIn`, Relay::handle_request) is an
+#   AUTHENTICATION boundary and not an AUTHORIZATION one - which is why the
+#   allowlist control belongs at the relay (see doc/RELAY_ALLOWLIST and
+#   doc/SECURITY_FOLLOWUP's "RELAY AND DISPATCH SURFACE STILL UNGATED").
+#
+#   Nothing above this line is changed by this note: it is a comment block added to
+#   a file whose every measured row was produced by the probes described in its own
+#   headers.

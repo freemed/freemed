@@ -115,7 +115,13 @@ class FacilityModule extends SupportModule {
 	//	* psrname
 	//
 	public function GetAll ( ) {
-		$q = "SELECT id, psrname FROM ".$this->table_name;
+		// Category B: table_name identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetAll| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$q = sprintf('SELECT id, psrname FROM %s', $table);
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
@@ -163,7 +169,7 @@ class FacilityModule extends SupportModule {
 		$string = trim(addslashes( $string ));
 		
 		$query = "SELECT * FROM facility WHERE psrname LIKE '".addslashes($string)."%'".
-			" LIMIT $limit";
+			" LIMIT ".intval($limit);
 			
 		syslog(LOG_INFO, "PICK| $query");
 		$result = $GLOBALS['sql']->queryAll( $query );

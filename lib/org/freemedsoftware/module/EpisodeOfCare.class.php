@@ -111,10 +111,15 @@ class EpisodeOfCare extends EMRModule {
 
 	function widget ($varname, $patient) {
 		global ${$varname};
+		// Category B: table_name identifier; Category A: patient id.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::widget| refusing invalid table_name '.var_export($this->table_name, true) );
+			return '';
+		}
 		return freemed::multiple_choice(
-			"SELECT id,eocdescrip,eocstartdate,eocdtlastsimilar ".
-			"FROM ".$this->table_name." WHERE ".
-			"eocpatient='".addslashes($patient)."'",
+			sprintf('SELECT id,eocdescrip,eocstartdate,eocdtlastsimilar FROM %s WHERE eocpatient=%s', $table, $GLOBALS['sql']->quote($patient)),
 			"##eocdescrip## (##eocstartdate## ".__("to")." ".
 				"##eocdtlastsimilar##)",
 			$varname,

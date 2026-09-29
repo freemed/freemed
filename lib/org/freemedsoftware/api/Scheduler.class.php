@@ -145,12 +145,29 @@ class Scheduler {
 	//
 	public function GetDailyAppointmentsRange ( $datefrom = NULL, $dateto = NULL, $provider = 0 ) {
 		freemed::acl_enforce( 'scheduling', 'read' );
-		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
+		// Category A (2.6b F4): the dates are validated as Y-m-d before they
+		// reach any predicate. ImportDate() answers boolean false for input it
+		// cannot parse, and the driver's quote(false) emits a bare 0 - which
+		// compares equal to MySQL's zero-date ('0000-00-00'), so a bad date used
+		// to match rows a literal could not. A date that is not Y-m-d refuses the
+		// query (logged) instead of being quoted.
+		$this_date = $datefrom ? $this->_ValidDate($datefrom) : date('Y-m-d');
+		if ( $this_date === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRange| refusing non-Y-m-d date_from '.var_export($datefrom, true) );
+			return array();
+		}
 		if ($dateto != NULL) {
-			$r_q = "s.caldateof >= '".addslashes($this_date)."' AND s.caldateof <= '".addslashes($this->ImportDate($dateto))."'";
+			$to_date = $this->_ValidDate($dateto);
+			if ( $to_date === false ) {
+				syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRange| refusing non-Y-m-d date_to '.var_export($dateto, true) );
+				return array();
+			}
+			// Category A: quote() supplies the surrounding quotes.
+			$r_q = "s.caldateof >= ".$GLOBALS['sql']->quote( $this_date ).
+				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $to_date );
 		} else {
 			// Single date query ....
-			$r_q = "s.caldateof = '".addslashes($this_date)."'";
+			$r_q = "s.caldateof = ".$GLOBALS['sql']->quote( $this_date );
 		}
 		$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''),IF(LENGTH(pa.ptid)>0,CONCAT(' (',pa.ptid,')'),'')) END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) ".( $provider ? " AND s.calphysician=".$GLOBALS['sql']->quote($provider) : "" )." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
 		return $GLOBALS['sql']->queryAll ( $query );
@@ -189,12 +206,24 @@ class Scheduler {
 	public function GetDailyAppointmentsRangeByProviderGroup ( $datefrom = NULL, $dateto = NULL, $providerGroup = 0 ) {
 		freemed::acl_enforce( 'scheduling', 'read' );
 
-		$this_date = $datefrom ? $this->ImportDate($datefrom) : date('Y-m-d');
+		$this_date = $datefrom ? $this->_ValidDate($datefrom) : date('Y-m-d');
+		if ( $this_date === false ) {
+			// This method's own empty answer is null (see the tail), not array().
+			syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRangeByProviderGroup| refusing non-Y-m-d date_from '.var_export($datefrom, true) );
+			return null;
+		}
 		if ($dateto != NULL) {
-			$r_q = "s.caldateof >= '".addslashes($this_date)."' AND s.caldateof <= '".addslashes($this->ImportDate($dateto))."'";
+			$to_date = $this->_ValidDate($dateto);
+			if ( $to_date === false ) {
+				syslog( LOG_ERR, get_class($this).'::GetDailyAppointmentsRangeByProviderGroup| refusing non-Y-m-d date_to '.var_export($dateto, true) );
+				return null;
+			}
+			// Category A: quote() supplies the surrounding quotes.
+			$r_q = "s.caldateof >= ".$GLOBALS['sql']->quote( $this_date ).
+				" AND s.caldateof <= ".$GLOBALS['sql']->quote( $to_date );
 		} else {
 			// Single date query ....
-			$r_q = "s.caldateof = '".addslashes($this_date)."'";
+			$r_q = "s.caldateof = ".$GLOBALS['sql']->quote( $this_date );
 		}
 		
 		$pg = CreateObject( 'org.freemedsoftware.module.ProviderGroups' );
@@ -216,7 +245,11 @@ class Scheduler {
 			}
 			$providersJoin = $providersJoin.' )';
 			
-			$query = "SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) ".$providersJoin." GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC";
+			// Category C: $providersJoin is code-authored and its values were
+			// driver-quoted above (as was $r_q); the placeholder keeps the
+			// fragment out of the statement literal.
+			$query = str_replace('{{providers}}', $providersJoin,
+			"SELECT s.caldateof AS date_of, DATE_FORMAT(s.caldateof, '%m/%d/%Y') AS date_of_mdy, s.calhour AS hour, s.calminute AS minute, CONCAT(LPAD(s.calhour, 2, '0'), ':',LPAD(s.calminute, 2, '0')) AS appointment_time, s.calduration AS duration, CONCAT(ph.phylname, ', ', ph.phyfname) AS provider, ph.id AS provider_id, s.caltype AS resource_type, CASE s.caltype WHEN 'block' THEN '-' WHEN 'temp' THEN CONCAT( '[!] ', ci.cilname, ', ', ci.cifname, ' (', ci.cicomplaint, ')' ) WHEN 'group' THEN CONCAT( cg.groupname, ' (', cg.grouplength, ' members)') ELSE CONCAT(pa.ptlname, ', ', pa.ptfname, IF(LENGTH(pa.ptmname)>0,CONCAT(' ',pa.ptmname),''), IF(LENGTH(pa.ptsuffix)>0,CONCAT(' ',pa.ptsuffix),''), ' (', pa.ptid, ')') END AS patient, s.calpatient AS patient_id, s.calprenote AS note, SUBSTRING_INDEX(GROUP_CONCAT(st.sname), ',', -1) AS status, SUBSTRING_INDEX(GROUP_CONCAT(st.scolor), ',', -1) AS status_color,s.id AS scheduler_id,s.calappttemplate as appointmentTemplateId, aptm.atcolor as templateColor FROM scheduler s LEFT OUTER JOIN appttemplate aptm ON s.calappttemplate=aptm.id LEFT OUTER JOIN scheduler_status ss ON s.id=ss.csappt LEFT OUTER JOIN schedulerstatustype st ON st.id=ss.csstatus LEFT OUTER JOIN physician ph ON s.calphysician=ph.id LEFT OUTER JOIN patient pa ON s.calpatient=pa.id LEFT OUTER JOIN callin ci ON s.calpatient=ci.id LEFT OUTER JOIN calgroup cg ON s.calpatient=cg.id  WHERE ( ${r_q} ) AND s.calstatus NOT IN ( 'noshow', 'cancelled' ) {{providers}} GROUP BY s.id, ss.csappt ORDER BY s.caldateof, s.calhour, s.calminute, s.calphysician DESC");
 			return $GLOBALS['sql']->queryAll ( $query );
 			
 		}
@@ -252,8 +285,14 @@ class Scheduler {
 	//	* resource_type ( pat, temp, block )
 	//
 	public function GetDailyAppointmentScheduler( $dt, $provider = 0 ) {
-		$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-		$q = "CALL schedulerGenerateDailySchedule ( ".$GLOBALS['sql']->quote( $s->ImportDate( $dt ) ).", ".$GLOBALS['sql']->quote( freemed::config_value('calshr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calehr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calinterval') ).", ".$GLOBALS['sql']->quote( $provider + 0 )." ) ";
+		// Category A + F4 (2.6f): the date IS the criterion here, so it is
+		// validated as Y-m-d and the call is refused (logged, this method's empty
+		// answer) rather than passing quote(ImportDate(false)) - a bare 0 - to
+		// the stored procedure, whose own date predicate would then compare
+		// against MySQL's zero-date.
+		$this_date = $this->_ValidDate( $dt );
+		if ( $this_date === false ) { return array(); }
+		$q = "CALL schedulerGenerateDailySchedule ( ".$GLOBALS['sql']->quote( $this_date ).", ".$GLOBALS['sql']->quote( freemed::config_value('calshr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calehr') ).", ".$GLOBALS['sql']->quote( freemed::config_value('calinterval') ).", ".$GLOBALS['sql']->quote( $provider + 0 )." ) ";
 		return $GLOBALS['sql']->queryAllStoredProc( $q );
 	} // end method GetDailyAppointmentScheduler
 
@@ -327,9 +366,16 @@ class Scheduler {
 	//
 	public function date_add ( $starting, $interval ) {
 		if ($interval < 1) { return $starting; }
-		$q = $GLOBALS['sql']->queryOne("SELECT DATE_ADD('".
-			addslashes($this->ImportDate( $starting ))."', INTERVAL ".
-			($interval+0)." DAY) AS mydate");
+		// Category A + F4 (2.6f): the date is validated as Y-m-d and the query is
+		// refused (logged, false) rather than quoting ImportDate()'s boolean
+		// false - the driver's quote(false) is a bare 0, a date no caller asked
+		// for, and the old hand-written literal turned it into '' (the zero-date)
+		// instead. The quotes come from quote(); addslashes() inside them was the
+		// one shape the static gate excludes. The interval is a plain cast.
+		$this_date = $this->_ValidDate( $starting );
+		if ( $this_date === false ) { return false; }
+		$q = $GLOBALS['sql']->queryOne( sprintf( 'SELECT DATE_ADD(%s, INTERVAL %d DAY) AS mydate',
+			$GLOBALS['sql']->quote( $this_date ), intval( $interval ) ) );
 		return $q;
 	} // end method date_add
 
@@ -494,8 +540,21 @@ class Scheduler {
 	//	information
 	//
 	public function FindDateAppointments ( $date, $provider = -1 ) {
+		// Category A + F4 (2.6f): the date is the criterion, validated as Y-m-d;
+		// an unparseable value refuses the query (logged, this method's empty
+		// answer) instead of being quoted - quote(false) is a bare 0, which
+		// compares equal to MySQL's zero-date.
+		//
+		// NOTE (2.6f): the provider branch below calls prepare(), which does not
+		// exist anywhere in the tree (measured: no 'function prepare' outside the
+		// PEAR/ADODB/CodeSniffer bundles), so that branch has always fataled
+		// before any SQL was built. It is left exactly as-is on purpose - casting
+		// it would silently activate a path that has never run - and is routed as
+		// a functional finding rather than repaired under a security task.
+		$this_date = $this->_ValidDate( $date );
+		if ( $this_date === false ) { return array(); }
 		$query = "SELECT * FROM scheduler WHERE ".
-			"(caldateof = '".addslashes( $this->ImportDate( $date ) )."' ".
+			"(caldateof = ".$GLOBALS['sql']->quote( $this_date )." ".
 			"AND calstatus != 'cancelled' ".
 			( $provider != -1 ? 
 				"AND calphysician = '".prepare($provider)."'" :
@@ -519,8 +578,11 @@ class Scheduler {
 	//	information.
 	//
 	public function FindGroupAppointments ( $group_id ) {
+		// Category A (2.6f): calgroupid is INT UNSIGNED, so the group id is cast
+		// in an unquoted predicate rather than addslashes()ed inside
+		// hand-written quotes.
 		$query = "SELECT * FROM scheduler WHERE ( ".
-			"calgroupid = '".addslashes($group_id)."' ".
+			"calgroupid = ".intval($group_id)." ".
 			"AND calstatus != 'cancelled' ".
 			" ) ".
 			"ORDER BY caldateof, calhour, calminute";
@@ -541,8 +603,9 @@ class Scheduler {
 	//	Dates Only
 	//
 	public function FindGroupAppointmentsDates ( $group_id ) {
+		// Category A (2.6f): as FindGroupAppointments - a cast group id.
 		$query = "SELECT id,calphysician,caldateof FROM scheduler WHERE ( ".
-			"calgroupid = '".addslashes($group_id)."' ".
+			"calgroupid = ".intval($group_id)." ".
 			"AND calstatus != 'cancelled' ".
 			" ) ".
 			"ORDER BY caldateof, calhour, calminute";
@@ -1014,20 +1077,31 @@ class Scheduler {
 			$starting_time = freemed::config_value("calshr");
 		}
 		//$b_criteria;
+		// Category A (2.6f): calfacility and calphysician are INT UNSIGNED
+		// (data/schema/mysql/scheduler.sql), so the criteria are cast in unquoted
+		// predicates instead of addslashes()ed inside hand-written quotes.
 		if ($_criteria['location']) {
-			$b_criteria[] = "calfacility = '".addslashes($_criteria['location'])."'";
+			$b_criteria[] = "calfacility = ".intval($_criteria['location']);
 		}
 		if ($_criteria['provider']) {
-			$b_criteria[] = "calphysician = '".addslashes($_criteria['provider'])."'";
+			$b_criteria[] = "calphysician = ".intval($_criteria['provider']);
 		}
 
 		// After we have gotten all of the prospective days, run
 		// some maps to see what we have
 		foreach ($c_days AS $this_day) {
+			// Category A + F4 (2.6f): caldateof is a DATE, so the candidate day is
+			// validated as Y-m-d and an unusable one is SKIPPED (logged) rather
+			// than quoted - quote(false) is a bare 0, i.e. MySQL's zero-date.
+			// Skipping cannot widen the search: a candidate with no valid date has
+			// no appointments to fit into, which is exactly what the old
+			// caldateof = '<false>' predicate answered.
+			$this_day_sql = $this->_ValidDate( $this_day );
+			if ( $this_day_sql === false ) { continue; }
 			//if($b_criteria)
 				$m_criteria = array_merge(
 					$b_criteria,
-					array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'")
+					array("caldateof = ".$GLOBALS['sql']->quote( $this_day_sql ), "calstatus != 'cancelled'")
 				);
 			//else	
 			//	$m_criteria = array("caldateof = '".addslashes($this_day)."'", "calstatus != 'cancelled'");
@@ -1338,6 +1412,33 @@ class Scheduler {
 		}
 		return date( "Y-m-d",mktime(0,0,0,$m,$d,$y));
 	} // end function scroll_next_month
+
+	// Method: _ValidDate
+	//
+	//	ImportDate() with a shape check (Task 2.6b, review finding F4).
+	//	ImportDate() returns boolean false for input it cannot parse, and the
+	//	driver's quote(false) emits a bare 0 - which compares equal to MySQL's
+	//	zero-date ('0000-00-00'), so a bad date could match a row that the old
+	//	hand-quoted literal could not. Only a real Y-m-d value is returned;
+	//	anything else is false and the caller refuses the query (logged) rather
+	//	than emitting a predicate with a wrong value in it.
+	//
+	// Parameters:
+	//
+	//	$input - Date string in any format ImportDate() accepts
+	//
+	// Returns:
+	//
+	//	'Y-m-d' string, or boolean false
+	//
+	protected function _ValidDate ( $input ) {
+		$date = $this->ImportDate( $input );
+		if ( !preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $date ) ) {
+			syslog( LOG_ERR, get_class($this).'| refusing non-Y-m-d date '.var_export($input, true) );
+			return false;
+		}
+		return $date;
+	} // end method _ValidDate
 
 	// Method: ImportDate
 	//

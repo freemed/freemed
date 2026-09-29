@@ -95,28 +95,38 @@ class Zipcodes extends SupportModule {
 	public function CityStateZipPicklist ( $param ) {
 		// If two letters then a space, st city
 		if ( strlen($param) >= 4 and substr($param, 2, 1) == ' ' ) {
-			$where = "state = UPPER(".$GLOBALS['sql']->quote(substr($param, 0, 2)).") AND city LIKE '%".addslashes(substr($param, -(strlen($param)-3)))."%'";
+			// Category A: each predicate value is quoted by the driver where the
+			// predicate is composed (quote() supplies the quotes).
+			$where = 'state = UPPER('.$GLOBALS['sql']->quote(substr($param, 0, 2)).') AND city LIKE '.$GLOBALS['sql']->quote('%'.substr($param, -(strlen($param)-3)).'%');
 		} elseif ( strlen($param) >= 4 and substr($param, strlen($param)-3, 1) == ' ' ) {
 			// Handle city st or city, st
-			$where = "state = UPPER(".$GLOBALS['sql']->quote(substr($param, -2)).") AND city LIKE '%".addslashes(str_replace(',', '', substr($param, 0, strlen($param)-3)))."%'";
+			$where = 'state = UPPER('.$GLOBALS['sql']->quote(substr($param, -2)).') AND city LIKE '.$GLOBALS['sql']->quote('%'.str_replace(',', '', substr($param, 0, strlen($param)-3)).'%');
 		} elseif ( (strlen($param) >= 3) and ($param+0) == 0 ) {
-			$where = "city LIKE '%".addslashes($param)."%'";
+			$where = 'city LIKE '.$GLOBALS['sql']->quote('%'.$param.'%');
 		}
 
 		// Handle zip code entry
 		if ( ($param + 0) != 0 and empty($where) ) {
 			if (strlen($param) < 3) { return array(); }
 			if (strlen($param) < 5) {
-				$where = "zip LIKE '".addslashes($param)."%'";
+				$where = 'zip LIKE '.$GLOBALS['sql']->quote($param.'%');
 			} else {
-				$where = "zip=".$GLOBALS['sql']->quote( $param );
+				$where = 'zip='.$GLOBALS['sql']->quote( $param );
 			}
 		}
 
 		// Ignore blanks
 		if ( $where == '' ) { return array(); }
 
-		$query = "SELECT CONCAT(city, ', ', state, ' ', zip, ' ', country) AS v FROM ".$this->table_name." WHERE ${where} LIMIT 20";
+		// Category B: table_name identifier; Category C: $where is a join of
+		// predicates that were quoted where they were composed above, so this
+		// assembly splices no data. (Table refusal is a log line, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::CityStateZipPicklist| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$query = sprintf("SELECT CONCAT(city, ', ', state, ' ', zip, ' ', country) AS v FROM %s WHERE %s LIMIT 20", $table, $where);
 
 		$a = $GLOBALS['sql']->queryCol( $query );
 		foreach ($a AS $r) {

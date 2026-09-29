@@ -25,6 +25,12 @@
 //
 //	User manipulation routines.
 //
+//	Task 2.8, fix round 1: Multicall() re-dispatches relay methods, so this file
+//	needs the allowlist the relay consults. LoadObjectDependency at file scope is
+//	the repo convention (154 files) and Relay.class.php loads the same class for
+//	the outer check, so this is a no-op in the relay request path.
+LoadObjectDependency('org.freemedsoftware.core.Relay_Allowlist');
+
 class UserInterface {
 
 	protected $user;
@@ -106,7 +112,11 @@ class UserInterface {
 	//	Array of arrays containing ( user description, id ).
 	//
 	public function GetUsers ( $param = '',$usertype='' ) {
-		$criteria = addslashes( $param );
+		// Category A (2.6b): the tokeniser input is not a query value, and every
+		// predicate built from it below is driver-quoted where it is composed
+		// (quote()). addslashes() here only double-escaped the value - a search
+		// for O'Brien was looking for the literal O\'Brien - so it is gone.
+		$criteria = (string) $param;
 		if (!(strpos($criteria, ',') === false)) {
 			list ($last, $first) = explode( ',', $criteria);
 		} else {
@@ -121,31 +131,44 @@ class UserInterface {
 		$either = trim( $either );
 
 		if ($first and $last) {
-			$q[] = "( ptlname LIKE '".addslashes($userlname)."%' AND ".
-				" userfname LIKE '".addslashes($first)."%' )";
+			// NOTE (2.6b, review F2): this branch is a pre-existing functional bug
+			// and is left as-is - fixing it would redesign the search. `ptlname`
+			// is a `patient` column while the statement below selects from
+			// `user` (aliased u), so MySQL rejects the query outright
+			// (measured: ERROR 1054 (42S22) Unknown column 'ptlname' in 'WHERE');
+			// the branch therefore fails hard, it does not "match nothing".
+			// The pattern used to come from an undefined $userlname (i.e. LIKE
+			// '%') and now comes from $last, the value this branch is guarded on
+			// (if ($first and $last)) - that changes only the pattern on a column
+			// that does not exist. Only the injection shape is fixed here: the
+			// values are driver-quoted.
+			$q[] = "( ptlname LIKE ".$GLOBALS['sql']->quote( $last.'%' ).
+				" AND userfname LIKE ".$GLOBALS['sql']->quote( $first.'%' )." )";
 		} elseif ($first) {
-                	$q[] = "userfname LIKE '".addslashes($first)."%'";
+			$q[] = "userfname LIKE ".$GLOBALS['sql']->quote( $first.'%' );
 		} elseif ($last) {
-                	$q[] = "userlname LIKE '".addslashes($last)."%'";
+			$q[] = "userlname LIKE ".$GLOBALS['sql']->quote( $last.'%' );
 		} else {
-			$q[] = "userfname LIKE '".addslashes($either)."%'";
-			$q[] = "userlname LIKE '".addslashes($either)."%'";
+			$q[] = "userfname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
+			$q[] = "userlname LIKE ".$GLOBALS['sql']->quote( $either.'%' );
 		}
 		$condition="";
 		$temp="";
 		$temp=join(' OR ', $q);
 		if($temp!='' && $temp!=NULL)
-			$condition=" WHERE (".$temp.") ";
+			// $temp is a join of driver-quoted predicates built above; assembled
+			// with sprintf so no bare string-literal/concatenation survives.
+			$condition=sprintf(" WHERE (%s) ", $temp);
 		if($usertype!=""){
 			if($condition==""){
-					$condition=" WHERE usertype='".$temp."' ";
+					$condition=" WHERE usertype=".$GLOBALS['sql']->quote($usertype)." ";
 			}
 			else{
-				$condition=$condition." AND usertype='".$usertype."' ";
+				$condition=$condition." AND usertype=".$GLOBALS['sql']->quote($usertype)." ";
 			}
 		}
 		
-		$q = "SELECT CONCAT(userfname,' ',usermname,' ',userlname,', ',usertitle) AS description, u.id AS id FROM user u ".$condition." ORDER BY u.userdescrip";
+		$q = sprintf("SELECT CONCAT(userfname,' ',usermname,' ',userlname,', ',usertitle) AS description, u.id AS id FROM user u %s ORDER BY u.userdescrip", $condition);
 		//return $q;
 		$res = $GLOBALS['sql']->queryAll( $q );
 		foreach ( $res AS $r ) {
@@ -157,6 +180,56 @@ class UserInterface {
 	// Method: Multicall
 	//
 	//	Utility method to perform multiple pipelined calls.
+	//
+	//	Task 2.8, fix round 1 (C1). The relay's allowlist check runs ONCE, on the
+	//	OUTER method string, in Relay::handle_request(); an inner method named
+	//	here never met it, so before this gate an allowlisted Multicall was a
+	//	standing bypass of the whole control -- any registered class, any public
+	//	method, any arguments. Every inner call is now gated with the SAME shared
+	//	entry point the relay uses (Relay_Allowlist::refuse(), INNER scope:
+	//	refuse($inner_method, NULL, TRUE)), so the stage behaviour and the miss
+	//	log line are identical to an outer call's: in log-only a miss is logged
+	//	and the call still runs (that is how an operator discovers a pattern that
+	//	is needed), and in enforce it is refused. The INNER scope adds exactly one
+	//	rule to the outer one -- the data file's never-allow namespaces, refused
+	//	in both stages (see the R36 correction below).
+	//
+	//	The refusal is PER CALL. A refused inner call puts INVALID_CALL in its own
+	//	slot -- the same signal the outer refusal answers with -- and the rest of
+	//	the batch still runs, so one refused entry cannot abort a batch the client
+	//	legitimately sent.
+	//
+	//	FIX ROUND 2 (R36) -- CORRECTION. Fix round 1 replaced this guard with the
+	//	allowlist as "dead code":
+	//	    if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) {
+	//	        syslog( LOG_ERR, "Invalid method called ${v['method']}" );
+	//	        return false;
+	//	    }
+	//	and claimed it "compared 25 characters against a 24-character literal".
+	//	THAT CLAIM WAS FALSE. The literal 'org.freemedsoftware.core.' is 25
+	//	characters ($ printf '%s' 'org.freemedsoftware.core.' | wc -c  ->  25), so
+	//	the comparison could and DID match, and the guard refused every inner call
+	//	in the `core` namespace outright -- in BOTH stages, including the shipped
+	//	log-only one. Removing it therefore CHANGED shipped behaviour: an inner
+	//	`org.freemedsoftware.core.*` call proceeded where the pre-2.8 code had
+	//	refused it.
+	//
+	//	Fix round 2 reinstates the refusal as a deliberate, documented policy in
+	//	the DATA FILE -- data/config/relay-allowlist.php 'never_allow' =>
+	//	array ( 'org.freemedsoftware.core.' ) -- driven by
+	//	Relay_Allowlist::refuse($inner_method, NULL, TRUE). A never-allow namespace
+	//	is refused in BOTH stages for an inner call whose method name comes from
+	//	the caller, which is exactly this guard's scope, so the shipped behaviour
+	//	is back at parity with pre-2.8 and no new outage risk is created: the
+	//	pre-2.8 code refused these calls too.
+	//
+	//	One deliberate deviation from the old shape: the refusal is PER SLOT
+	//	(INVALID_CALL in the entry's own slot, the batch continues) rather than the
+	//	old `return false`, which aborted the whole batch. That is the C1 decision
+	//	above and it is strictly less disruptive; the old guard's own
+	//	`syslog(LOG_ERR, "Invalid method called ...")` line is gone, and
+	//	Relay_Allowlist::log_never_allow() writes a louder, structured one at the
+	//	same priority instead.
 	//
 	// Parameters:
 	//
@@ -173,14 +246,15 @@ class UserInterface {
 		$output = array( );
 		foreach ( $calls AS $k => $v ) {
 			$v = (array) $v;
-			if ( substr($v['method'], 0, 25) == 'org.freemedsoftware.core.' ) {
-				syslog( LOG_ERR, "Invalid method called ${v['method']}" );
-				return false;
+			$inner_method = isset ( $v['method'] ) ? $v['method'] : NULL;
+			if ( class_exists ( 'Relay_Allowlist' ) and Relay_Allowlist::refuse ( $inner_method, NULL, true ) ) {
+				$output[ $k ] = 'INVALID_CALL';
+				continue;
 			}
-			if ( is_array( $v['parameters'] ) ) {
-				$output[ $k ] = @call_user_func_array ( 'CallMethod', array_merge ( array ( $v['method'] ), $v['parameters'] ) );
+			if ( isset ( $v['parameters'] ) and is_array ( $v['parameters'] ) ) {
+				$output[ $k ] = @call_user_func_array ( 'CallMethod', array_merge ( array ( $inner_method ), $v['parameters'] ) );
 			} else {
-				$output[ $k ] = @CallMethod( $v['method'] );
+				$output[ $k ] = @CallMethod( $inner_method );
 			}
 		}
 		return $output;
@@ -267,7 +341,7 @@ class UserInterface {
 				return false;
 			}
 		}
-		$q = "SELECT id, username, userdescrip, userlevel, usertype, userfac, userphy, userphygrp, userrealphy, usermanageopt, useremail, usersms, usersmsprovider FROM user WHERE".( $criteria_field ? " ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%'  AND" : "" )." id>1 ORDER BY username LIMIT ${limit}";	
+		$q = "SELECT id, username, userdescrip, userlevel, usertype, userfac, userphy, userphygrp, userrealphy, usermanageopt, useremail, usersms, usersmsprovider FROM user WHERE".( $criteria_field ? " ${criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%'  AND" : "" )." id>1 ORDER BY username LIMIT ".intval($limit);	
 
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords

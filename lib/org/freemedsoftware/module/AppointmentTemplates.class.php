@@ -156,15 +156,21 @@ class AppointmentTemplates extends SupportModule {
 	function _update ( ) {
 		$version = freemed::module_version ( $this->MODULE_NAME );
 
+		// Category B: the table identifier is validated once and reused
+		// (refused by log, R12 — the maintenance handler then does nothing).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::_update| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+
 		// Version 0.1.1
 		//
 		//	Add colors
 		//
 		if (!version_check($version, '0.1.1')) {
-			$GLOBALS['sql']->query('ALTER TABLE '.$this->table_name.' '.
-				'ADD COLUMN atcolor CHAR(7) AFTER atequipment');
-			$GLOBALS['sql']->query('UPDATE '.$this->table_name.' '.
-				'SET atcolor=\'\' WHERE id>0');
+			$GLOBALS['sql']->query(sprintf('ALTER TABLE %s ADD COLUMN atcolor CHAR(7) AFTER atequipment', $table));
+			$GLOBALS['sql']->query(sprintf('UPDATE %s SET atcolor=%s WHERE id>0', $table, $GLOBALS['sql']->quote('')));
 		} // end version 0.1.1
 	} // end method _update
 

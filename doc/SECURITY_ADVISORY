@@ -1,0 +1,1459 @@
+$Id$
+
+FreeMED security advisory - three remotely reachable defects in the relay, the
+help endpoint and the vCalendar endpoint
+
+
+STATUS: PREPARED, NOT PUBLISHED. NOTHING IN THIS FILE HAS BEEN SENT ANYWHERE.
+
+   No CVE has been requested, no advisory has been published, no packager, clinic
+   or downstream consumer has been contacted, and no part of this file has been
+   pushed. Section 7 holds the drafts that are ready to be sent, each headed
+   "NOT YET SENT - awaiting owner approval". Section 7.C is the checklist the
+   owner works through to publish; section 7.D lists every placeholder.
+
+   Scope of this advisory: the three defects below, on branch
+   security/mitigation-2026-09 (base 79efd68d; HEAD 49551849). The HEAD value is
+   **the branch head AT THE TIME OF WRITING**, not the merge head: the fix wave
+   that finished this document landed after it, so read it as frozen provenance
+   and re-derive the reviewed revision with `git rev-parse HEAD` before
+   publishing (checklist 7.C item 7). doc/SECURITY_FOLLOWUP:12 carries the same
+   convention for its own pin, so the two documents do not disagree about a
+   commit they were each written at. Everything the
+   execution found but did not fix is in doc/SECURITY_FOLLOWUP and is NOT
+   disclosed here - it is a backlog, not a vulnerability report.
+
+   Fixing release: <RELEASE-VERSION>, dated <RELEASE-DATE>. The version numbers
+   in this tree disagree and an operator must know which one they are reading:
+   lib/freemed.php:31 declares VERSION "0.8.8", lib/freemed.php:32 declares
+   DISPLAY_VERSION "0.9.0-rc1" (it appears in the vCalendar 401 realm string),
+   and the packaging metadata says 0.9.0 (freemed.spec:26, debian/changelog).
+   The advisory, the release notes and the CVE records must all use the same
+   number and it must be the number the released artifact reports.
+
+
+1. SUMMARY
+
+   1.1 help.php - unvalidated path in a PATH_INFO-driven file server (CWE-22).
+
+   help.php built a filesystem path from $_SERVER['PATH_INFO'] and passed it
+   straight to readfile(). It validated the UI and locale components and never
+   validated the page tail, so on any front-end that hands PHP a path still
+   containing ".." segments the endpoint read files outside the help tree - the
+   obvious target being lib/settings.php, which defines DB_HOST/DB_NAME/DB_USER/
+   DB_PASSWORD in the clear and therefore reaches every record in the system. The
+   endpoint also served help content to callers with no session at all. Measured
+   on modern front-ends (Apache 2.4.68, nginx 1.31.6), the traversal does NOT
+   reach PHP: both servers consume the dot segments before PATH_INFO is built,
+   so no traversing path reaches the vulnerable concatenation. This
+   is a real code defect with deployment-dependent reachability, not a
+   demonstrated anonymous file read - see 3.1 for what was and was not measured.
+   Fixed in <RELEASE-VERSION>.
+
+   1.2 relay.php - authenticated SQL injection cluster (CWE-89).
+
+   The relay dispatches a method named by the request, with arguments taken from
+   the request, and its only gate was "is someone logged in". Four of the methods
+   it can reach concatenated request data into SQL. A session holder could read
+   arbitrary rows out of the database: reading the full `user` table, including
+   the password digests, was reproduced live (3.2). The same
+   concatenation idiom appeared in roughly 170 further sites across ~60 files
+   reachable by the same mechanism, so the fix is the four sites plus a
+   tree-wide sweep plus a deny-by-default allowlist at the relay. Fixed in
+   <RELEASE-VERSION>. The allowlist ships LOG-ONLY; enforcement is a documented
+   operator step (4.1).
+
+   1.3 vcalendar.php - pass-the-hash and cross-provider calendar access
+       (CWE-287 / CWE-836, CWE-639).
+
+   The endpoint accepted a password digest as the credential itself:
+   ?user=<name>&hash=<md5 of the password> was compared directly against the
+   stored user.userpassword, so anyone holding the digest was authenticated
+   without knowing the password. Live where register_argc_argv is Off - which is
+   what php.ini-production ships, i.e. the usual production install - and masked
+   where it is On (PHP's compiled default), because the script's own argv CLI
+   guard then halts every query-string request with a silent empty 200 (3.3).
+   The same endpoint let any authenticated caller read any provider's calendar by
+   naming that provider in ?physician=, with no authorization check. Fixed in
+   <RELEASE-VERSION>; the GET user/hash path is disabled by default behind the
+   vcals_legacy_hash compatibility switch (4.2).
+
+
+2. AFFECTED / NOT AFFECTED, AND WHERE THE FIX IS
+
+   2.1 Finding 1 - the layouts this is reachable on. "Affected" below means the
+       pre-fix code was reached with a traversing path; it is measured, not
+       assumed.
+
+   layout                                        pre-fix result        affected
+   Apache 2.4.68 + mod_php 8.3.35                  ..  -> 400            no
+     (/help.php/gwt/en_US/../../../../etc/passwd)  (normalised path escapes
+                                                    the root)
+     same, ..%2f form                              -> 404               no
+     same, %2e%2e%2f form                          -> 404               no
+     (re-tested with AllowEncodedSlashes On and
+      AcceptPathInfo On: still 404)
+   nginx 1.31.6 + php-fpm 8.3.35                   ..  -> 400            no
+     (/help.php/gwt/en_US/../../../../etc/passwd)  (dot segments consumed
+                                                    before PHP ran)
+     same, ..%2f form                              -> 200, no token      no
+     same, %2e%2e%2f form                          -> 200, no token      no
+     (PATH_INFO is empty - fastcgi_split_path_info no longer matched -
+      so no traversing path reaches the concatenation, and no payload
+      returned contents; see 3.1)
+   Apache < 2.4.49 (an inference from public
+     behaviour, NOT measured here), and any
+     proxy/FastCGI layout that preserves dot
+     segments in PATH_INFO                         not measurable here   YES
+                                                   (code-level)
+
+   In EVERY layout above the pre-fix endpoint served help content anonymously:
+   GET /help.php/gwt/en_US/main answered 200 with 5818 bytes both with and
+   without a session. That is the exposure the auth half of the fix removed.
+
+   The fix: lib/help-path.php (new - validates the page token, resolves with
+   realpath() on both sides, requires the basename to equal
+   <page>.<locale>.html, refuses dot segments and a missing/unreadable target)
+   and help.php (a Login.LoggedIn gate before any filesystem access, plus a
+   single generic 404 that does not disclose whether a path exists). Commit
+   3949591f. The sibling PATH_INFO consumer chtml.php had the same
+   "validate some parameters, not the tail" shape and is fixed with an
+   end-anchored token (ee5ee372, 4f2eee6f); the full sink audit is
+   tests/security/evidence/path-sink-audit.md.
+
+   2.2 Finding 2 - every layout that serves relay.php, on both web servers, and
+       only for a caller holding a valid session.
+
+   * Apache 2.4.68 + mod_php: the injected calls returned the leaked rows (live).
+   * nginx 1.31.6 + php-fpm: the same four methods produced the same leaked rows
+     (spot check, same session, same payloads).
+   * unauthenticated: refused before the method runs. The same call with no
+     cookie and with a made-up SessionID both answer INVALID_SESSION - measured
+     on the injected payload itself
+     (tests/security/evidence/relay-sqli-prefix.txt, SITE 1).
+     Only the org.freemedsoftware.public.* namespace bypasses the login guard,
+     and none of the four sites is in it.
+   * NOT an entry point: POST /relay.php/json with a JSON body. It fatals on
+     Relay_Json::deserialize_parameters(), which is called at
+     Relay_Json.class.php:87 and :90 and defined nowhere in the tree. The working
+     vector is the method name in PATH_INFO plus param0..paramN form fields.
+
+   The fix: the four injection sites (c7e17354 ModuleSearch::picklist,
+   c71a74c8 EncounterNotesTemplate::getTemplates, 04248424
+   UserInterface::GetUsers, 606bbd11 Remitt statement rendering), the
+   SqlIdent identifier validator and the base-class identifier invariants
+   (a5060a09) with the tree-wide sweep in batches on top, and the relay
+   allowlist (1ae0e45f) whose default is log-only (4.1).
+
+   2.3 Finding 3 - conditional on one PHP ini setting, and both conditions were
+       measured.
+
+   * register_argc_argv = Off (php.ini-production's value; the usual Debian/
+     Ubuntu production install and this harness's container): the GET user/hash
+     path AUTHENTICATES on the digest alone. The three outcomes are
+     distinguishable - see 3.3 for the exact status codes, byte counts and
+     bodies.
+   * register_argc_argv = On (PHP's compiled default; the stock php:8.3-apache
+     image ships no php.ini, so the default applies there): every request
+     carrying a query string is halted by the script's own CLI guard
+     (if ($_SERVER['argc'])) with a masked empty 200 - no status, no body, no
+     log line. The endpoint neither authenticates nor refuses anything, so on
+     that layout neither the vulnerability nor its fix is observable.
+   * The fix no longer depends on this setting at all -
+     commit f0d53619 replaces the argv test with if (PHP_SAPI === 'cli'), which
+     no ini file can move. Re-measured under both settings with the same results
+     (6 probes, byte-identical; vcalendar-auth.txt §6.2).
+   * The Basic-auth branch - the branch clients are told to migrate to - was DEAD
+     on PHP 8.3 before this work: vcalendar.php:62 called a global prepare() that
+     is declared nowhere in the tree, so any credentialed request without the
+     query credential died with "Uncaught Error: Call to undefined function
+     prepare()". Repaired in the same change.
+
+   The fix: vcalendar.php (574ac616 reject the GET-hash path, 62af8f2b scope the
+   provider to the authenticated caller, f0d53619 the SAPI guard) plus
+   Physician.class.php (7a60d3ab the count() TypeError, 12622abe the !empty($d)
+   refinement).
+
+
+3. FINDINGS IN DETAIL
+
+   Every measurement quoted below is copied from a file under
+   tests/security/evidence/ that is committed with this branch. Where a claim is
+   an inference rather than a measurement, it says so.
+
+   3.1 FINDING 1 - help.php arbitrary file read (CWE-22), CVSS 3.1
+
+   MECHANISM. help.php:46 (pre-fix) read a path assembled at help.php:40-44 from
+   $_SERVER['PATH_INFO']. The regexes at help.php:35-38 were applied to $parts[1]
+   (UI) and $parts[2] (locale) only; the page tail reached the concatenation
+   unvalidated, and the ".html" suffix at help.php:48-50 was attached only if
+   that variant happened to exist, so a non-matching request was readfile()d raw
+   at help.php:57. There was no session or ACL check anywhere in the file:
+   help.php:24-57 includes lib/freemed.php and nothing else. So the defect is
+   two independent things - an unvalidated path sink, and content served to
+   anonymous callers - and the fix closes both.
+
+   MEASURED EVIDENCE - the traversal does NOT reproduce on modern front-ends
+   (help-traversal-prefix.txt, section B; captured with curl --path-as-is, which
+   matters: without it curl collapses the dot segments client-side and the row
+   measures nothing):
+
+     Apache :38081, no cookie, pre-fix
+       /help.php/gwt/en_US/../../../../etc/passwd              HTTP 400
+       /help.php/gwt/en_US/%2e%2e%2f%2e%2e%2fetc/passwd        HTTP 404
+       /help.php/gwt/en_US/..%2f..%2fetc/passwd                HTTP 404
+       /help.php/gwt/en_US/....//....//etc/passwd              HTTP 200
+             body: "Help index ..../..../etc/passwd not present."
+       /help.php/gwt/en_US/%252e%252e/%252e%252e/etc/passwd    HTTP 200
+             body: "Help index %2e%2e/%2e%2e/etc/passwd not present."
+       /help.php/gwt/en_US/..%5C..%5Cetc/passwd                HTTP 200
+             body: "Help index ..\..\etc/passwd not present."
+
+     nginx :38082 is the same except that the single-encoded rows also reach PHP
+     with an EMPTY page token (fastcgi_split_path_info no longer matched), which
+     is the same PHP 8.3 "Undefined array key 1" path noted in the sink audit:
+       /help.php/gwt/en_US/%2e%2e%2f%2e%2e%2fetc/passwd        HTTP 200
+             body: "Help index  not present."
+
+     NO PAYLOAD RETURNED FILE CONTENTS on either server. The shapes that do reach
+     PHP arrive as literal text that fails file_exists() and prints the
+     not-present line. The hardened repro, run against the same pre-fix tree:
+       5 probe(s): 0 exploited, 4 refused/filtered before PHP (400/404),
+                   0 auth required (401/403), 1 answered otherwise
+       >>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0)
+     The counter "0 auth required" is the point: pre-fix there is nothing to be
+     401'd.
+
+   MEASURED EVIDENCE - the anonymity defect, which is what the harness could
+   demonstrate end to end:
+
+     pre-fix  Apache :38081, NO cookie   GET /help.php/gwt/en_US/main
+              STATUS: 200   bytes: 5818
+     pre-fix  Apache :38081, WITH a valid session, same request
+              STATUS: 200   bytes: 5818   (identical body)
+     pre-fix  nginx :38082, with and without a session: 200 / 5818 bytes both
+     post-fix anon   GET /help.php/gwt/en_US/main
+              HTTP/1.1 401 Unauthorized   body: "Authentication required."
+     post-fix authed GET /help.php/gwt/en_US/main
+              HTTP 200, 5818 bytes, unchanged help HTML
+
+   SEVERITY. The vector a CVE record should carry for the code defect is the
+   reporter's, and it is right for a layout where the traversal is reachable:
+
+       AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N = 7.5   (High)
+
+   Reasoning in one line: network-reachable, no session, no user interaction,
+   read-only confidentiality impact at the level of the database credentials in
+   lib/settings.php, and scope unchanged because the file read stays inside the
+   web user's own authority. The severity is DEPLOYMENT-DEPENDENT, and that
+   qualifier belongs in the record: on the two modern front-ends measured here
+   the traversal does not reproduce at all - it is reachable where dot
+   segments survive to PATH_INFO, which neither of them does - and what
+   remains demonstrated on them is the anonymous serve of help HTML, i.e.
+
+       AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N = 5.3   (Medium)
+
+   and only if a site treats its own help text as non-public. On a site where it
+   does not, the measured impact on those layouts is nil and the fix is
+   defence-in-depth plus an independently justified authentication requirement.
+   The execution record labels it that way (ruling R4) and this advisory does not
+   claim a live anonymous file read on any modern stack.
+
+   WHAT THE FIX DOES. Authentication before any filesystem access (anonymous
+   requests get 401), and resolution that cannot leave the help directory: every
+   path component is validated, realpath() is applied to both the help directory
+   and the candidate, the candidate's basename must equal
+   <page>.<locale>.html, and the file must exist and be readable. Nothing about
+   the fix depends on the front-end normalising anything, so it holds on the
+   layouts where the pre-fix code would have traversed. The ".html" suffix is now
+   deterministic, so a request for /main and /main.en_US both resolve to
+   main.en_US.html - the contract the GWT client's help button uses.
+
+   3.2 FINDING 2 - relay SQL injection cluster (CWE-89), CVSS 3.1
+
+   MECHANISM. relay.php validates only the transport provider (Relay_Json,
+   Relay_Xmlrpc) and Route/CallMethod in lib/loader.php:47-70 resolves any
+   registered class, instantiates it and calls any public method with
+   request-supplied arguments. Relay.class.php:45-51 gates on
+   org.freemedsoftware.public.Login.LoggedIn and nothing else; only 18 of the 431
+   PHP files under lib/org/freemedsoftware call acl_enforce anywhere
+   (grep -rl acl_enforce: 18 files, of 431 under that root). Every
+   unparameterized query in that surface was therefore reachable by any
+   authenticated user. The four reported sites concatenated request data into
+   SQL:
+     api/UserInterface.class.php:144   $condition .= " AND usertype='".$usertype."' ";
+     api/ModuleSearch.class.php:35     "module_associations='".$moduleType."' and "
+     module/EncounterNotesTemplate.class.php:275
+                                       (WHERE pnotesttype='".$type."'")
+     api/Remitt.class.php:997          payrecproc='".$procedure."'
+   (line numbers are pre-fix as recorded in the plan's verification table).
+
+   MEASURED EVIDENCE - all four sites, pre-fix, live, with a real session
+   (relay-sqli-prefix.txt; digests are abbreviated in the committed file and are
+   not reproduced here; every row is a live response body):
+
+     SITE 1  api.UserInterface.GetUsers   (param1 = $usertype)
+       reachability   param1=''      HTTP 200, rows=1   [["Ada …","1"]]
+       benign control param1='x'     HTTP 200, rows=0   null
+       INJECTED       param1="x' UNION SELECT username,userpassword FROM user-- -"
+                                     HTTP 200, rows=2   [["admi…","<digest>"],
+                                                          ["cler…","<digest>"]]
+       ANONYMOUS, same injected call, no cookie:  HTTP 200  INVALID_SESSION
+       BOGUS session id, same injected call:      HTTP 200  INVALID_SESSION
+       nginx spot check, same rows: reachability 1 / control null / injected 2 rows
+
+     SITE 2  api.ModuleSearch.picklist   (param1 = $moduleType)
+       benign control param1='nonexistent'   HTTP 200  null
+       INJECTED  param1="billing' UNION SELECT userfname,userlname FROM user-- -"
+                                     HTTP 200
+                                     {"DemoPayments":"Demo Payments Module",
+                                      "Admi…":"Ada…","Cler…":"Cal…"}
+       The injected call returns the seeded module row AND two extra key/value
+       pairs that are the user table's first and last names - a different column
+       choice on purpose, to show the leak is not tied to one column.
+
+     SITE 3  module.EncounterNotesTemplate.getTemplates   (param0 = $type)
+       reachability   param0='Progress Note'   HTTP 200
+                      [{"id":"1","tempname":"Demo Progress Template", …}]
+       benign control param0='Encounter Note'  HTTP 200  []
+       INJECTED  param0="x' UNION SELECT id,username,userpassword,usertype FROM user-- -"
+                                     HTTP 200, 2 objects
+                      [{"id":"1","tempname":"admi…","tempuser":"<digest>","notetype":"supe…"},
+                       {"id":"2","tempname":"cler…","tempuser":"<digest>","notetype":"misc…"}]
+
+     SITE 4  api.Remitt.RenderStatementXML -> _RenderProcedure   (param0 = $procedure)
+       benign control param0='6'  HTTP 200
+                      <patpay>0</patpay> …
+                      <payhistory>No payment has been received for this service</payhistory>
+       INJECTED  param0="0' UNION SELECT 1,0,0,0,CONCAT(username,':',userpassword) FROM user-- -"
+                                     HTTP 200
+                      <patpay>2</patpay> …
+                      <payhistory>Paid By: Patient $2 (cler:<digest>);</payhistory>
+
+     OUT OF BAND, queried directly against the database and not read out of any
+     response - the leaked column is the password digest:
+       SELECT COUNT(*) AS user_rows, GROUP_CONCAT(DISTINCT LEFT(userpassword,4))
+       FROM user;   ->  user_rows 2   digest_prefixes <one 4-char prefix, both rows>
+     Every leaked response carries 2 rows (sites 1-3) - the row count of the
+     `user` table on this database. The full digests were never printed.
+
+     REDACTION NOTE: the committed evidence file
+     (tests/security/evidence/relay-sqli-prefix.txt) shows each digest as its
+     first four characters followed by an ellipsis, and it states that rule in its
+     own header. This advisory replaces even those four characters with <digest>,
+     so that no fragment of a password digest is published. The discriminating
+     fact in every row above is the structure - which column the payload landed
+     in, and how many rows came back - and that is unchanged.
+
+   MEASURED EVIDENCE - the fix, same server, same session, same payloads:
+
+     GetUsers      INJECTED -> HTTP 200, rows=0, body: null
+     picklist      INJECTED -> HTTP 200, rows=0, body: null
+     getTemplates  INJECTED -> HTTP 200, body: []
+     Remitt        INJECTED -> HTTP 200,
+                              <payhistory>No payment has been received for this service</payhistory>
+     hardened repro at HEAD:
+       13 probe(s) sent (4 sites x 3), 0 vulnerable response(s), 0 inconclusive
+       sites cleared: UserInterface.GetUsers  ModuleSearch.picklist
+                      EncounterNotesTemplate.getTemplates  Remitt.RenderStatementXML
+       >>> RESULT: NO EXPLOIT OBSERVED (measured negative, exit 0)
+     for contrast, the same script against the pre-fix tree:
+       2 vulnerable response(s), 1 inconclusive, exit 1.
+     Those two rows are the script's own disclosed sensitivity limits, not
+     negatives: its marker heuristic misses SITE 2 (the payload leaks names, not
+     digests) and degrades SITE 4 to INCONCLUSIVE. The quoted bodies above are
+     the evidence for those two sites.
+
+   SEVERITY. Measured impact first:
+
+       AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N = 6.5   (Medium)
+
+   Reasoning in one line: the proven exploit is a read - an attacker-chosen
+   UNION SELECT returning the full user table including the password digests -
+   with the session prerequisite measured (INVALID_SESSION for anonymous and
+   bogus-session callers), so PR:L, and C:H because the leaked credentials and
+   the reachable schema are the confidentiality of the whole system.
+
+   The wider claim the reporter scored at 8.8 is defensible only at class level,
+   and the record must say which one it is scoring: the same idiom carried into
+   write paths (the sweep fixed roughly 170 sites across ~60 files, including
+   UPDATE/DELETE criteria), and the relay's any-method/any-class reachability
+   means a session can reach those methods; scored on that basis the same vector
+   with I:H/A:H gives
+
+       AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H = 8.8
+
+   which is exactly the reporter's number, but with integrity and availability
+   ASSUMED from the reachable surface rather than proven - only read impact was
+   demonstrated live. We are not adopting S:C: the relay, the modules and the
+   database are one security authority in this application, nothing measured
+   crossed a scope boundary, and S:C would inflate the same facts to 9.9
+   (AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H). 9.8 is not that vector either - it
+   is the S:U/PR:N full-CIA score, which is not the same facts.
+   Recommendation for the CVE record: 6.5 for the proven issue if the record is
+   scoped to the four sites, or 8.8 with the class-level scope written into the
+   description - the owner should pick one and keep the description and the score
+   consistent.
+
+   WHAT THE FIX DOES. The four sites use the project's established idiom - quote()
+   for values, intval()/casts for numeric ids - and the sweep applies it to the
+   same anti-pattern tree-wide, with a validated-identifier helper (SqlIdent) for
+   schema and column names, which cannot be bound as parameters. Because a fix
+   for today's omission does not stop tomorrow's, the relay is additionally
+   deny-by-default against data/config/relay-allowlist.php (4.1), and a static
+   gate (make security-check) now fails the build when a raw concatenation is
+   reintroduced into an application file.
+
+   THE ONE PLACE THE IDIOM IS A WRITE PRIMITIVE, and the complete set of them: a
+   `LIMIT` whose value is spliced rather than cast is not a read defect - the
+   server does accept `INTO OUTFILE` in that position - so the sweep closed it
+   at ALL THREE instances in the tree, not two: api/UserInterface::GetRecords,
+   api/PatientInterface::picklist and
+   module/WorkListsModule::GenerateWorkList. The third is an ALLOWLISTED relay
+   method (data/config/relay-allowlist.php), so enforcement alone would not have
+   covered it, and the static gate cannot see it (an unrelated addslashes() on
+   the same line excuses the splice). It was found by the final whole-branch
+   review and is fixed in the same release as the other two.
+
+   MEASURED, so this is not read as a demonstrated file write. What was measured
+   is that the injected string REACHES the statement - that is the finding - and
+   that the write primitive did NOT execute on this deployment. On the shipped
+   server (mariadb:10.11.19-MariaDB, secure_file_priv NULL) the POSITION is
+   accepted: `SELECT 1 LIMIT 1 INTO OUTFILE '<path>'` writes its row when run
+   with the FILE privilege. The application's own connection is refused:
+   `<db>@%`, the user every relay call runs as, holds USAGE plus `<db>.*` and no
+   FILE privilege, so the same statement answers `Access denied; you need (at
+   least one of) the FILE privilege(s) for this operation`. No file was written.
+   The claim this release stands on is therefore the reach of the injected
+   string, not a demonstrated write.
+
+   3.3 FINDING 3 - vcalendar.php pass-the-hash and cross-provider access
+       (CWE-287 / CWE-836 / CWE-639), CVSS 3.1
+
+   MECHANISM. freemed_get_auth() (pre-fix vcalendar.php:66-71) authenticated a
+   request by comparing the request-supplied hash parameter against the stored
+   value directly, in SQL:
+       ... WHERE username='".addslashes($_GET['user'])."' AND
+                 userpassword='".addslashes($_GET['hash'])."'
+   The stored user.userpassword is an unsalted MD5 digest of the password, so the
+   digest WAS the credential: anyone who could read it - a database read, a
+   backup, a log, or the SQL injection in 3.2 - could authenticate with it
+   without knowing the password. A GET parameter carrying a credential also lands
+   in access logs and in the endpoint's own syslog line
+   (vcalendar.php:63 logged the username for an unauthenticated request).
+   Separately, the provider was taken from $_REQUEST['physician'] with no check
+   against the caller, so any authenticated caller could name any physician.
+
+   MEASURED EVIDENCE - the authentication bypass, live, register_argc_argv = Off
+   (vcalendar-auth.txt section 1; the harness pre-fix base is commit 8938de83).
+
+     CASE anonymous                        HTTP 200, text/html, 964 bytes
+       body ends: Fatal error: Uncaught Error: Call to undefined function
+                  prepare() in /var/www/html/vcalendar.php:62
+       (no 401 challenge at all before the fix)
+       syslog: "vCalendar [get] username =" (empty)
+
+     CASE get-hash, non-physician account + CORRECT digest
+                                           HTTP 200, text/html, 377 bytes
+       body ends: "Not enough information provided."
+       -> authentication SUCCEEDED, and execution then stopped at the provider
+          check exactly as designed.
+       syslog: "vCalendar [get] username = clerk"
+
+     CASE get-hash, admin account + CORRECT digest
+                                           HTTP 200, text/html, 1809 bytes
+       body: Physician/FreemedDb warnings ending in
+             Fatal error: Uncaught TypeError: count(): Argument #1 ($value) must
+             be of type Countable|array, null given in
+             .../core/Physician.class.php:93
+       -> authentication SUCCEEDED; the endpoint then failed for want of a seeded
+          physician row.
+       syslog: "vCalendar [get] username = admin"
+
+     CASE get-hash, admin account + IMPOSSIBLE digest
+                                           HTTP 200, text/html, 625 bytes
+       body ends in the same prepare() fatal inside freemed_basic_auth()
+       -> NOT authenticated.
+
+     Three distinguishable outcomes for three credentials: the digest is the
+     credential. (The digest was confirmed to match the stored userpassword out of
+     band by a direct SQL comparison returning a row count of 1 for that account
+     and 0 for the impossible digest - never by printing the digest.)
+
+   MEASURED EVIDENCE - the same endpoint where register_argc_argv = On. Every
+   query-string request is answered by the script's own guard with an empty 200,
+   so the vulnerability is MASKED there - and so is everything else
+   (vcalendar-auth.txt §6.2, the argv-guard control):
+
+     request                                  argv-guard copy, register_argc_argv=On
+     /vcalendar.php                     anon    401 / 0 bytes
+     ?user=clerk&hash=<correct digest>  anon    200 / 0 bytes   <-- masked
+     ?physician=1                       clerk   200 / 0 bytes   <-- masked
+     ?type=fromdate&m=13&d=45&y=2026    admin   200 / 0 bytes   <-- masked
+     ?physician=1                       admin   200 / 0 bytes   <-- masked
+     (no query string)                  admin   200 / 220 bytes text/x-vCalendar
+
+   MEASURED EVIDENCE - post-fix (vcalendar-auth.txt section 2, the tree also
+   carrying this task's provider scoping):
+
+     every GET-hash request (correct digest, impossible digest, no hash) and every
+     request with no credentials:
+       HTTP 401, WWW-Authenticate: Basic realm="FreeMED v0.8.8 vCalendar",
+       0 bytes body
+     Basic auth, admin, correct password:
+       HTTP 200, Content-Type: text/x-vCalendar;charset=UTF-8, 222 bytes
+       BEGIN:VCALENDAR / VERSION:1.0 / PRODID:Val Q. Verifier / TZ:-07 / END:VCALENDAR
+       (222 bytes is the vcalendar-auth.txt section-2 round, where PRODID
+        still carried a trailing ", "; after 12622abe removed that
+        artefact the same request measures 220 bytes - see 3.3.)
+
+   MEASURED EVIDENCE - the compatibility switch (vcalendar-auth.txt section 3):
+     config row absent (the default)   -> 401, 0 bytes
+     vcals_legacy_hash = on, correct digest, non-physician account
+                                       -> 200, 32 bytes, "Not enough information
+                                          provided.", and syslog
+                                          "vCalendar [get] DEPRECATED hash
+                                          authentication used
+                                          (vcals_legacy_hash=on), claimed
+                                          username = clerk, remote = 192.168.128.1"
+     config row removed again          -> 401, 0 bytes
+
+   MEASURED EVIDENCE - cross-provider access
+   (vcalendar-provider-scope.txt sections 1-2, 5):
+
+     PRE-FIX, non-physician account (userrealphy = 0) naming ?physician=1:
+       HTTP 200, 2154 bytes, body sha256 be97d0bebd1d5bc4 - byte-identical to the
+       admin request for the same physician, no 403 and no refusal in syslog
+       -> the provider parameter was honoured for a caller with no relationship
+          to that provider.
+     POST-FIX:
+       non-physician ?physician=1   HTTP 403  33 bytes
+                                    "Not authorized for that provider."
+                                    syslog "provider 1 refused for user 2"
+       admin        ?physician=1    HTTP 200  text/x-vCalendar, 220 bytes
+       physician    ?physician=1 (self) HTTP 200; ?physician=2 (other) HTTP 403
+       ?physician[]=1 and ?physician=1abc    HTTP 403 (no shape bypass)
+       (220 bytes here is the fix-round-1 measurement in
+        vcalendar-provider-scope.txt section 5, taken after 12622abe removed
+        PRODID's trailing ", "; 2.3's 222-byte row for the same request is
+        the earlier vcalendar-auth.txt section-2 round.)
+       the ACL the branch consults was verified, not assumed:
+         acl_check('schedule','view','user',1) = false, …user 2 = false,
+         …user 3 = false - it is true for the admin account only through
+         freemed::acl()'s user_number == 1 short circuit, which the syslog line
+         "ACL| schedule/view// forced for admin user" records.
+
+   SEVERITY. The GET-hash path, as a code-level defect:
+
+       AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N = 5.9   (Medium)
+
+   Reasoning in one line: no session is needed (PR:N) - the digest itself is the
+   credential - but the attack requires the attacker to already hold that stored
+   digest, which is the AC:H condition. If a scorer instead treats the digest as
+   available through this same release's other defects (3.2 reads it out of the
+   database for a session holder), the chained view scores higher and that is a
+   chain argument, not this endpoint's own vector. The configuration qualifier is
+   part of the record: MASKED where register_argc_argv is On, live where it is
+   Off.
+
+   The cross-provider branch, scored on the endpoint's purpose - a provider's
+   calendar holds patient-linked appointments:
+
+       AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N = 6.5   (Medium)
+
+   with the measured floor stated honestly:
+
+       AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N = 4.3   (Medium)
+
+   We are not claiming calendar contents were disclosed. The measured fact is
+   that the provider parameter was honoured for any authenticated caller (the
+   pre-fix body for the non-physician caller is byte-identical to the admin's) and
+   that the fix refuses it with 403; the content half could not be demonstrated
+   because the harness cannot populate that calendar (3.4). Certificates-of-impact
+   language belongs in the CVE record only with that qualifier attached.
+
+   WHAT THE FIX DOES. freemed_get_auth() and its call site are gone: the endpoint
+   is Basic-auth over TLS, with a proper 401 challenge (repaired - the challenge
+   died inside the endpoint on PHP 8 before this change) and the credential
+   comparison moved out of SQL into PHP, fetching the row by username and
+   comparing with hash_equals(). The pre-authentication syslog line is removed.
+   The GET path exists only behind the off-by-default vcals_legacy_hash option
+   (4.2). The provider is the authenticated caller's own unless ?physician=
+   names another provider AND the caller holds the schedule/view grant, which is
+   evaluated fail-closed; ?physician plus type/m/d/y are integer-validated, and
+   an impossible date (m=13) is refused with 400 instead of being normalised by
+   mktime().
+
+   3.4 LIMITATIONS - WHAT THIS ADVISORY DOES NOT CLAIM
+
+     (a) NO CLIENT SMOKE PASS WAS POSSIBLE. This checkout contains no compiled
+         GWT client (find ui/gwt -name '*.js' returns only vendored viewerjs and
+         mugshot resources), so no browser session has ever exercised the relay
+         call set. That is exactly why the new allowlist ships LOG-ONLY, and why
+         enforcement is documented as an operator step with a miss-collection
+         pass rather than as a released behaviour (4.1).
+
+     (b) The module-smoke functional gate cannot see a valid-but-wrong query that
+         returns 0 rows. The committed baseline has 136 entries: 6 OK, 22 EXC,
+         108 SKIP, and the SKIPs come from the reduced seed - an empty table makes
+         a correct query and a wrong-but-valid query indistinguishable. "No
+         deltas" is therefore not proof that a batch's SQL is equivalent, only
+         that the observed outcomes did not move.
+
+     (c) THE HARNESS IS A THROWAWAY STACK WITH A REDUCED SEED. Its tables are
+         pinned by tests/security/evidence/seed-fingerprint.md (with
+         seed-verify.sql) because the seed genuinely drifted once during this
+         work. Patient tables are empty: `patient`, `procrec` and `vitals` have 0
+         rows, so no PHI exists in the harness at all and no PHI was disclosed by
+         anything measured here.
+
+     (d) FINDING 1 WAS NOT DEMONSTRATED END TO END ON A MODERN FRONT-END, and the
+         reporter's proof of concept was confirmed in isolation - by replicating
+         the logic - not end to end. Any published reproduction steps must say so,
+         which is why 5.2 corrects them.
+
+     (e) FINDING 3's PHI IS NOT DEMONSTRATED. The reproduced vCalendar body is
+         the envelope only - BEGIN:VCALENDAR / VERSION:1.0 /
+         PRODID:<provider's own name> / TZ:-07 / END:VCALENDAR - with no event
+         entries, because `scheduler` is empty and cannot be populated here: an
+         insert fails with ERROR 1452 (a foreign key from patient_emr to the
+         pinned-empty `patient` table). Two pre-existing PHP 8.3 defects also sit
+         between this and a client-parseable calendar (core/vCalendar.class.php's
+         uninitialised $buffer printing a warning into the payload, and
+         core/Physician.class.php:83 handing an array to strpos()), both recorded
+         in doc/SECURITY_FOLLOWUP rather than fixed here. So: authentication
+         bypass demonstrated live; calendar contents reproducible on a populated
+         install.
+
+     (f) FINDING 2's PRE-FIX ROWS COME FROM A RECONSTRUCTED TREE. The fixes had
+         already landed, so the pre-fix rows were measured against a throwaway
+         extraction of the pinned pre-fix commit served from the harness docroot,
+         with the vulnerable concatenation re-verified by grep in the served file
+         before each run. Two of the four sites' script-based verdicts are the
+         script's own thresholds rather than the leak's absence (3.2), and the
+         committed rows for them are hand-transcribed from the live responses.
+
+     (g) VERIFICATION WAS PRIMARILY ON APACHE + mod_php 8.3.35; nginx 1.31.6 +
+         php-fpm was used for spot checks and for the deployment rules
+         (four servers for the latter: two harness copies and two mounting the
+         shipped configuration files themselves).
+
+     (h) EVIDENCE HYGIENE. tests/security/evidence/sweep-notes.md:369 prints the
+         harness verification account's literal MD5 digest - the pass-the-hash
+         payload 3.3 removed - which contradicts this work's own no-digest rule
+         for evidence. It is scheduled for a one-line redaction in a later fix
+         pass. The honest limit: the value is already in this branch's git
+         history, so redacting the working tree does not remove it; it is a
+         throwaway harness credential for a synthetic account; and neither this
+         advisory nor any CVE request may quote it.
+
+
+4. WHAT THE RELEASE CHANGES FOR OPERATORS
+
+   Read this section before upgrading. Items marked MANDATORY are steps only the
+   operator can take; the release cannot do them for you.
+
+   4.1 THE RELAY IS DENY-BY-DEFAULT, AND IT SHIPS LOG-ONLY
+
+   relay.php now checks the requested method against an allowlist
+   (data/config/relay-allowlist.php, matcher in
+   lib/org/freemedsoftware/core/Relay_Allowlist.class.php) before dispatching,
+   after the login guard, for every method including the public.* namespace. A
+   method that is not named in the list is a MISS.
+
+   SHIPPED BEHAVIOUR: 'enforce' => false. A miss is logged at LOG_WARNING and the
+   call STILL EXECUTES. You get the safety of the enumeration and a log of what
+   your site actually calls; you do not get enforcement until you ask for it.
+
+   MANDATORY OPERATOR STEP (if you want the control enforced): run the procedure
+   in doc/RELAY_ALLOWLIST section 3 - deploy log-only, confirm by hand that a
+   deliberate miss logs, use the system normally on your real compiled client
+   until the log is quiet, add every method named there to 'patterns', then set
+   'enforce' => true. Proven live in both states: with enforcement on, an unlisted
+   method returns the body INVALID_CALL (HTTP 200 - the relay's own response
+   convention) and does not run; with it off, the same call runs and logs
+   "Relay: method '<name>' is not in the relay allowlist (remote=<ip>, LOG-ONLY,
+   call still executed)".
+
+   Also changed, and worth knowing even before you enforce: the allowlist now
+   covers the two re-dispatch axes. A relay method that re-dispatches a method
+   name supplied by its caller (UserInterface.Multicall) gates the inner call
+   through the same decision point, and the ModuleInterface wrappers -
+   add/del/GetRecord/GetRecords/mod/picklist/RenderHtmlView/to_text and the print
+   wrappers' RenderToPDF - gate the concrete org.freemedsoftware.module.<Class>.
+   <literal> string they are about to dispatch, because a per-method list cannot
+   constrain a class the caller names. TWO FURTHER class-axis re-dispatchers of
+   the same shape are NOT gated by this release - Forms::control_module
+   (module/Forms.class.php:336-351) and BaseModule::_print
+   (core/BaseModule.class.php:196-208, :230-241) - so "the two re-dispatch axes"
+   above means the two this release gated, not every class-axis path in the tree;
+   both are recorded with a fix shape in doc/SECURITY_FOLLOWUP sections 4.1/4.2.
+   Measured exposure on that axis: 866
+   (class, literal) pairs exist over the 133 module class files and 803 of them
+   are NOT in the shipped list, so enforcing will refuse a wrapper call naming a
+   module class the list does not name - by design, and that is what the
+   log-only period exists to discover. Separately, 'never_allow' refuses INNER
+   calls in the org.freemedsoftware.core. namespace in BOTH stages (the pre-2.8
+   Multicall guard's behaviour, reinstated); outer calls in that namespace are
+   logged and not refused. A config edit is not instant and the OPcache lag is
+   PER WORKER - probe more than once before believing an answer. A missing or
+   unparseable data file logs and falls back to log-only rather than refusing
+   everything.
+
+   4.2 vCALENDAR: THE GET CREDENTIAL PAIR IS DEPRECATED AND OFF BY DEFAULT
+
+   http://host/vcalendar.php?user=<name>&hash=<md5 of the password> no longer
+   authenticates: such a request gets 401 with the Basic challenge. The
+   compatibility switch, DEFAULT OFF, is a config row:
+       INSERT INTO config (c_option, c_value, c_title, c_section, c_type)
+       VALUES ('vcals_legacy_hash', 'off', 'vCalendar legacy GET hash auth',
+               'Scheduler', 'YesNo');
+   and every use of it is logged at LOG_NOTICE as "DEPRECATED hash authentication
+   used (vcals_legacy_hash=on), claimed username = <user>, remote = <ip>" -
+   whether or not the credential is accepted. Search for that string to find the
+   clients that still need migrating; turn the row off when the log is quiet.
+   Nothing in a request can enable it.
+
+   TO ENABLE IT - the row above is OFF, and this is the only way on: set that
+   row's c_value to a true value ('1', 'on', 'yes' or 'true'), which is the
+   value the endpoint's own config read accepts (case-insensitively, trimmed).
+   The security cost of enabling it is the whole of finding 3, for as long as
+   it is set: any caller holding a user's stored MD5 digest authenticates as
+   that user without the password, and the digest travels in the request URL,
+   so it lands in access logs. Treat it as a TEMPORARY migration window and
+   close it: set c_value back to 'off' (or delete the row) as soon as the log
+   is quiet. A site that never creates the row is already in the safe state.
+
+   MANDATORY OPERATOR STEP: migrate calendar clients to HTTP Basic over TLS
+   before upgrading (they get 401 otherwise), or set that row's c_value to a
+   true value ('1', 'on', 'yes' or 'true') for the migration window and close
+   it again afterwards.
+
+   MANDATORY OPERATOR STEP - and this one can remove a capability that works
+   today: ?physician=<other provider> now requires the schedule/view access
+   control grant for any caller that is not the administrator and is not that
+   provider. On a schema where that grant has never been created the check fails
+   closed and the request is refused with 403. A front desk or practice-manager
+   account that used to fetch providers' calendars will lose that ability until
+   you create the schedule/view ACO and the AROs for the roles that need it. See
+   doc/VCALENDAR_AUTHENTICATION section 4 for the full prerequisite. Related, and
+   worth a look while you are there: this endpoint loads the ACL on demand because
+   a SESSION_DISABLE request skips the block in lib/freemed.php that builds it,
+   and if the vendored phpGACL cache directory under /tmp is not writable by the
+   web user the check is refused rather than permitted.
+   Other interface changes: ?type, ?m, ?d, ?y are integer-validated and an
+   impossible date is refused with 400 instead of being normalised; the endpoint's
+   own CLI guard now tests PHP_SAPI rather than $_SERVER['argc'].
+
+   4.3 WEB-SERVER RULES: FOUR TREES DENIED, PATH_INFO SCOPED
+
+   Shipped: doc/freemed.apache.conf (installed by doc/Makefile as
+   /etc/apache2/conf.d/freemed.conf) and docker/nginx.conf, with the .htaccess
+   files as a second layer that nginx does not read at all.
+
+   THE MEASURED ROWS ARE NOT REPEATED HERE. Every before/after row for these
+   rules is in tests/security/evidence/deployment-hardening.txt, which is the one
+   copy of the matrix: PHASE A is the unhardened state, PHASE B the state with
+   the rules installed, PHASE E the PATH_INFO consumers and the four shapes the
+   scope rule changes, and PHASE F1 the anchoring matrix. The operator-facing
+   prose is doc/DEPLOYMENT_HARDENING (sections 1-3, 4 and 6), and the two
+   configuration files' own comments point at the same file. What an operator
+   needs from this section is what changed, which is:
+     * lib/, data/, tests/ and scripts/ are no longer web-readable on either
+       server. Before the rules, every file in them was readable - executed where
+       the PHP handler covered the path, served as source where it did not - and
+       lib/settings.php (the installer's DB credential file) was reachable and
+       executed; a malformed `<Files *> deny from *` in one directory's
+       .htaccess had taken that subtree out of its parent's denial, and
+       data/documents/unfiled/*.djvu answered 200 by URL. Now 403 (404 for
+       Apache's /lib%2FAPI.php - see below).
+     * PATH_INFO is scoped: AcceptPathInfo stays On for the install root because
+       five entrypoints route on the trailing path (help.php, chtml.php,
+       relay.php, relay-gwt.php, controller.php), and every OTHER script
+       addressed with a trailing path is refused with 403.
+   AFTER these rules every row in the evidence file is 403 on both servers - the
+   one exception is Apache's /lib%2FAPI.php, which stays 404
+   (AllowEncodedSlashes off, so the path is never split; nginx refuses the same
+   request with 403) - as is /help.php/../scripts/... . The rules are the belt:
+   any layout where the PHP handler does not cover the path (a static server, a
+   proxy serving .php as text) discloses lib/settings.php to whoever asks, so
+   fix the handler configuration too.
+
+   MEASURED BEHAVIOUR CHANGE, four shapes, both servers (the status pairs are
+   PHASE E of the evidence file): /install.php/<path> 200 -> 403, /index.php/
+   <path> 302 -> 403, /vcalendar.php/<path> 401 -> 403,
+   /services/RemittCallback.php/<path> 200 -> 403. None of them reads PATH_INFO
+   and the plain URLs are unchanged (/services/RemittCallback.php?wsdl is still
+   200, verified).
+   The allowlist is ANCHORED to the request root - an earlier revision of the rule
+   was an unanchored substring test, so /install.php/x/help.php/ ran the installer
+   instead of being refused (200 before, 403 after; PHASE F1). A site serving the
+   tree under a different prefix must add that prefix to the nginx map entry the
+   same way it must add its own location block; the Apache rule matches in
+   per-directory context and is prefix-independent (measured in docroot,
+   /freemed, and a second Alias).
+
+   4.4 register_argc_argv = Off
+
+   docker/php-custom.ini now sets it Off, and a site with its own php.ini should
+   add the same line. Why it matters beyond vcalendar.php: PHP's compiled default
+   for this setting is On, so without the line a request carrying a query string
+   looks like a command line to any script that guards on $_SERVER['argc'] /
+   $_SERVER['argv'], and the request halts as an empty 200 - which is what masked
+   finding 3 on the stock image. Provenance, stated exactly: this was measured on
+   the verification image (built FROM php:8.3-apache, no active php.ini), NOT on
+   the Bitnami-layout image this project's docker-compose.yml ships, which was not
+   available to inspect and normally loads a php.ini that already sets it Off. The
+   explicit line is still the right thing to ship - wherever the file is read it
+   wins - but do not read it as "the trap is live on your container". The CLI SAPI
+   ignores the setting, so a command-line script must test PHP_SAPI, not this.
+
+   4.5 THE .htaccess CORRECTIONS
+
+   Four files carried <Files *> deny from * - and * is not the `all` keyword a
+   Deny takes, so it matched no client and the rule allowed everything it was
+   meant to deny (that is how /scripts/*.sh served source, and how data/store/'s
+   file cancelled its parent's denial). Five more carried 2.2-only order/deny
+   syntax, which on an Apache 2.4 without mod_access_compat is a configuration
+   error during URI mapping - the tree answers 500 rather than the 403 the rule
+   means (measured by config test with the module set minus mod_access_compat).
+   All nine are rewritten with a module-guarded dual-syntax block. One deliberate
+   behaviour change: data/documents/unfiled/ denied its *.djvu exception, so
+   unfiled .djvu uploads are no longer fetchable by URL (200 -> 403; the document
+   viewer fetches page images through the relay, not the filesystem path).
+   lib/org/freemedsoftware/acl/.htaccess is deliberately left 2.2-only: it is
+   vendored phpGACL, not this tree's file.
+
+   4.6 DOCUMENTS ADDED, AND THE RELEASE-NOTE TEXT
+
+   doc/DEPLOYMENT_HARDENING   what the shipped web-server configuration refuses,
+                              the PATH_INFO scope, the ini, and the lib/
+                              settings.php measurement and verdict
+   doc/RELAY_ALLOWLIST        the allowlist, the two re-dispatch axes, the
+                              never-allow rule, and the enforcement procedure
+   doc/VCALENDAR_AUTHENTICATION  the deprecation, the migration steps, the
+                              compatibility switch and the schedule/view
+                              prerequisite
+   doc/SECURITY_FOLLOWUP      the backlog of defects found and deliberately not
+                              fixed here - read it before reporting one of them
+   This repository has no CHANGELOG or release-notes file; the release-note
+   paragraphs for the relay and for vCalendar are sections 4 and 5 of those two
+   documents and should be published with them.
+
+   4.7 THE MANIFEST OF MANDATORY STEPS
+
+     1. Install the new web-server configuration (package install does it; a
+        self-managed vhost must copy the four <Directory> blocks, or the nginx
+        deny location, into its own config) and the corrected .htaccess files.
+     2. Add register_argc_argv = Off to your php.ini if you run your own.
+     3. Migrate vCalendar clients from ?user=&hash= to Basic over TLS, or set
+        vcals_legacy_hash to a true value for the migration window (4.2 gives
+        the exact value, the cost of enabling it, and the closing step).
+     4. Grant the schedule/view ACO and AROs to any non-admin role that reads
+        providers' calendars other than its own.
+     5. After a normal use period, complete the relay allowlist's
+        miss-collection pass and set 'enforce' => true if you want it enforced.
+
+
+5. CREDIT
+
+   5.1 REPORTED BY kta1kri, whose report supplied the findings this advisory is
+       built from - the help.php path handling, the four relay injection sites
+       and the vCalendar credential path. The credit belongs in the advisory, in
+       the release notes and in each CVE record unless the reporter asks
+       otherwise. (Ask before publishing: the draft in 7.B.3 offers the credit
+       and gives them the chance to decline or to change the name they want
+       used.)
+
+   5.2 TWO CORRECTIONS THE REPORTER MUST BE TOLD, because their published
+       reproduction steps are not exact. Both are corrections to the proof of
+       concept, not to the findings - the defects are real in all three cases.
+
+       (i)  TRAVERSAL DEPTH IS OFF BY TWO. Against the documented install root
+            /usr/share/freemed (Makefile:27 INSTDIR; the docker mount agrees):
+              /gwt/en_US/../../../../lib/settings.php   -> /usr/share/freemed/lib/settings.php
+              /gwt/en_US/../../../lib/settings.php      -> .../ui/lib/settings.php (does not exist)
+              seven or more `..` reach an absolute path (/etc/passwd), and an
+              eighth/ninth clamp at the root.
+            In a checkout at a deeper path the count is larger again (9 `..` are
+            needed for /etc/passwd from this checkout), so a reproducer must
+            either run from the install root or count its own depth.
+
+       (ii) THE TRAVERSAL DOES NOT REPRODUCE ON MODERN FRONT-ENDS. Measured
+            2026-09-28: Apache 2.4.68 answers 400 for the raw `..` form and 404
+            for the single-encoded forms (`%2e%2e%2f`, `..%2f`); nginx 1.31.6
+            answers 400 for the raw form too, and on those single-encoded forms
+            it reaches PHP with an EMPTY page token (200; no payload returned
+            contents); re-tested with AllowEncodedSlashes On and AcceptPathInfo
+            On, still 404. Both servers consume the dot segments before PHP
+            builds PATH_INFO, so a traversing path never reaches the vulnerable
+            concatenation there. The code is unconditionally unsafe and IS
+            exploitable on a front-end that preserves dot segments - an Apache
+            older than 2.4.49 (an inference from public behaviour, NOT tested
+            here) or some proxy/FastCGI layout - but "confirmed dynamically"
+            describes a PoC confirmed in
+            isolation - replicating the logic - not end to end on a running
+            deployment. The advisory reports it that way (3.1).
+
+       (iii) THE PHASE-2 ENTRY POINT IS DIFFERENT FROM THE ONE REPORTED.
+            POST /relay.php/json with a JSON {"method":…,"params":[…]} body
+            cannot execute: it fatals on Relay_Json::deserialize_parameters(),
+            called at Relay_Json.class.php:87 and :90 and defined nowhere in the
+            tree. The working vector, proven live, puts the method name in
+            PATH_INFO and the arguments in param0..paramN form fields (3.2). The
+            reproduction in any published advisory must use the working vector;
+            the JSON-body transport is separately recorded in
+            doc/SECURITY_FOLLOWUP section 4.3 as a functional defect.
+
+
+6. REFERENCES
+
+   6.1 FIX COMMITS (branch security/mitigation-2026-09; base 79efd68d)
+
+     help.php / Finding 1
+       3949591f  confine help.php path resolution and require authentication (CWE-22)
+       03e1c09c  make the help-path unit test hermetic and non-vacuous
+       ee5ee372, 4f2eee6f  the chtml.php sibling shape (page token)
+       6e0c1749  audit the sibling path/file sinks
+     relay SQL injection / Finding 2
+       c7e17354, c71a74c8, 04248424, 606bbd11  the four reported sites
+       a5060a09  SqlIdent identifier validator and base-class invariants
+       4d6e7e8b  the static SQL-concatenation gate (make security-check)
+       1ae0e45f, 2a55da8f, aab07693, 5492ff41  the relay allowlist and its
+                 enumeration, shipped log-only
+       3c1e41f3, 9db2d5f2, c4a331a5, f4a016cc  the re-dispatch axes and the
+                 never-allow namespace
+       b1603d5e and the sweep batches  the tree-wide parameterization
+     vcalendar.php / Finding 3
+       574ac616  reject the vCalendar GET-hash credential path (CWE-287/CWE-836)
+       62af8f2b  scope the vCalendar provider to the authenticated caller (CWE-639)
+       f0d53619  gate vcalendar.php on the SAPI, not $_SERVER['argc']
+       7a60d3ab, 12622abe  the Physician::fullName() count()/!empty($d) repairs
+       6d264546  document the deprecation and migration
+     deployment hardening
+       98c20e0f  deny web access to lib/, data/, tests/ and scripts/ (CWE-548)
+       e9e58465  ship register_argc_argv = Off (CWE-16)
+       7cf8b35b  doc/DEPLOYMENT_HARDENING
+       ab3afb85  the five sibling .htaccess files
+       ce2290f6  anchor the PATH_INFO allowlist to the request root
+       1f17bce0, 2c58e267  harden the path-guard gate
+     the fix for this delivery is SECURITY.md and doc/SECURITY_ADVISORY
+       themselves (this task's commit).
+
+   6.2 EVIDENCE (committed, redacted; each file states its own provenance,
+       servers, commits and what it does NOT show)
+
+     tests/security/evidence/help-traversal-prefix.txt        Finding 1
+     tests/security/evidence/path-sink-audit.md               Finding 1 (siblings)
+     tests/security/evidence/relay-sqli-prefix.txt            Finding 2, pre-fix
+     tests/security/evidence/relay-allowlist.txt              Finding 2, the control
+     tests/security/evidence/relay-callset.txt                the enumerated call set
+     tests/security/evidence/relay-accesslog.txt              the access-log tier
+     tests/security/evidence/vcalendar-auth.txt               Finding 3
+     tests/security/evidence/vcalendar-provider-scope.txt     Finding 3 (provider)
+     tests/security/evidence/deployment-hardening.txt         section 4.3/4.4/4.5
+     tests/security/evidence/module-smoke-before.json,
+     tests/security/evidence/module-smoke-after.json          limitation (b)
+     tests/security/evidence/seed-fingerprint.md              limitation (c)
+     tests/security/evidence/sweep-notes.md                   the sweep record;
+       line 369 carries the digest exposure of limitation (h) and is to be redacted
+
+   6.3 OPERATOR DOCUMENTS
+
+     doc/DEPLOYMENT_HARDENING, doc/RELAY_ALLOWLIST,
+     doc/VCALENDAR_AUTHENTICATION, doc/SECURITY_FOLLOWUP, and SECURITY.md at the
+     repository root for the reporting policy.
+
+   6.4 EXTERNAL
+
+     Repository:        https://github.com/freemed/freemed
+     CVE request form:  https://cveform.mitre.org/   (MITRE; request type
+                        "Report Vulnerability/Request CVE ID")
+     GitHub advisories: the repository's Security -> Advisories tab (a private
+                        draft can carry the fix and be published on release)
+     Package definitions in-tree: debian/ (changelog, control) and freemed.spec
+
+
+7. APPENDICES
+
+   7.A CVE REQUESTS                                              NOT YET SENT -
+                                                                 AWAITING OWNER
+                                                                 APPROVAL
+
+   Three requests, one per finding, using the MITRE request form's fields. Fill
+   the placeholders (7.D) before submitting. Submit AFTER the release is
+   available for download; request the IDs BEFORE announcing anything.
+
+   7.A.1  REQUEST 1 - help.php path traversal
+
+     Request type:                Report Vulnerability/Request CVE ID
+     Vendor:                      freemed
+     Product:                     FreeMED (electronic medical record system);
+                                  distribution package name "freemed"
+     Version(s) affected:         all releases prior to <RELEASE-VERSION>; the
+                                  defects were reproduced against the development
+                                  tree the fix is cut from, whose own version
+                                  strings disagree (section 1) - which RELEASED
+                                  line is affected is an owner call, not a
+                                  measurement made here.
+     Version fixed:               <RELEASE-VERSION> (<RELEASE-DATE>)
+     Vulnerability type:          Path traversal (CWE-22); the same endpoint
+                                  served its content without authentication
+                                  (CWE-306 class, reported here as part of the
+                                  same defect)
+     Root cause:                  help.php built a filesystem path from
+                                  $_SERVER['PATH_INFO'] and passed it to
+                                  readfile() without validating the page
+                                  component (help.php:40-46, pre-fix), and the
+                                  endpoint performed no session or ACL check
+                                  (help.php:24-57, pre-fix). Only the UI and
+                                  locale components were validated.
+     Impact:                      Arbitrary file read as the web-server user
+                                  where the front-end delivers dot segments in
+                                  PATH_INFO, including lib/settings.php (which
+                                  defines DB_HOST/DB_NAME/DB_USER/DB_PASSWORD in
+                                  clear text, and therefore reaches every record
+                                  in the system). MEASURED REACHABILITY, stated
+                                  because it is part of the finding: the
+                                  traversal does NOT reproduce on Apache 2.4.68
+                                  or nginx 1.31.6 (400 for the raw `..` form on
+                                  both; 404 for the encoded forms on Apache;
+                                  nginx answers those 200 with an empty page
+                                  token and no contents - both consume the dot
+                                  segments before PATH_INFO is built), so it is
+                                  exploitable on front-ends that preserve dot
+                                  segments (an Apache older than 2.4.49 - an
+                                  inference from public behaviour, not measured
+                                  here - or some proxy/FastCGI layout).
+                                  Independently of reachability, the
+                                  pre-fix endpoint served help content to
+                                  callers with no session (200, 5818 bytes,
+                                  measured with and without a session).
+     Affected component:          help.php (all releases up to
+                                  <RELEASE-VERSION>); remediated by
+                                  lib/help-path.php (new) and help.php
+     Attack vector:               AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N = 7.5 on a
+                                  deployment that preserves dot segments in
+                                  PATH_INFO; measured impact on modern
+                                  front-ends AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N
+                                  = 5.3 (anonymous access to help content), which
+                                  applies only if a site treats its own help text
+                                  as non-public - where it does not, the measured
+                                  impact on those layouts is nil (3.1).
+                                  Qualifier: deployment-dependent reachability;
+                                  see Impact above.
+     Discovery credit:            kta1kri
+     References:                  <RELEASE-ANNOUNCEMENT-URL>; fix commit
+                                  3949591f; evidence
+                                  tests/security/evidence/help-traversal-prefix.txt;
+                                  advisory <ADVISORY-URL>
+
+   7.A.2  REQUEST 2 - relay SQL injection cluster
+
+     Request type:                Report Vulnerability/Request CVE ID
+     Vendor:                      freemed
+     Product:                     FreeMED (electronic medical record system);
+                                  distribution package name "freemed"
+     Version(s) affected:         all releases prior to <RELEASE-VERSION>; the
+                                  defects were reproduced against the development
+                                  tree the fix is cut from, whose own version
+                                  strings disagree (section 1) - which RELEASED
+                                  line is affected is an owner call, not a
+                                  measurement made here.
+     Version fixed:               <RELEASE-VERSION> (<RELEASE-DATE>)
+     Vulnerability type:          SQL injection (CWE-89)
+     Root cause:                  Four relay-reachable methods concatenated
+                                  request data into SQL without quoting
+                                  (api/UserInterface.class.php:144,
+                                  api/ModuleSearch.class.php:35,
+                                  module/EncounterNotesTemplate.class.php,
+                                  api/Remitt.class.php:997 - pre-fix line
+                                  numbers), and the relay dispatched any method
+                                  of any registered class with request-supplied
+                                  arguments, gated only on an authenticated
+                                  session (Relay.class.php:45-51, pre-fix;
+                                  lib/loader.php:47-70).
+     Impact:                      An authenticated user could read arbitrary rows
+                                  out of the database. Reproduced live: a UNION
+                                  SELECT through UserInterface.GetUsers returned
+                                  the entire user table including the password
+                                  digests (an unsalted MD5 of each password);
+                                  the same technique leaked names through
+                                  ModuleSearch.picklist, template fields through
+                                  EncounterNotesTemplate.getTemplates, and a
+                                  username:digest string through
+                                  Remitt.RenderStatementXML. Because the relay's
+                                  reachable surface is every public method of
+                                  every registered class, the same class of
+                                  defect existed in write paths too (fixed in the
+                                  same release, not proven live). The one place
+                                  where that idiom is a write primitive rather
+                                  than a read - a `LIMIT` whose value is spliced,
+                                  a position the server does accept `INTO
+                                  OUTFILE` in - had THREE instances, not two:
+                                  api/UserInterface::GetRecords,
+                                  api/PatientInterface::picklist and
+                                  module/WorkListsModule::GenerateWorkList (an
+                                  ALLOWLISTED relay method, so enforcement alone
+                                  would not have covered it). All three are cast
+                                  in the same release; 3.2 gives the mechanism.
+                                  MEASURED, not proven live: the injected value
+                                  reaches the statement and the write did NOT
+                                  execute, because the relay's DB user holds no
+                                  FILE privilege, which the server requires for
+                                  `INTO OUTFILE` (3.2 has the run).
+     Affected component:          relay.php and the relay-reachable API/module
+                                  surface, remediated by parameterizing every
+                                  application-owned concatenation (the four
+                                  sites plus a tree-wide sweep using ->quote(),
+                                  integer casts and a validated-identifier
+                                  helper) and by a deny-by-default method
+                                  allowlist at the relay
+                                  (data/config/relay-allowlist.php).
+     Attack vector:               AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N = 6.5 for the
+                                  proven read impact. If the record is scoped to
+                                  the reachable surface rather than the four
+                                  sites, the same vector with I:H/A:H is
+                                  AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H = 8.8
+                                  (integrity/availability assumed from the
+                                  write-path instances fixed in the release, not
+                                  proven live). Prerequisite, measured: a valid
+                                  session - unauthenticated and bogus-session
+                                  calls answer INVALID_SESSION before the method
+                                  runs, so PR:L and not PR:N.
+                                  Recommended record score: 6.5 - the score for
+                                  the impact that was proven live, with the
+                                  record scoped to the four sites. The 8.8
+                                  applies only if the assigner accepts the
+                                  I:H/A:H assumption drawn from the write-path
+                                  instances (fixed in the release, never
+                                  exercised live); whichever is used, the scope
+                                  and the assumption go in the description so
+                                  the text and the score agree.
+     Discovery credit:            kta1kri
+     References:                  <RELEASE-ANNOUNCEMENT-URL>; fix commits
+                                  c7e17354, c71a74c8, 04248424, 606bbd11,
+                                  1ae0e45f; evidence
+                                  tests/security/evidence/relay-sqli-prefix.txt;
+                                  advisory <ADVISORY-URL>
+
+   7.A.3  REQUEST 3 - vCalendar pass-the-hash and cross-provider access
+
+     Request type:                Report Vulnerability/Request CVE ID
+     Vendor:                      freemed
+     Product:                     FreeMED (electronic medical record system);
+                                  distribution package name "freemed"
+     Version(s) affected:         all releases prior to <RELEASE-VERSION>; the
+                                  defects were reproduced against the development
+                                  tree the fix is cut from, whose own version
+                                  strings disagree (section 1) - which RELEASED
+                                  line is affected is an owner call, not a
+                                  measurement made here.
+     Version fixed:               <RELEASE-VERSION> (<RELEASE-DATE>)
+     Vulnerability type:          Use of a password hash instead of the password
+                                  for authentication, i.e. pass-the-hash
+                                  (CWE-836; improper authentication, CWE-287);
+                                  authorization bypass through a user-controlled
+                                  key (CWE-639) for the provider parameter. The
+                                  underlying unsalted-MD5 storage (CWE-916) is
+                                  NOT fixed in this release and is out of scope.
+     Root cause:                  vcalendar.php's freemed_get_auth() accepted
+                                  ?user=<name>&hash=<md5 of the password> and
+                                  compared the request-supplied value directly
+                                  against the stored user.userpassword
+                                  (pre-fix vcalendar.php:66-71), so the stored
+                                  digest was itself a usable credential. The
+                                  same endpoint selected the calendar from
+                                  $_REQUEST['physician'] with no comparison
+                                  against the authenticated caller
+                                  (pre-fix vcalendar.php:85-88).
+     Impact:                      Anyone holding a user's stored MD5 password
+                                  digest - from a database read, a backup, a log,
+                                  or the SQL injection fixed in the same release
+                                  - could authenticate to the vCalendar endpoint
+                                  without knowing the password, and could then
+                                  name ANY provider and receive that provider's
+                                  calendar. MEASURED: the digest alone
+                                  authenticated (three distinguishable outcomes
+                                  for a correct digest, an impossible digest and
+                                  no credential), the provider parameter was
+                                  honoured for a caller with no relationship to
+                                  that provider (a non-physician caller's
+                                  response for a named provider was
+                                  byte-identical to the administrator's), and
+                                  the calendar CONTENTS were not demonstrated -
+                                  the reproduced body is the empty calendar
+                                  envelope with the provider's name. Two
+                                  pre-existing PHP 8 defects also made the
+                                  calendar unreachable (an undefined prepare()
+                                  and a count() TypeError), both repaired in the
+                                  same release.
+                                  CONFIGURATION QUALIFIER, part of the finding:
+                                  the GET-hash path authenticates where
+                                  register_argc_argv = Off (what
+                                  php.ini-production ships, i.e. the usual
+                                  production install) and is masked where it is
+                                  On (PHP's compiled default), because the
+                                  endpoint's own argv CLI guard then halts every
+                                  query-string request with a silent empty 200.
+     Affected component:          vcalendar.php, remediated by removing the
+                                  GET-hash authentication path (Basic over TLS
+                                  only, disabled-by-default vcals_legacy_hash
+                                  compatibility switch), moving the credential
+                                  comparison out of SQL and into PHP with
+                                  hash_equals(), and scoping the provider to the
+                                  authenticated caller with a fail-closed
+                                  schedule/view access-control check.
+     Attack vector:               Pass-the-hash:
+                                  AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N = 5.9
+                                  (AC:H: the attacker must already hold the
+                                  stored digest; PR:N: no session is needed).
+                                  Cross-provider access:
+                                  AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N = 6.5,
+                                  with the measured floor
+                                  AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N = 4.3
+                                  because calendar contents were not
+                                  demonstrated.
+                                  Recommended record score: 6.5 (the highest of
+                                  the defensible vectors), with both vectors and
+                                  the configuration qualifier in the
+                                  description.
+     Discovery credit:            kta1kri
+     References:                  <RELEASE-ANNOUNCEMENT-URL>; fix commits
+                                  574ac616, 62af8f2b, f0d53619, 7a60d3ab;
+                                  evidence
+                                  tests/security/evidence/vcalendar-auth.txt,
+                                  tests/security/evidence/vcalendar-provider-scope.txt;
+                                  advisory <ADVISORY-URL>
+
+   7.A.4  WHAT NOT TO PUT IN THE REQUESTS. No credential, no password digest
+          (not even a prefix), no patient data, no reproduction that includes a
+          real account's digest. The committed evidence files are redacted in
+          exactly this way and the request text should stay consistent with them.
+          Do not quote the digest at tests/security/evidence/sweep-notes.md:369.
+
+   7.B DOWNSTREAM NOTIFICATIONS                                  NOT YET SENT -
+                                                                 AWAITING OWNER
+                                                                 APPROVAL
+
+   7.B.1  TO PACKAGERS AND DISTRIBUTORS
+
+     Subject: [ANNOUNCE] FreeMED <RELEASE-VERSION> security release - three
+              remotely reachable defects, patch first
+
+     FreeMED <RELEASE-VERSION> fixes three remotely reachable security defects
+     found by an external reporter (kta1kri) and fixed on the release branch.
+     Please prioritise this update for any host running the application.
+
+      1. help.php served an unvalidated PATH_INFO path (arbitrary file read,
+         CWE-22), reaching the database credentials in lib/settings.php on any
+         front-end that delivers dot segments in PATH_INFO; the endpoint also
+         served its content without authentication. CVE <CVE-ID-F1>.
+      2. Four relay-reachable methods concatenated request data into SQL
+         (CWE-89). An authenticated user could read arbitrary rows - including
+         the entire user table with password digests - and the relay's
+         any-method reachability extended the same class of defect across the
+         API surface. CVE <CVE-ID-F2>.
+      3. vcalendar.php accepted a password digest as the credential
+         (pass-the-hash, CWE-836/CWE-287) and let any authenticated caller read
+         any provider's calendar (CWE-639). CVE <CVE-ID-F3>.
+
+     OPERATOR STEPS THAT ARE NOT AUTOMATIC - please carry them in your advisory
+     text:
+       * vCalendar clients using ?user=&hash= must move to HTTP Basic over TLS,
+         or the site must set the vcals_legacy_hash config option to a true
+         value ('1', 'on', 'yes' or 'true') for the migration window - it is
+         off by default, every use is logged, and it must be turned back off
+         when the log is quiet.
+       * Sites where a non-administrator role reads providers' calendars other
+         than its own must create the schedule/view access-control grant, or
+         that capability is refused with 403 after the upgrade.
+       * The new relay method allowlist ships in log-only mode
+         (data/config/relay-allowlist.php, 'enforce' => false). Enforcement is a
+         deliberate operator step after a miss-collection pass; see the release's
+         doc/RELAY_ALLOWLIST.
+       * Sites with their own php.ini should add register_argc_argv = Off.
+
+     Release: <RELEASE-VERSION>, <RELEASE-DATE>, <RELEASE-ANNOUNCEMENT-URL>.
+     Advisory: <ADVISORY-URL>. Full technical detail, including what was and was
+     not reproduced, is in doc/SECURITY_ADVISORY in the source tree.
+
+     Please hold publication of your own package advisory until
+     <EMBARGO-UNTIL>.
+
+     <MAINTAINER-NAME> <MAINTAINER-EMAIL>
+
+   Note for the owner before sending: the in-tree packaging metadata names
+   debian/ (Maintainer field in debian/control) and freemed.spec for RPM. Any
+   other distributor is outside what this repository can evidence - send the
+   text above to the maintainer addresses your distribution's security process
+   publishes, and record who was told and when in the release notes.
+
+   7.B.2  TO OPERATING CLINICS AND HOSTING OPERATORS
+
+     Subject: action required - FreeMED security update <RELEASE-VERSION>
+
+     A security update for your FreeMED system is available. It fixes three
+     defects in the way the system decides who may read data. To be exact about
+     what was measured: two of the three need a logged-in account to use at all
+     (the calendar one additionally needs a stored fingerprint of a password),
+     and the third let help text be fetched with no login. There is no evidence
+     that anyone has used them against you, and no action on the database is
+     required to install the update.
+
+     What to do:
+       * Install FreeMED <RELEASE-VERSION> on the server, or ask whoever
+         maintains your installation to do so. This is not optional: the defects
+         are remotely reachable.
+       * If calendar software (Outlook, Apple Calendar, a phone) reads provider
+         calendars, it must be reconfigured to use HTTP Basic authentication
+         over HTTPS instead of the old URL containing a password hash, or it
+         will stop working after the update. Ask your maintainer if you are not
+         sure - there is a documented temporary switch to allow more time.
+       * If non-administrator staff (for example front desk or practice
+         managers) fetch other providers' calendars, the update requires an
+         access-control permission for that. Your maintainer can grant it.
+
+     What to watch for afterwards: your administrator can search the server's
+     logs for the words "DEPRECATED hash authentication" and "not in the relay
+     allowlist". The first shows calendar clients that still need reconfiguring;
+     the second is expected during the first days after the update and is used
+     to finish the configuration.
+
+     Questions: <CLINICAL-CONTACT>   (TODO: this address does not exist yet).
+
+     Sent to: <CLINIC-RECIPIENT-LIST>   (TODO: the owner decides whether a
+     clinic-facing deployment exists at all and who is on this list; nothing in
+     this repository names one.)
+
+   7.B.3  TO THE REPORTER (kta1kri)
+
+     Subject: FreeMED - your report, what we fixed, and when we will publish
+
+     Thank you for the report - all three findings were real and two of them
+     were reproduced live against a running stack. We are crediting you as
+     kta1kri in the advisory, the release notes and the CVE records; tell us if
+     you would rather be credited differently or not at all.
+
+     Being straight with you about the three places our measurements differ
+     from the proof of concept, because the advisory's reproduction steps should
+     be exact:
+
+       1. The traversal depth is two segments more than the report states. From
+          the documented install root, 4 x ".." reaches lib/settings.php and 7+
+          reaches an absolute path.
+       2. The traversal does not reproduce on modern front-ends: Apache 2.4.68
+          returns 400 for the raw ".." form and 404 for the single-encoded
+          forms; nginx 1.31.6 returns 400 for the raw form too, and answers
+          those single-encoded forms 200 with an empty page token (no
+          contents); re-tested with AllowEncodedSlashes On and AcceptPathInfo
+          On, still 404. Both consume the dot segments before PHP builds
+          PATH_INFO. The code is unsafe as you wrote, and exploitable on a
+          front-end that preserves dot segments (an Apache older than 2.4.49
+          per public behaviour - we did not test one - or some proxy/FastCGI
+          layouts) - but your "dynamically confirmed" step was
+          confirmed in isolation, by replicating the logic, rather than end to
+          end. The advisory says exactly that.
+       3. The relay entry point in the report does not execute: POST
+          /relay.php/json with a JSON body fatals on
+          Relay_Json::deserialize_parameters(), which is defined nowhere in the
+          tree. Your injection is real and we reproduced it with the method name
+          in PATH_INFO and the arguments as param0..paramN form fields, e.g.
+          UserInterface.GetUsers with param1="x' UNION SELECT username,
+          userpassword FROM user-- -", which returns the user table including
+          the digests.
+
+     We are not claiming a live calendar-content disclosure for the vCalendar
+     item: the digest authenticates (measured, on a stack where
+     register_argc_argv is Off) and the provider parameter was honoured for any
+     authenticated caller, but the calendar body we could reproduce was the
+     empty envelope, so the advisory says "authentication bypass demonstrated
+     live; contents reproducible on a populated install".
+
+     Timeline: CVE IDs requested <CVE-REQUEST-DATE> (we will forward them to
+     you), release <RELEASE-VERSION> on <RELEASE-DATE>, advisory published
+     <PUBLISH-DATE>. If you plan a write-up, tell us the date and we will
+     coordinate - we would rather publish the same day than in a sequence.
+     We have asked downstream packagers to hold until <EMBARGO-UNTIL>.
+
+     <MAINTAINER-NAME> <MAINTAINER-EMAIL>
+
+   7.C PUBLICATION CHECKLIST                                       OWNER ACTIONS
+
+       [ ]  1. Fill every placeholder in SECURITY.md and in this file - the list
+               is section 7.D. The security contact address in SECURITY.md DOES
+               NOT EXIST YET: create the mailbox, and make sure it is monitored,
+               before either file is published.
+       [ ]  2. Release first. <RELEASE-VERSION> must exist, be downloadable, and
+               report the number used in this advisory (see the version note at
+               the top of section 1). Nothing is sent before the fix is
+               available - these defects are remotely reachable and the
+               traversal's payload is a URL.
+       [ ]  3. Decide the disclosure date and write it into <EMBARGO-UNTIL> and
+               the notification drafts. A conventional window is measured from
+               the reporter's acknowledgement; agree it WITH the reporter (draft
+               7.B.3) rather than declaring it.
+       [ ]  4. Request the three CVE IDs (7.A) - or, if you are a CNA or prefer
+               the GitHub route, open a private GitHub Security Advisory on
+               github.com/freemed/freemed and request the IDs through it. Record
+               the assigned IDs in place of <CVE-ID-F1/F2/F3>, in the release
+               notes and in the downstream notices.
+       [ ]  5. Confirm the credit with the reporter and send them draft 7.B.3,
+               including the three corrections in 5.2. Ask whether they are
+               publishing and when.
+       [ ]  6. Send 7.B.1 to each packager/distributor you can evidence, and
+               record who was told and when. Send 7.B.2 only if a clinic-facing
+               deployment exists and you can name its recipients - decide that
+               BEFORE writing the recipient list.
+       [ ]  7. Re-read this file as a hostile reader: every number it quotes must
+               still match the evidence files (the pinned commits are named in
+               section 6), and every "measured" claim must still be one you can
+               point at. The harness is a throwaway stack - do not re-measure on
+               it and call the result product behaviour.
+       [ ]  8. Confirm no credential, digest or PHI is in the published text, and
+               that tests/security/evidence/sweep-notes.md:369 is redacted before
+               anything is published - or state in the advisory that the digest
+               is in the branch history (limitation (h)).
+       [ ]  9. Publish: this file (as doc/SECURITY_ADVISORY), SECURITY.md, the
+               release note paragraphs from doc/RELAY_ALLOWLIST section 4 and
+               doc/VCALENDAR_AUTHENTICATION section 5, and the release itself.
+               There is no CHANGELOG in this repository to update.
+       [ ] 10. Then post to the downstream channels and answer the reporter with
+               the CVE IDs and the published URLs.
+
+   7.D PLACEHOLDERS - FILL BEFORE SENDING ANYTHING
+
+     In SECURITY.md
+       security@<TODO-OWNER-DOMAIN>   the reporting address (does not exist yet)
+       <PGP-FINGERPRINT>              or delete the PGP paragraph
+       <ACK-TARGET>                   acknowledgement target (suggest 3 business
+                                      days)
+       <SUPPORTED-LINE>               the supported version line, e.g. 0.9.x
+       <RELEASE-BRANCH>               the branch releases come from
+
+     In this file, sections 1-6
+       <RELEASE-VERSION>              the version the fix is released in
+       <RELEASE-DATE>                 its release date
+       <RELEASE-ANNOUNCEMENT-URL>     the announcement/release page
+       <ADVISORY-URL>                 where this advisory is published
+
+     In the appendices, 7.A-7.B
+       <CVE-ID-F1>, <CVE-ID-F2>, <CVE-ID-F3>
+       <MAINTAINER-NAME>, <MAINTAINER-EMAIL>
+       <EMBARGO-UNTIL>                agreed with the reporter
+       <CVE-REQUEST-DATE>, <PUBLISH-DATE>
+       <CLINICAL-CONTACT>             a monitored address for clinics
+       <CLINIC-RECIPIENT-LIST>        only if a clinic-facing deployment exists
+
+     Placeholder style: every placeholder above starts with an upper-case letter
+     inside angle brackets, so a reader (or a script) finds them with
+         grep -n '<[A-Z]' SECURITY.md doc/SECURITY_ADVISORY
+     The only other angle-bracket tokens in the two files are quoted response
+     elements from the evidence (<patpay>, <payhistory>), code identifiers
+     (<Class>, <literal>, <Directory>), quoted web-server configuration syntax
+     (<Files *>, in 4.3 and 4.5), the request values the findings concern
+     (<user>, <name>, <path>, <page>, <locale>, <ip>) and the redaction marker
+     <digest> in 3.2 - none of which is a placeholder to fill. The shipped
+     defaults - the log-only relay allowlist and the off-by-default
+     vcals_legacy_hash switch - are NOT placeholders either: they are the released
+     behaviour.

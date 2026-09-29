@@ -23,6 +23,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 LoadObjectDependency('org.freemedsoftware.core.BaseModule');
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
 
 // Class: org.freemedsoftware.core.SupportModule
 //
@@ -156,6 +157,10 @@ class SupportModule extends BaseModule {
 
 	// contructor method
 	public function __construct () {
+		// Enforce the SQL identifier invariant for this module's class-declared
+		// identifiers before anything can build a query from them.
+		$this->_ValidateIdentifiers();
+
 		// Store the rpc map in the meta information
 		$this->_SetMetaInformation('rpc_field_map', $this->rpc_field_map);
 		$this->_SetMetaInformation('distinct_fields', $this->distinct_fields);
@@ -167,6 +172,74 @@ class SupportModule extends BaseModule {
 		// Call parent constructor
 		parent::__construct();
 	} // end function SupportModule
+
+	// Method: _ValidateIdentifiers
+	//
+	//	Enforce the SQL identifier invariant (Task 2.6a / ruling R12) for every
+	//	identifier this class declares in source: $table_name, $order_field,
+	//	$archive_field and $additional_fields.
+	//
+	//	These values come from the module source, never from input or from the
+	//	database, so a failure is a developer error: it is reported loudly with
+	//	trigger_error() and must be caught in development rather than degraded in
+	//	silence. (Values that arrive from a DB row or from configuration are
+	//	handled the other way round — log and refuse; see
+	//	api/PatientInterface.class.php::MoveEmrAttachments.)
+	//
+	//	$additional_fields is the one allowlisted raw-SQL case: its members are
+	//	code-authored expressions by design (SqlIdent::expression() checks the
+	//	shape — no statement terminator, no comment, must end in "AS <alias>").
+	//
+	//	An undeclared/empty identifier is not a failure: it is simply absent.
+	//	$order_field defaults to 'id' and $archive_field to ''.
+	//
+	// See Also:
+	//	<SqlIdent>
+	//
+	protected function _ValidateIdentifiers ( ) {
+		$shapes = array (
+			'table_name'    => 'name',
+			'order_field'   => 'columns',
+			'archive_field' => 'name',
+		);
+		foreach ( $shapes AS $var => $shape ) {
+			$value = $this->$var;
+			if ( $value === NULL or $value === '' or $value === false ) { continue; }
+			$ok = ( $shape == 'name' ) ? SqlIdent::valid( $value ) : SqlIdent::validColumns( $value );
+			if ( ! $ok ) {
+				trigger_error(
+					get_class($this).'::$'.$var.' = '
+					. var_export($value, true)
+					. ' is not a valid SQL identifier (expected '
+					. ( $shape == 'name' ? 'a name, optionally table-qualified' : 'a names/ASC-DESC list' )
+					. '); fix the module declaration — see lib/org/freemedsoftware/core/SqlIdent.class.php',
+					E_USER_ERROR
+				);
+			}
+		}
+
+		// Trusted raw expressions (see method comment)
+		if ( $this->additional_fields !== NULL and $this->additional_fields !== false ) {
+			if ( ! is_array( $this->additional_fields ) ) {
+				trigger_error(
+					get_class($this).'::$additional_fields must be an array of code-authored SQL'
+					. ' expressions, got ' . var_export($this->additional_fields, true),
+					E_USER_ERROR
+				);
+			}
+			foreach ( $this->additional_fields AS $expression ) {
+				if ( SqlIdent::expression( $expression ) === false ) {
+					trigger_error(
+						get_class($this).'::$additional_fields contains '
+						. var_export($expression, true)
+						. ' which is not a valid "expression AS alias" fragment;'
+						. ' it is the one allowlisted raw-SQL case and must stay code-authored',
+						E_USER_ERROR
+					);
+				}
+			}
+		}
+	} // end method _ValidateIdentifiers
 
 	// override check_vars method
 	public function check_vars ($nullvar = "") {
@@ -283,10 +356,15 @@ class SupportModule extends BaseModule {
 		}
 
 		$this->del_pre( $id + 0 );
+		// Category A (2.6f): id is a record key and $id+0 was already the cast
+		// the review judged these sites to be - it is written as intval() in the
+		// UNQUOTED predicate instead of addslashes()ing that number inside
+		// hand-written quotes (addslashes() on a number is not escaping). The
+		// cast stays inline in the concatenation so the static gate can see it.
 		if($this->archive_field=="")
-			$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id+0 )."'";
+			$query = "DELETE FROM `".$this->table_name."` WHERE id = ".intval( $id );
 		else
-			$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=1 WHERE id = '".addslashes( $id+0 )."'";
+			$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=1 WHERE id = ".intval( $id );
 		$result = $GLOBALS['sql']->query ( $query );
 		return true;
 	} // end function del
@@ -297,7 +375,10 @@ class SupportModule extends BaseModule {
 		}
 
 		$this->del_pre( $id + 0 );
-		$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=0 WHERE id = '".addslashes( $id+0 )."'";
+		// Category A (2.6f): as in del() - the cast the site already relied on,
+		// written as intval() in an unquoted predicate (inline, so the static
+		// gate can see it).
+		$query = "UPDATE `".$this->table_name."` SET ".$this->archive_field."=0 WHERE id = ".intval( $id );
 		$result = $GLOBALS['sql']->query ( $query );
 		return true;
 	} // end function del
@@ -402,13 +483,45 @@ class SupportModule extends BaseModule {
 		if($criteria_field!=NULL)
 			$condition=" WHERE {$criteria_field} LIKE '".$GLOBALS['sql']->escape( $criteria )."%' ";
 		if($this->archive_field!=""){
-			if($criteria_field!=NULL)
-				$condition=$condition." AND ".$this->archive_field." != 1 ";
-			else 
-				$condition=" WHERE ".$this->archive_field." != 1 ";	
+			// Category B: the archive flag is an identifier this class declares;
+			// it is re-validated here and refused by log rather than fatal (R12).
+			$archive = SqlIdent::name( $this->archive_field );
+			if ( $archive === false ) {
+				syslog( LOG_ERR, get_class($this).'::GetRecords| refusing invalid archive_field '.var_export($this->archive_field, true) );
+			} else if($criteria_field!=NULL) {
+				$condition .= sprintf(' AND %s != 1 ', $archive);
+			} else {
+				$condition = sprintf(' WHERE %s != 1 ', $archive);
+			}
 		}
 		
-		$q = "SELECT *,".( is_array( $this->additional_fields ) ? join(',', $this->additional_fields).',' : '' ).$this->table_name.".id AS id FROM `".$this->table_name."` ".$this->FormJoinClause()." ".$condition." ".( $this->order_field != 'id' ? "ORDER BY ".$this->order_field : "" )." LIMIT {$limit}";
+		// Category B: table and ORDER BY identifiers. The constructor has already
+		// enforced their shape; name()/columns() re-check and refuse by log (R12).
+		// (2.6b F7) the ORDER BY guard is the truthiness guard the sibling methods
+		// (picklist here, EMRModule::picklist) use: an empty/NULL order_field means
+		// "no ORDER BY", not a refused identifier - the old `!= 'id'` guard sent it
+		// to columns() and logged a bogus refusal on every call.
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetRecords| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$order = ( $this->order_field and $this->order_field != 'id' ) ? SqlIdent::columns( $this->order_field ) : '';
+		if ( $order === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetRecords| refusing invalid order_field '.var_export($this->order_field, true) );
+			$order = '';
+		}
+		// Category A: $limit was interpolated raw into LIMIT (write primitive).
+		$q = sprintf(
+			'SELECT *,%s%s.id AS id FROM %s %s %s %s LIMIT %d',
+			( is_array( $this->additional_fields ) ? join(',', $this->additional_fields).',' : '' ),
+			$table,
+			$table,
+			$this->FormJoinClause(),
+			$condition,
+			( $order ? sprintf('ORDER BY %s', $order) : '' ),
+			intval( $limit )
+		);
 		//return $q;
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetRecords
@@ -426,10 +539,30 @@ class SupportModule extends BaseModule {
 		// Create join clause if there is one
 		$join = '';
 		if (is_array($this->table_join)) {
+			// Category B (2.6b): every token in the clause is an identifier -
+			// the joined table ($v), the local key column ($k) and this class's
+			// own table name - so each is emitted by SqlIdent::name(). A refusal
+			// is logged and that term is dropped rather than spliced (R12: a
+			// data-driven refusal is never fatal). The clause only adds columns
+			// to the base table's row set (LEFT OUTER JOIN), and no term
+			// references another term's alias, so dropping one cannot change
+			// which rows the statements that use it return.
+			$table_id = SqlIdent::name( $this->table_name );
+			if ( $table_id === false ) {
+				syslog( LOG_ERR, get_class($this).'::FormJoinClause| refusing invalid table_name '.var_export($this->table_name, true) );
+				return '';
+			}
 			$j = array();
 			foreach ( $this->table_join AS $k => $v ) {
 				if ( ($k+0) == 0 ) {
-					$j[] = "LEFT OUTER JOIN {$v} ON ".$this->table_name.".{$k} = {$v}.id";
+					$key_id = SqlIdent::name( $k );
+					$join_id = SqlIdent::name( $v );
+					if ( $key_id === false or $join_id === false ) {
+						syslog( LOG_ERR, get_class($this).'::FormJoinClause| dropping invalid join identifier '.var_export(array($k, $v), true) );
+						continue;
+					}
+					$j[] = sprintf('LEFT OUTER JOIN %s ON %s.%s = %s.id',
+						$join_id, $table_id, $key_id, $join_id);
 				}
 			}
 			$join = join(' ', $j);
@@ -463,37 +596,62 @@ class SupportModule extends BaseModule {
 		}
 		$condition="";
 		if(is_array($c))
-			$condition=" WHERE (".join(' OR ',$c).")";
+			// $c holds predicates whose values were driver-quoted where they were
+			// composed (above), so the assembly itself carries no data.
+			$condition=sprintf(" WHERE (%s)", join(' OR ', $c));
 		if($this->archive_field!=""){
-			if(is_array($c)!=NULL)
-				$condition=$condition." AND (".$this->archive_field." != 1 OR ".$this->archive_field." IS NULL) ";
-			else 
-				$condition=" WHERE ".$this->archive_field." != 1 OR ".$this->archive_field." IS NULL ";	
+			// Category B: archive flag identifier (see GetRecords).
+			$archive = SqlIdent::name( $this->archive_field );
+			if ( $archive === false ) {
+				syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid archive_field '.var_export($this->archive_field, true) );
+			} else if($condition!='') {
+				$condition .= sprintf(' AND (%s != 1 OR %s IS NULL) ', $archive, $archive);
+			} else {
+				$condition = sprintf(' WHERE %s != 1 OR %s IS NULL ', $archive, $archive);
+			}
 		}
 		if($fieldValues!=NULL){
-			$count=0;
-			$fieldsq='';
-			foreach ($fieldValues AS $k => $v) {
-				if($count==0){
-					$fieldsq=$k."= '".$v."' ";
+			// Category C rewrite (Task 2.6a): the field names come from the
+			// caller, so they are validated as identifiers and an invalid one is
+			// refused with a log line rather than spliced into the clause
+			// (ruling R12 — no fatal from a data value); the values are bound
+			// through the driver's quote().
+			$c = array();
+			foreach ((array) $fieldValues AS $k => $v) {
+				$name = SqlIdent::name( $k );
+				if ( $name === false ) {
+					syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid criteria field '.var_export($k, true) );
+					continue;
+				}
+				$c[] = $name." = ".$GLOBALS['sql']->quote( $v );
+			}
+			$fieldsq = join( ' AND ', $c );
+			if ( $fieldsq != '' ) {
+				// $fieldsq is a join of identifier-validated, driver-quoted
+				// predicates built just above (Category C).
+				if($condition==''){
+					$condition=sprintf(' WHERE %s', $fieldsq);
 				}
 				else{
-					$fieldsq=$fieldsq." AND ".$k."= '".$v."' ";
+					$condition=sprintf('%s AND %s', $condition, $fieldsq);
 				}
-				$count++;				
-			}
-			if($condition==''){
-				$condition=" WHERE ".$fieldsq;	
-			}
-			else{
-				$condition=$condition." AND ".$fieldsq;	
 			}
 		}
 		//return $condition;
-		$query = "SELECT * FROM ".$this->table_name.
-			" ".$this->FormJoinClause()." ".$condition.
-			( $this->order_field ? " ORDER BY ".$this->order_field : "" ).
-			" LIMIT 20";
+		// Category B: table and ORDER BY identifiers (see GetRecords).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid table_name '.var_export($this->table_name, true) );
+			return array();
+		}
+		$order = $this->order_field ? SqlIdent::columns( $this->order_field ) : '';
+		if ( $order === false ) {
+			syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid order_field '.var_export($this->order_field, true) );
+			$order = '';
+		}
+		$query = sprintf( 'SELECT * FROM %s %s %s %s LIMIT 20',
+			$table, $this->FormJoinClause(), $condition,
+			( $order ? sprintf('ORDER BY %s', $order) : '' ) );
 		//syslog(LOG_INFO, $query);
 		$result = $GLOBALS['sql']->queryAll($query);
 		if (!count($result)) { return array(); }
@@ -595,7 +753,13 @@ class SupportModule extends BaseModule {
 		//syslog(LOG_INFO, get_class($this)." : _setup()");
 		if (!$this->create_table()) { return false; }
 		//syslog(LOG_INFO, get_class($this)." : done with create_table");
-		$c = $GLOBALS['sql']->queryOne( "SELECT COUNT(*) FROM ".$this->table_name );
+		// Category B: table identifier (see GetRecords).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::_setup| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$c = $GLOBALS['sql']->queryOne( sprintf('SELECT COUNT(*) FROM %s', $table) );
 		if ( $c > 0 ) { return false; }
 		return CallMethod( 'org.freemedsoftware.api.TableMaintenance.ImportStockData', $this->table_name );
 	} // end function _setup

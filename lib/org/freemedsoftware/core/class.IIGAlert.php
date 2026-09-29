@@ -75,11 +75,11 @@ class IIGAlert {
 			$SoapResponse=$SoapClient->PutIIGQuestion($SoapData); 
 			if($ResponseArray['ReturnValue']=='SUCCESS') {
 				echo "success";
-				$SqlStatement="update openemr_postcalendar_events set pc_hb_confirm=concat(pc_hb_confirm,".$ResponseArray['ReturnMessage'].") where pc_eid=".$row['pc_eid'];
+				$SqlStatement="update openemr_postcalendar_events set pc_hb_confirm=concat(pc_hb_confirm,".$GLOBALS['sql']->quote($ResponseArray['ReturnMessage']).") where pc_eid=".intval($row['pc_eid']);
 				mysql_query($SqlStatement);
 			} else {
 				echo "fail";
-				$SqlStatement="update openemr_postcalendar_events set pc_hb_confirm='Failed' where pc_eid=".$row['pc_eid'];
+				$SqlStatement="update openemr_postcalendar_events set pc_hb_confirm='Failed' where pc_eid=".intval($row['pc_eid']);
 				mysql_query($SqlStatement);
 			}
 		} // end loop

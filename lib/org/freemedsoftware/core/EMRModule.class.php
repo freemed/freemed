@@ -23,6 +23,7 @@
  // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 LoadObjectDependency('org.freemedsoftware.core.BaseModule');
+LoadObjectDependency('org.freemedsoftware.core.SqlIdent');
 
 // Class: org.freemedsoftware.core.EMRModule
 //
@@ -179,6 +180,10 @@ class EMRModule extends BaseModule {
 	protected $loinc_display;
 
 	public function __construct () {
+		// Enforce the SQL identifier invariant for this module's class-declared
+		// identifiers before anything can build a query from them.
+		$this->_ValidateIdentifiers();
+
 		// Add meta information for patient_field, if it exists
 		if (isset($this->record_name)) {
 			$this->_SetMetaInformation('record_name', $this->record_name);
@@ -205,6 +210,48 @@ class EMRModule extends BaseModule {
 		// Call parent constructor
 		parent::__construct();
 	} // end constructor
+
+	// Method: _ValidateIdentifiers
+	//
+	//	Enforce the SQL identifier invariant (Task 2.6a / ruling R12) for every
+	//	identifier this class declares in source: $table_name, $date_field,
+	//	$order_fields and $summary_order_by.
+	//
+	//	These values come from the module source, never from input or from the
+	//	database, so a failure is a developer error: it is reported loudly with
+	//	trigger_error() and must be caught in development rather than degraded in
+	//	silence. (Values that arrive from a DB row or from configuration are
+	//	handled the other way round — log and refuse; see
+	//	api/PatientInterface.class.php::MoveEmrAttachments.)
+	//
+	//	An undeclared/empty identifier is not a failure: it is simply absent.
+	//
+	// See Also:
+	//	<SqlIdent>
+	//
+	protected function _ValidateIdentifiers ( ) {
+		$shapes = array (
+			'table_name'       => 'name',
+			'date_field'       => 'name',
+			'order_fields'     => 'columns',
+			'summary_order_by' => 'columns',
+		);
+		foreach ( $shapes AS $var => $shape ) {
+			$value = $this->$var;
+			if ( $value === NULL or $value === '' or $value === false ) { continue; }
+			$ok = ( $shape == 'name' ) ? SqlIdent::valid( $value ) : SqlIdent::validColumns( $value );
+			if ( ! $ok ) {
+				trigger_error(
+					get_class($this).'::$'.$var.' = '
+					. var_export($value, true)
+					. ' is not a valid SQL identifier (expected '
+					. ( $shape == 'name' ? 'a name, optionally table-qualified' : 'a names/ASC-DESC list' )
+					. '); fix the module declaration — see lib/org/freemedsoftware/core/SqlIdent.class.php',
+					E_USER_ERROR
+				);
+			}
+		}
+	} // end method _ValidateIdentifiers
 
 	// override check_vars method
 	function check_vars ($nullvar = "") {
@@ -244,8 +291,26 @@ class EMRModule extends BaseModule {
 		// If there is no table_name, we can skip this altogether
 		if (empty($this->table_name)) { return false; }
 
+		// Category B (2.6e fix round 1): the table identifier is validated and
+		// backtick-quoted like the ones its siblings in this class pass through
+		// SqlIdent (_setup, picklist, GetRecentRecord). A table name cannot be
+		// "logged and dropped" the way an optional clause fragment can - a FROM
+		// clause with no table is unbuildable - so an invalid declaration
+		// refuses the query, which is what the siblings do. For a valid
+		// declaration the emitted statement is unchanged: a quoted identifier
+		// is the same identifier.
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::locked| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+
 		if (!isset($locked['id_'.$id])) {
-			$query = "SELECT COUNT(*) AS lock_count FROM ".$this->table_name." WHERE id='".addslashes($id)."' AND (locked > 0)";
+			// Category A (2.6e): the record id is an integer key, so it is cast
+			// rather than quoted - addslashes() inside quotes was the one shape
+			// the static gate excludes, and quoting a numeric column is not
+			// escaping. Same rows: MySQL compares id=<int> and id='<int>' alike.
+			$query = "SELECT COUNT(*) AS lock_count FROM ".$table." WHERE id=".intval($id)." AND (locked > 0)";
 			$result = $GLOBALS['sql']->queryOne( $query );
 			$locked['id_'.$id] = ($result > 0) && !( is_a( $result, 'DB_Error' ) );
 		}
@@ -414,7 +479,11 @@ class EMRModule extends BaseModule {
 		}
 
 		$this->del_pre( $id );
-		$query = "DELETE FROM `".$this->table_name."` WHERE id = '".addslashes( $id )."'";
+		// Category A (2.6f): the record id is an integer key, so it is cast
+		// (id=<int>) rather than addslashes()ed inside hand-written quotes - the
+		// shape the static gate excludes. Same rows: MySQL compares id=5 and
+		// id='5' alike (see RenderHtmlView/locked()).
+		$query = "DELETE FROM `".$this->table_name."` WHERE id = ".intval( $id );
 		$result = $GLOBALS['sql']->query( $query );
 		return $result ? true : false;
 	} // end public function del
@@ -530,7 +599,13 @@ class EMRModule extends BaseModule {
 	// Method: _setup
 	public function _setup ( ) {
 		if (!$this->create_table()) { return false; }
-		$c = $GLOBALS['sql']->queryOne( "SELECT COUNT(*) FROM ".$this->table_name );
+		// Category B: table identifier (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::_setup| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$c = $GLOBALS['sql']->queryOne( sprintf('SELECT COUNT(*) FROM %s', $table) );
 		if ( $c > 0 ) { return false; }
 		return CallMethod('org.freemedsoftware.api.TableMaintenance.ImportStockData', $this->table_name );
 	} // end function _setup
@@ -582,11 +657,43 @@ class EMRModule extends BaseModule {
 	//
 	public function picklist ( $varname, $patient, $conditions = false ) {
 		// TODO: sanitize conditions or disable entirely ... perhaps select from a list of possibles defined by the module?
-		$query = "SELECT * FROM `".$this->table_name."` WHERE ".
-			"( `".$this->patient_field.
-				"` = '".addslashes($patient)."') ".
-			( $conditions ? " AND ( ".$conditions." ) " : "" ).
-			( $this->order_fields ? "ORDER BY ".$this->order_fields : "" );
+		// Category B: table and patient-field identifiers (refused by log, R12).
+		$table = SqlIdent::name( $this->table_name );
+		$pfield = SqlIdent::name( $this->patient_field );
+		if ( $table === false or $pfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid table_name/patient_field '.var_export($this->table_name, true).'/'.var_export($this->patient_field, true) );
+			return array();
+		}
+		$order = $this->order_fields ? SqlIdent::columns( $this->order_fields ) : '';
+		if ( $order === false ) {
+			syslog( LOG_ERR, get_class($this).'::picklist| refusing invalid order_fields '.var_export($this->order_fields, true) );
+			$order = '';
+		}
+		// Category C (2.6b): $conditions is a caller-composed WHERE fragment (see
+		// the TODO above) and no in-tree call site passes it. This method cannot
+		// quote predicates it did not compose, so the fragment is shape-checked
+		// here instead: anything that could terminate the statement (`;`), open a
+		// comment (`--`, `/*`, `#`) or re-quote an identifier (backtick) is
+		// refused with a log line and no rows, rather than spliced. Refused
+		// rather than dropped: $conditions is the caller's filter, so dropping it
+		// would widen the result set instead of preserving it.
+		//
+		// The non-string refusal (2.6f) is the one its declared sibling carries
+		// (FreemedDb::distinct_values' $where): an array/object reaching the
+		// (string) cast below would be built into the statement as "Array"
+		// instead of being refused, so the two checks are now identical.
+		$conditions_sql = '';
+		if ( $conditions ) {
+			if ( !is_string( $conditions ) or preg_match( '/[;`\x00]|--|\/\*|#/', $conditions ) ) {
+				syslog( LOG_ERR, get_class($this).'::picklist| refusing unsafe conditions fragment '.var_export($conditions, true) );
+				return array();
+			}
+			$conditions_sql = sprintf(' AND ( %s ) ', $conditions);
+		}
+		$query = sprintf( 'SELECT * FROM %s WHERE ( %s = %s ) %s %s',
+			$table, $pfield, $GLOBALS['sql']->quote( $patient ),
+			$conditions_sql,
+			( $order ? sprintf('ORDER BY %s', $order) : '' ) );
 		$result = $GLOBALS['sql']->queryAll( $query );
 		foreach ( $result AS $r ) {
 			if (!(strpos($this->widget_hash, "##") === false)) {
@@ -714,25 +821,47 @@ class EMRModule extends BaseModule {
 			$this->summary_query[] = $this->table_name.'.id AS __actual_id';
 		}
 
-		// Form conditional clause, if it exists
+		// Form conditional clause, if it exists.
+		//
+		// Deferred item 14 (final wave): the key is an IDENTIFIER, so it is
+		// validated and backtick-quoted by SqlIdent - it used to be built with
+		// the VALUE escaper (escape()), which is the wrong tool for a name.
+		// R12: a refusal here logs and DROPS the clause, never fataling the
+		// request; if no key validates at all the whole clause is dropped so
+		// the statement cannot gain a dangling "AND ( )".
+		$conditional_clause = NULL;
 		if ( is_array ($conditional) ) {
+			$c = array();
 			foreach ($conditional AS $k => $v) {
-				$c[] = "`".$GLOBALS['sql']->escape($k)."` = ".$GLOBALS['sql']->quote($v);
+				$k_id = SqlIdent::name( $k );
+				if ( $k_id === false ) {
+					syslog( LOG_ERR, get_class($this).'::qualified_query| refusing invalid conditional column '.var_export($k, true) );
+					continue;
+				}
+				$c[] = $k_id." = ".$GLOBALS['sql']->quote($v);
 			}
-			$conditional_clause = join ( ' AND ', $c );
+			if ( $c ) { $conditional_clause = join ( ' AND ', $c ); }
 		}
 
 		// get last $items results
+		//
+		// Category A (2.6f): the patient id is a *value*, so the driver quotes it
+		// (quote() supplies the surrounding quotes) - it was addslashes()ed inside
+		// hand-written quotes, the one shape the static gate excludes. The row
+		// limit sits in an UNQUOTED numeric context, so it is cast rather than
+		// escaped, exactly as the same class of splice was fixed at
+		// UserInterface.class.php:270 in this sweep. Both are reachable from the
+		// public GetList($patient, $items) above.
 		$query = "SELECT *".
-			( (count($this->summary_query)>0) ? 
+			( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 			",".join(",", $this->summary_query)." " : " " ).
 			"FROM ".$this->table_name." ".
 			( is_array($this->summary_query_link) ? " ".join(',',$_from).' ' : ' ' ).
-			"WHERE ".$this->patient_field."='".addslashes($patient)."' ".
+			"WHERE ".$this->patient_field."=".$GLOBALS['sql']->quote($patient)." ".
 			($this->summary_conditional ? 'AND '.$this->summary_conditional.' ' : '' ).
-			($conditional ? 'AND ( '.$conditional_clause.' ) ' : '' ).
+			($conditional_clause ? 'AND ( '.$conditional_clause.' ) ' : '' ).
 			"ORDER BY ".( (is_array($this->summary_query_link) and $this->summary_order_by == 'id') ? $this->table_name.'.' : '' ).$this->summary_order_by." DESC ".
-			( $items ? "LIMIT ".addslashes($items) : '' );
+			( $items ? "LIMIT ".intval($items) : '' );
 
 		// Return full hash
 		return $GLOBALS['sql']->queryAll( $query );
@@ -754,16 +883,55 @@ class EMRModule extends BaseModule {
 	//	Associative array (hash) of record
 	//
 	public function GetRecentRecord ( $patient, $recent_date = NULL ) {
+		// Category A (2.6b F4): the date is validated as Y-m-d before it reaches
+		// a predicate, because the driver's quote(false) emits a bare 0 - which
+		// compares equal to MySQL's zero-date ('0000-00-00'). A value that is not
+		// Y-m-d (ImportDate() answers false for anything it cannot parse) drops
+		// the date qualifier with a log line instead of being quoted. This site's
+		// ternary already dropped the predicate for false, so every
+		// currently-working case behaves exactly as before; the zero-date hazard
+		// F4 describes is live in Scheduler, where the date is the primary
+		// criterion (measured - see the batch-C report).
+		$rDate = NULL;
 		if ( $recent_date ) {
 			$s = CreateObject( 'org.freemedsoftware.api.Scheduler' );
-			$rDate = $s->ImportDate( $recent_date );
-		} else {
-			$rDate = NULL;
+			$parsed = $s->ImportDate( $recent_date );
+			if ( preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', (string) $parsed ) ) {
+				$rDate = $parsed;
+			} else {
+				syslog( LOG_ERR, get_class($this).'::GetRecentRecord| ignoring non-Y-m-d recent_date '.var_export($recent_date, true) );
+			}
 		}
-		$query = "SELECT * FROM `".$this->table_name."` ".
-			"WHERE `".$this->patient_field."` = '".addslashes($patient)."' ".
-			( $rDate ? " AND `".$this->date_field."` <= '".addslashes($rDate)."' " : "" ).
-			"ORDER BY ".$this->date_field." DESC, id DESC";
+		// Category B (2.6b F3): the table and patient column are required - if
+		// either is not a single identifier the statement cannot be built, so it
+		// is refused with a log line and this method's empty answer (R12: a
+		// data-driven refusal is never fatal).
+		//
+		// NOTE (2.6b F3): $date_field is deliberately NOT part of that refusal.
+		// It is optional metadata - modules exist that declare no date column -
+		// so an absent or unusable value drops the ORDER BY term and falls back
+		// to `id DESC`, the fallback R12 names for a data-driven identifier. The
+		// pre-review code bundled all three into one check and refused the whole
+		// query, turning "this module has no date column" into "no record".
+		$table = SqlIdent::name( $this->table_name );
+		$pfield = SqlIdent::name( $this->patient_field );
+		if ( $table === false or $pfield === false ) {
+			syslog( LOG_ERR, get_class($this).'::GetRecentRecord| refusing invalid table_name/patient_field '.var_export(array($this->table_name, $this->patient_field), true) );
+			return NULL;
+		}
+		// Category B (2.6f): $date_field is optional metadata and some modules
+		// legitimately declare none (Vitals, Immunizations), so this is the same
+		// SILENT truthiness guard the sibling ORDER BY handling uses - it used to
+		// log LOG_ERR on every call for those modules, which is noise for a
+		// normal declaration, not a refusal. The fallback (`id DESC`) is in the
+		// statement below.
+		$dfield = $this->date_field ? SqlIdent::name( $this->date_field ) : false;
+		// Category A: the patient id and the validated Y-m-d date. The date
+		// qualifier is only emitted when there is a date column to qualify on.
+		$query = sprintf( 'SELECT * FROM %s WHERE %s = %s%s ORDER BY %s',
+			$table, $pfield, $GLOBALS['sql']->quote( $patient ),
+			( ( $dfield and $rDate ) ? sprintf(' AND %s <= %s ', $dfield, $GLOBALS['sql']->quote( $rDate )) : '' ),
+			( $dfield ? sprintf('%s DESC, id DESC', $dfield) : 'id DESC' ) );
 		$res = $GLOBALS['sql']->queryRow( $query );
 		return $res;
 	} // end method GetRecentRecord
@@ -821,13 +989,26 @@ class EMRModule extends BaseModule {
 
 		// Actual renderer for formatting array
 		if ($this->patient_field) {
+			// Category B (2.6e fix round 1): table identifier, validated and
+			// backtick-quoted like the siblings in this class that already call
+			// SqlIdent (_setup, picklist, GetRecentRecord). A refusal here cannot
+			// fall back to dropping the token - the FROM clause needs a table -
+			// so an invalid declaration refuses the render instead.
+			$table = SqlIdent::name( $this->table_name );
+			if ( $table === false ) {
+				syslog( LOG_ERR, get_class($this).'::RenderHtmlView| refusing invalid table_name '.var_export($this->table_name, true) );
+				return false;
+			}
 			// If this is an EMR module with additional
 			// fields, import them
 			$query = "SELECT *".
-				( (count($this->summary_query)>0) ? 
+				( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
-				"FROM ".$this->table_name." ".
-				"WHERE id='".addslashes($id)."'";
+				"FROM ".$table." ".
+				// Category A (2.6e): the record id is an integer key; cast it
+				// (id=<int>) instead of splicing it inside quotes with
+				// addslashes(), which is the shape the static gate excludes.
+				"WHERE id=".intval($id);
 			$rec = $GLOBALS['sql']->queryRow($query);
 		} else {
 			$rec = $GLOBALS['sql']->get_link( $t, $id );
@@ -922,11 +1103,13 @@ class EMRModule extends BaseModule {
 			if ($this->patient_field) {
 				// If this is an EMR module with additional
 				// fields, import them
+				// Category A (2.6f): the record id is an integer key; cast it
+				// rather than splicing it inside quotes with addslashes().
 				$query = "SELECT *".
-					( (count($this->summary_query)>0) ? 
+					( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 					",".join(",", $this->summary_query)." " : " " ).
 					"FROM ".$this->table_name." ".
-					"WHERE id='".addslashes($record)."'";
+					"WHERE id=".intval($record);
 				$rec = $GLOBALS['sql']->queryRow($query);
 			} else {
 				$rec = $GLOBALS['sql']->get_link( $t, $record );
@@ -990,11 +1173,20 @@ class EMRModule extends BaseModule {
 				$my_template = $this->print_template;
 			}
 
+			// Category A (2.6f): the record id is an integer key; cast it rather
+			// than splicing it inside quotes with addslashes().
+			//
+			// NOTE (2.6f): $record is undefined in this method - the parameter is
+			// $id (pre-existing; addslashes($record) warned here too). It is left
+			// as-is deliberately: intval(NULL) is 0, which reproduces the old
+			// `id=''` predicate (MySQL coerces '' to 0 as well), while switching
+			// to $id would silently start fetching a record this method has never
+			// fetched. Routed as a functional bug, not fixed under a security task.
 			$query = "SELECT *".
-				( (count($this->summary_query)>0) ? 
+				( ((is_array($this->summary_query) ? count($this->summary_query) : 0)>0) ? 
 				",".join(",", $this->summary_query)." " : " " ).
 				"FROM ".$this->table_name." ".
-				"WHERE id='".addslashes($record)."'";
+				"WHERE id=".intval($record);
 			$rec = $GLOBALS['sql']->queryRow($query);
 
 			// Handle templating elsewhere

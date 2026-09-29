@@ -32,9 +32,10 @@ class ModuleSearch {
 	public function picklist ( $keyword,$moduleType=NULL ) {
 		$q = "";
 		if($moduleType)
-			$q = "module_associations='".$moduleType."' and ";
+			$q = "module_associations=".$GLOBALS['sql']->quote($moduleType)." and ";
 		$q = $q."module_name LIKE '" . $GLOBALS['sql']->escape( $keyword ) . "%'";
- 		$query = "SELECT module_name,module_class FROM modules WHERE " . $q;
+		// $q is a join of driver-quoted predicates composed above (Category C).
+		$query = sprintf('SELECT module_name,module_class FROM modules WHERE %s', $q);
 		syslog(LOG_INFO, "PICK| $query");
 		$result = $GLOBALS['sql']->queryAll( $query );
 		foreach($result AS $k){

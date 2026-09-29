@@ -92,8 +92,18 @@ class Callin extends SupportModule {
 
 		// Call parent constructor
 		parent::__construct();
-		if($this->archive_field)
-			$this->archive_check = "(".$this->archive_field." IS NULL OR ".$this->archive_field."=0)";
+		if($this->archive_field) {
+			// Category B: archive_field is a schema identifier this class
+			// declares. It is validated here and the clause is composed from the
+			// validated name, so a raw identifier is never spliced into a query
+			// (R12: refusal is a log line, and the declared default '1' stands).
+			$archive = SqlIdent::name( $this->archive_field );
+			if ( $archive === false ) {
+				syslog( LOG_ERR, get_class($this).'::__construct| refusing invalid archive_field '.var_export($this->archive_field, true) );
+			} else {
+				$this->archive_check = sprintf( '(%s IS NULL OR %s=0)', $archive, $archive );
+			}
+		}
 	} // end constructor Callin
 
 	protected function add_pre ( &$data ) {
@@ -117,7 +127,13 @@ class Callin extends SupportModule {
 	//	Hash.
 	public function GetAll () {
 		freemed::acl_enforce( 'emr', 'read' );
-		$q = "SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y %H:%m:%s') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin WHERE ".$this->archive_check." ORDER BY cidatestamp DESC";
+		// Category C: $this->archive_check is code-authored in the constructor
+		// from the validated archive_field identifier, so this assembly carries
+		// no data. str_replace is used because the statement contains
+		// DATE_FORMAT specifiers ('%m/%d/%Y') that sprintf would consume.
+		$q = str_replace( '{{archive}}', $this->archive_check,
+			"SELECT CONCAT(cilname, ', ', cifname, ' ', cimname) AS name, cicomplaint AS complaint, citookcall AS took_call, cidatestamp AS call_date, DATE_FORMAT(cidatestamp, '%m/%d/%Y %H:%m:%s') AS call_date_mdy, cihphone AS phone_home, ciwphone AS phone_work, id FROM callin WHERE {{archive}} ORDER BY cidatestamp DESC"
+		);
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAll
 
@@ -136,10 +152,15 @@ class Callin extends SupportModule {
 		freemed::acl_enforce( 'emr', 'read' );
 		$conditions = "";
 		if($criteria!=NULL){
+			// Category A: every LIKE value is quoted by the driver where the
+			// predicate is composed (the wildcards stay inside the literal).
 			if($criteria['cilname'])
-				$conditions=$conditions.($conditions?" AND ":" ")."ci.cilname like '%".$criteria['cilname']."%'";
+				$conditions=$conditions.($conditions?" AND ":" ").sprintf('ci.cilname like %s', $GLOBALS['sql']->quote('%'.$criteria['cilname'].'%'));
 			if($criteria['cifname'])
-				$conditions=$conditions.($conditions?" AND ":" ")."ci.cilname like '%".$criteria['cilname']."%'";
+				// NOTE (2.6b): the predicate text is unchanged from the original,
+				// which tests ci.cilname for both criteria (a copy/paste defect,
+				// reported separately) — only the value handling is fixed here.
+				$conditions=$conditions.($conditions?" AND ":" ").sprintf('ci.cilname like %s', $GLOBALS['sql']->quote('%'.$criteria['cilname'].'%'));
 			if($criteria['id'])
 				$conditions=$conditions.($conditions?" AND ":" ")."ci.id =".$GLOBALS['sql']->quote($criteria['id']);
 			if(!$criteria['ciarchive'])
@@ -148,8 +169,15 @@ class Callin extends SupportModule {
 			$conditions=$this->archive_check;
 		if(!$conditions)
 			$conditions = 1;
-		
-		$q = "SELECT CONCAT(ci.cilname, ', ', ci.cifname, ' ', ci.cimname) AS name, ci.cicomplaint AS complaint, ci.citookcall AS took_call, ci.cidatestamp AS call_date,ci.ciarchive as archive, DATE_FORMAT(ci.cidatestamp, '%m\/%d\/%Y %H:%m:%s') AS call_date_mdy, ci.ciphysician AS provider, CONCAT(CASE WHEN ci.cihphone!='' then CONCAT('(H)',ci.cihphone) ELSE '' END, CASE WHEN ci.ciwphone!='' THEN CONCAT(' (W)',ci.ciwphone) ELSE '' END) as contact_phone, ci.id, CONCAT( insci.insconame, ' (', insci.inscocity, ', ', insci.inscostate, ')') AS coverage FROM callin ci LEFT JOIN insco insci on insci.id = ci.covinsco and ci.ciisinsured=1 WHERE ".$conditions." ORDER BY ci.cidatestamp DESC";		
+
+		// Category C: $conditions is a join of predicates whose values were
+		// quoted where they were composed above (and of the code-authored
+		// archive clause), so this assembly carries no data. str_replace is used
+		// because the statement contains DATE_FORMAT specifiers that sprintf
+		// would consume.
+		$q = str_replace( '{{conditions}}', $conditions,
+			"SELECT CONCAT(ci.cilname, ', ', ci.cifname, ' ', ci.cimname) AS name, ci.cicomplaint AS complaint, ci.citookcall AS took_call, ci.cidatestamp AS call_date,ci.ciarchive as archive, DATE_FORMAT(ci.cidatestamp, '%m\/%d\/%Y %H:%m:%s') AS call_date_mdy, ci.ciphysician AS provider, CONCAT(CASE WHEN ci.cihphone!='' then CONCAT('(H)',ci.cihphone) ELSE '' END, CASE WHEN ci.ciwphone!='' THEN CONCAT(' (W)',ci.ciwphone) ELSE '' END) as contact_phone, ci.id, CONCAT( insci.insconame, ' (', insci.inscocity, ', ', insci.inscostate, ')') AS coverage FROM callin ci LEFT JOIN insco insci on insci.id = ci.covinsco and ci.ciisinsured=1 WHERE {{conditions}} ORDER BY ci.cidatestamp DESC"
+		);
 		return $GLOBALS['sql']->queryAll( $q );
 	} // end method GetAllWithInsurance
 	
@@ -163,10 +191,16 @@ class Callin extends SupportModule {
 	//
 	public function GetDetailedRecord( $id) {
 		freemed::acl_enforce( 'emr', 'read' );
-		$q = "SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cilname AS lastname, cifname AS firstname, cimname AS middlename, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
-		.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, c.id ,f.psrname as facility, f.id as facilityid"
-		.",ph.id AS physicianid, CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
-		."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id=".$id." AND ".$this->archive_check;
+		// Category A: the record id is cast; Category C: the archive clause is
+		// code-authored in the constructor. The statement is assembled with
+		// str_replace because it contains DATE_FORMAT specifiers that sprintf
+		// would consume.
+		$q = str_replace( array( '{{id}}', '{{archive}}' ), array( intval($id), $this->archive_check ),
+			"SELECT CONCAT(c.cilname, ', ', c.cifname, ' ', c.cimname) AS name, c.cilname AS lastname, cifname AS firstname, cimname AS middlename, c.cicomplaint AS complaint, c.citookcall AS took_call, c.cidatestamp AS call_date"
+			.", DATE_FORMAT(c.cidatestamp, '%m/%d/%Y') AS call_date_mdy,c.cidob AS dob, c.cihphone AS phone_home, c.ciwphone AS phone_work, c.id ,f.psrname as facility, f.id as facilityid"
+			.",ph.id AS physicianid, CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician "
+			."FROM callin c LEFT OUTER JOIN facility f ON c.cifacility=f.id LEFT OUTER JOIN physician ph ON c.ciphysician=ph.id where c.id={{id}} AND {{archive}}"
+		);
 		return $GLOBALS['sql']->queryRow( $q );
 	} // end method GetDetailedRecord
 	
@@ -181,11 +215,14 @@ class Callin extends SupportModule {
 	public function GetDetailedRecordWithIntake( $id) {
 		freemed::acl_enforce( 'emr', 'read' );
 		
-		$id = $GLOBALS['sql']->quote($id);
+		// Category A: the record id is quoted once, into a local, instead of
+		// overwriting the parameter and splicing it into two statements.
+		$id_sql = $GLOBALS['sql']->quote($id);
 		
-		$q = "select * FROM callin c where c.id=".$id." AND ".$this->archive_check;
+		// Category C: the archive clause is code-authored (constructor).
+		$q = sprintf('select * FROM callin c where c.id=%s AND %s', $id_sql, $this->archive_check);
 		$return = $GLOBALS['sql']->queryRow( $q );
-		$q = "select tii.id as treatment_id,tii.* from treatment_initial_intake tii where tii.intaketype = 'callin' and tii.patient = ".$id;
+		$q = sprintf("select tii.id as treatment_id,tii.* from treatment_initial_intake tii where tii.intaketype = 'callin' and tii.patient = %s", $id_sql);
 		$r = $GLOBALS['sql']->queryRow( $q );
 		//return $r;
 		if($r){

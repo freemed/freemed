@@ -299,8 +299,10 @@ class ScannedDocuments extends EMRModule {
 	} // end method fax_widget
 
 	public function GetPatientAllRecords($patient){
+		// Category A: the value is what the driver quotes; the surrounding
+		// quotes belong to quote(), never both.
 		$patient = $GLOBALS['sql']->quote($patient);
-		$q = "select im.id,im.imagedt,im.imagefile,im.imagetype,im.imagecat,CONCAT(ph.phylname, ', ', ph.phyfname, ' ', ph.phymname) AS physician from images im left join physician ph on ph.id = im.imagephy where im.imagepat=".$patient;
+		$q = sprintf('select im.id,im.imagedt,im.imagefile,im.imagetype,im.imagecat,CONCAT(ph.phylname, \', \', ph.phyfname, \' \', ph.phymname) AS physician from images im left join physician ph on ph.id = im.imagephy where im.imagepat=%s', $patient);
 		return $GLOBALS['sql']->queryAll( $q );
 	}
 

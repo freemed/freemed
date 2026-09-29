@@ -125,10 +125,18 @@ class ProgressNotes extends EMRModule {
 	//	Boolean, whether or not a note exists.
 	//
 	public function NoteForDate ( $patient, $date ) {
-		$q = "SELECT COUNT(id) AS my_count ".
-			"FROM ".$this->table_name." WHERE ".
-			"pnotespat = '".addslashes($patient)."' AND ".
-			"pnotesdt = '".addslashes($date)."'";
+		// Category B: table_name identifier; Category A: patient id and date.
+		// (Refused by log, R12.)
+		$table = SqlIdent::name( $this->table_name );
+		if ( $table === false ) {
+			syslog( LOG_ERR, get_class($this).'::NoteForDate| refusing invalid table_name '.var_export($this->table_name, true) );
+			return false;
+		}
+		$q = sprintf('SELECT COUNT(id) AS my_count FROM %s WHERE pnotespat = %s AND pnotesdt = %s',
+			$table,
+			$GLOBALS['sql']->quote($patient),
+			$GLOBALS['sql']->quote($date)
+		);
 		$my_count = $GLOBALS['sql']->queryOne($q);
 		if ($my_count > 0) {
 			return true;

@@ -1,0 +1,1255 @@
+=== vcalendar.php — Task 3.1 evidence: the GET-hash credential path and the Basic-auth repair ===
+
+PROVENANCE
+  repo / branch        /home/jbuchbinder/Code/projects/freemed   security/mitigation-2026-09
+  pre-fix base         8938de83
+  fix commits          574ac616  SECURITY: reject the vCalendar GET-hash credential path (CWE-287/CWE-836)
+                       7a60d3ab  fix: initialise $d in Physician::fullName() on PHP 8 (count() TypeError)
+  server               Apache/2.4.68 (Debian), PHP 8.3.35, http://localhost:38081
+                       (the served docroot is a copy of the checkout, synced before every run)
+  register_argc_argv   Off — the container's php ini. With it On, the script's own CLI guard
+                       (if ($_SERVER['argc'])) fires for ANY request carrying a query string and
+                       lib/freemed.php's error_reporting(E_ERROR|E_WARNING|E_PARSE) masks the
+                       E_USER_ERROR, so the endpoint answers an empty 200 and nothing can be
+                       measured. Stated here because every row below depends on it.
+                       FIX ROUND 1 (R23): the rows below — captured before the fix — did depend
+                       on this. They no longer do, and any future run must not be read against
+                       this caveat: commit f0d53619 replaces the argv guard with
+                       `if (PHP_SAPI === 'cli')`, which no ini setting can move. Re-measured at
+                       HEAD under BOTH settings, with Apache gracefully restarted between them,
+                       with identical results: anonymous 401/0 bytes, ?user=clerk&hash=<correct md5>
+                       401/0 bytes, clerk ?physician=1 403/33 bytes, ?type=fromdate&m=13&d=45&y=2026
+                       400/13 bytes. Under register_argc_argv=On an unmodified copy of this file
+                       (the argv guard) answered an empty 200 to every one of those query-string
+                       requests. See section 6 for the full run.
+  display_errors       On (harness php-overrides.ini). Warnings therefore appear inside the
+                       response bodies in this harness. A production install with
+                       display_errors=Off receives the same payload without the warning line —
+                       see the note after section 2.
+  measurement          ./transcript.sh, one curl per case; the request URL, the Basic
+                       Authorization header and curl's `user` option are all fed in through a
+                       0600 curl config file, so no credential ever appears in argv.
+  syslog capture       every "--- syslog lines for this request" block below is read from a
+                       THROWAWAY Perl SOCK_DGRAM listener this harness starts on /dev/log
+                       (vcal-work/syslog-sink.pl, appending to /tmp/freemed-syslog.log, with
+                       `chmod 777 /dev/log` so www-data can write the socket). The php:8.3-apache
+                       image ships no syslog daemon and no /dev/log, so without that sink every
+                       syslog() call in FreeMED is silently discarded. The syslog CALLS are
+                       product code; the SINK is a harness artifact and does not ship.
+                       FIX ROUND 1 (Minor-2): this line is the disclosure the review asked for.
+                       The driver is also polled for ALL new sink lines; the original poll
+                       filtered on the string "vcalendar", which is why the
+                       "ACL| schedule/view// forced for admin user" line (it does not contain
+                       that string) was missing from the provider-scope rows.
+  REDACTION            the password is <pw>, the Basic credentials are <b64 ...>, the stored MD5
+                       digest is <correct md5> and an impossible digest is <bogus md5>; any other
+                       32-hex token is <32-hex digest>. The digest was confirmed to match the
+                       stored userpassword out of band, never by printing it: the match was checked
+                       with a direct SQL comparison, which returned a row count of 1 for the account
+                       the row below names (0 for the impossible digest), so each "digest accepted"
+                       claim in this file is backed by a row count and not by a printed credential.
+                       No patient data appears in any body: the scheduler table is empty (see the
+                       PHI note in section 5).
+
+The harness DB (MariaDB 10.11) carried this seed for the rows below, and it was
+removed again afterwards. The pinned fingerprint (entemplate 1|1, payrec 1|3,
+patient_emr 1|5, user 2|1,2, patient/procrec/vitals 0 rows, modules 135 = 134
+distinct classes) was checked before the seed and again after the teardown:
+
+    INSERT INTO practice (id, pracname) VALUES (1, 'Verification Practice');
+    INSERT INTO physician (id, phylname, phyfname, phymname, phydegrees, physsn, phypractice)
+      VALUES (1, 'Verifier', 'Val', 'Q', '', '', 1);
+    INSERT INTO user (id, username, userpassword, userdescrip, usertype, userrealphy, userfname, userlname)
+      SELECT 3, 'vcphys', userpassword, 'Verification provider', 'misc', 1, 'Val', 'Verifier'
+      FROM user WHERE id = 2;      -- digest copied by SELECT, never written as a literal
+
+  The one pinned table touched is `user` (2 rows -> 3); it is back to 2 rows now.
+  `config` gained one optional row for the escape-hatch probe, also removed.
+
+
+1. PRE-FIX BASELINE — base 8938de83, before any change
+   Expected from the brief and observed: the three GET-hash outcomes are DISTINGUISHABLE
+   (clerk 377 bytes / admin 1809 bytes / impossible digest 625 bytes) while anonymous gets a
+   prepare() fatal instead of a 401 challenge.
+
+######## PHASE=pre BASE=http://localhost:38081 commit=8938de83 ########
+
+===== CASE anonymous
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      # no credentials
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 964
+--- response sha256     : 1e86cae4bcebee07
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "Authorization" in <b>/var/www/html/vcalendar.php</b> on line <b>36</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught Error: Call to undefined function prepare() in /var/www/html/vcalendar.php:62
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(93): freemed_basic_auth()
+    #1 {main}
+      thrown in <b>/var/www/html/vcalendar.php</b> on line <b>62</b><br />
+
+--- syslog lines for this request:
+    2026-09-28 18:30:11 <134>Sep 28 18:30:11 freemed[45]: vCalendar [get] username =
+
+===== CASE get-hash-clerk-correct-digest
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=clerk&hash=<correct md5>  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=clerk&hash=<correct md5>"
+      # no credentials
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 377
+--- response sha256     : 8ee1cc7c0379bc6e
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "physician" in <b>/var/www/html/vcalendar.php</b> on line <b>99</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    Not enough information provided.
+--- syslog lines for this request:
+    2026-09-28 18:30:11 <134>Sep 28 18:30:11 freemed[41]: vCalendar [get] username = clerk
+
+===== CASE get-hash-admin-correct-digest
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>"
+      # no credentials
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 1809
+--- response sha256     : 809d10dd8c2d07cf
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "physician" in <b>/var/www/html/vcalendar.php</b> on line <b>99</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php</b> on line <b>190</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>55</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>56</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>57</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>58</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>78</b><br />
+    <br />
+    <b>Warning</b>:  Undefined variable $d in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>93</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /var/www/html/lib/org/freemedsoftware/core/Physician.class.php:93
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(123): Physician-&gt;fullName()
+    #1 {main}
+      thrown in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>93</b><br />
+
+--- syslog lines for this request:
+    2026-09-28 18:30:11 <134>Sep 28 18:30:11 freemed[42]: vCalendar [get] username = admin
+
+===== CASE get-hash-admin-bogus-digest
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=admin&hash=<bogus md5>  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=admin&hash=<32-hex digest>"
+      # no credentials
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 625
+--- response sha256     : 452a19d8d74fa3c1
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "Authorization" in <b>/var/www/html/vcalendar.php</b> on line <b>36</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught Error: Call to undefined function prepare() in /var/www/html/vcalendar.php:62
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(93): freemed_basic_auth()
+    #1 {main}
+      thrown in <b>/var/www/html/vcalendar.php</b> on line <b>62</b><br />
+
+--- syslog lines for this request:
+    2026-09-28 18:30:12 <134>Sep 28 18:30:12 freemed[46]: vCalendar [get] username = admin
+
+===== CASE get-hash-admin-no-hash
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=admin  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=admin"
+      # no credentials
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 738
+--- response sha256     : 7ca54d0e1c39fe70
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "Authorization" in <b>/var/www/html/vcalendar.php</b> on line <b>36</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught Error: Call to undefined function prepare() in /var/www/html/vcalendar.php:62
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(93): freemed_basic_auth()
+    #1 {main}
+      thrown in <b>/var/www/html/vcalendar.php</b> on line <b>62</b><br />
+
+--- syslog lines for this request:
+    2026-09-28 18:30:12 <134>Sep 28 18:30:12 freemed[43]: vCalendar [get] username = admin
+
+===== CASE basic-admin-correct
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=basic:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      header = "Authorization: Basic <redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 2272
+--- response sha256     : 33fe1fc2e4677537
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "physician" in <b>/var/www/html/vcalendar.php</b> on line <b>99</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php</b> on line <b>190</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>55</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>56</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>57</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>58</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>78</b><br />
+    <br />
+    <b>Warning</b>:  Undefined variable $d in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>93</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /var/www/html/lib/org/freemedsoftware/core/Physician.class.php:93
+
+--- syslog lines for this request:
+    2026-09-28 18:30:12 <134>Sep 28 18:30:12 freemed[44]: vCalendar [get] username =
+
+===== CASE basic-admin-wrong
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=basicbad:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      header = "Authorization: Basic <redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 715
+--- response sha256     : 14f1feb38db2b03e
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>50</b><br />
+    Not authorized.
+--- syslog lines for this request:
+    2026-09-28 18:30:12 <134>Sep 28 18:30:12 freemed[45]: vCalendar [get] username =
+
+===== CASE basic-clerk-correct
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=basic:clerk
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      header = "Authorization: Basic <redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 840
+--- response sha256     : e70cd5a3f1e08f2d
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "physician" in <b>/var/www/html/vcalendar.php</b> on line <b>99</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    Not enough information provided.
+--- syslog lines for this request:
+    2026-09-28 18:30:13 <134>Sep 28 18:30:13 freemed[41]: vCalendar [get] username =
+
+===== CASE curl-u-admin-correct
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=curlu:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      user = "<redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 2272
+--- response sha256     : 33fe1fc2e4677537
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "physician" in <b>/var/www/html/vcalendar.php</b> on line <b>99</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php</b> on line <b>190</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>55</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>56</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>57</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>58</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>78</b><br />
+    <br />
+    <b>Warning</b>:  Undefined variable $d in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>93</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /var/www/html/lib/org/freemedsoftware/core/Physician.class.php:93
+
+--- syslog lines for this request:
+    2026-09-28 18:30:13 <134>Sep 28 18:30:13 freemed[42]: vCalendar [get] username =
+
+===== CASE basic-clerk-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=basic:clerk
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      header = "Authorization: Basic <redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 2154
+--- response sha256     : be97d0bebd1d5bc4
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php</b> on line <b>190</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>55</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>56</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>57</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>58</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>78</b><br />
+    <br />
+    <b>Warning</b>:  Undefined variable $d in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>93</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /var/www/html/lib/org/freemedsoftware/core/Physician.class.php:93
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(123): Physician-&gt;fullName()
+
+--- syslog lines for this request:
+    2026-09-28 18:30:13 <134>Sep 28 18:30:13 freemed[46]: vCalendar [get] username =
+
+===== CASE basic-admin-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=basic:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      header = "Authorization: Basic <redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 2154
+--- response sha256     : be97d0bebd1d5bc4
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php</b> on line <b>190</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>55</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>56</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>57</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>58</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>78</b><br />
+    <br />
+    <b>Warning</b>:  Undefined variable $d in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>93</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /var/www/html/lib/org/freemedsoftware/core/Physician.class.php:93
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(123): Physician-&gt;fullName()
+
+--- syslog lines for this request:
+    2026-09-28 18:30:13 <134>Sep 28 18:30:13 freemed[43]: vCalendar [get] username =
+
+===== CASE anonymous-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      # no credentials
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 964
+--- response sha256     : 1e86cae4bcebee07
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "Authorization" in <b>/var/www/html/vcalendar.php</b> on line <b>36</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught Error: Call to undefined function prepare() in /var/www/html/vcalendar.php:62
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(93): freemed_basic_auth()
+    #1 {main}
+      thrown in <b>/var/www/html/vcalendar.php</b> on line <b>62</b><br />
+
+--- syslog lines for this request:
+    2026-09-28 18:30:14 <134>Sep 28 18:30:14 freemed[44]: vCalendar [get] username =
+
+===== CASE basic-admin-physician-2
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=2  auth=basic:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=2"
+      header = "Authorization: Basic <redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 2154
+--- response sha256     : be97d0bebd1d5bc4
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>71</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "user" in <b>/var/www/html/vcalendar.php</b> on line <b>73</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "hash" in <b>/var/www/html/vcalendar.php</b> on line <b>74</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/vcalendar.php</b> on line <b>76</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key "type" in <b>/var/www/html/vcalendar.php</b> on line <b>104</b><br />
+    <br />
+    <b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php</b> on line <b>190</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>55</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>56</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>57</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>58</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>78</b><br />
+    <br />
+    <b>Warning</b>:  Undefined variable $d in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>93</b><br />
+    <br />
+    <b>Fatal error</b>:  Uncaught TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /var/www/html/lib/org/freemedsoftware/core/Physician.class.php:93
+    Stack trace:
+    #0 /var/www/html/vcalendar.php(123): Physician-&gt;fullName()
+
+--- syslog lines for this request:
+    2026-09-28 18:30:14 <134>Sep 28 18:30:14 freemed[45]: vCalendar [get] username =
+
+######## raw artefacts: /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/vcal-work/raw-pre ########
+
+
+2. POST-FIX — commits 574ac616 + 7a60d3ab applied
+   Expected and observed: every GET-hash request (correct digest, impossible digest,
+   no hash at all) and every request with no credentials answer 401 with the Basic
+   challenge; the Basic branch authenticates and answers text/x-vCalendar.
+
+######## PHASE=post BASE=http://localhost:38081 commit=62af8f2b ########
+   FIX ROUND 1 (Minor-7): header and title disagree, and the header is the precise one. The
+   section above is titled "574ac616 + 7a60d3ab applied", but the tree actually SERVED for this
+   run was commit 62af8f2b — the HEAD at the time, which carries task 3.2's provider scoping on
+   top of this task's two commits. Read this transcript as "the 3.1 fix measured on a tree that
+   also contains 3.2", not as a 3.1-only tree. The post-fix rows below are therefore identical
+   for the 3.1 and 3.2 questions by construction, not by coincidence.
+
+===== CASE anonymous
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      # no credentials
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : Basic realm="FreeMED v0.8.8 vCalendar"
+--- response bytes      : 0
+--- response body       : <empty, 0 bytes>
+--- syslog lines for this request:
+
+===== CASE get-hash-clerk-correct-digest
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=clerk&hash=<correct md5>  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=clerk&hash=<correct md5>"
+      # no credentials
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : Basic realm="FreeMED v0.8.8 vCalendar"
+--- response bytes      : 0
+--- response body       : <empty, 0 bytes>
+--- syslog lines for this request:
+
+===== CASE get-hash-admin-correct-digest
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>"
+      # no credentials
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : Basic realm="FreeMED v0.8.8 vCalendar"
+--- response bytes      : 0
+--- response body       : <empty, 0 bytes>
+--- syslog lines for this request:
+
+===== CASE get-hash-admin-bogus-digest
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=admin&hash=<bogus md5>  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=admin&hash=<bogus md5>"
+      # no credentials
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : Basic realm="FreeMED v0.8.8 vCalendar"
+--- response bytes      : 0
+--- response body       : <empty, 0 bytes>
+--- syslog lines for this request:
+
+===== CASE get-hash-admin-no-hash
+--- request (redacted)  : http://localhost:38081/vcalendar.php?user=admin  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?user=admin"
+      # no credentials
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : Basic realm="FreeMED v0.8.8 vCalendar"
+--- response bytes      : 0
+--- response body       : <empty, 0 bytes>
+--- syslog lines for this request:
+
+===== CASE basic-admin-correct
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=basic:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      header = "Authorization: Basic <b64 admin:pw>"
+--- HTTP status         : 200
+--- Content-Type        : text/x-vCalendar;charset=UTF-8
+--- Content-Disposition : inline; filename=20260928.1.vcs
+--- WWW-Authenticate     : 
+--- response bytes      : 222
+--- response sha256     : 7389b3a6ac8a5fec
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID:Val Q. Verifier, 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog lines for this request:
+
+===== CASE basic-admin-wrong
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=basicbad:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      header = "Authorization: Basic <b64 admin:wrong>"
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 15
+--- response sha256     : ff41f41055fd86c7
+--- response body (redacted, first 30 lines):
+    Not authorized.
+--- syslog lines for this request:
+
+===== CASE basic-clerk-correct
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=basic:clerk
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      header = "Authorization: Basic <b64 clerk:pw>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 32
+--- response sha256     : 9368ebdcb71e53f5
+--- response body (redacted, first 30 lines):
+    Not enough information provided.
+--- syslog lines for this request:
+
+===== CASE curl-u-admin-correct
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=curlu:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      user = "<redacted>"
+--- HTTP status         : 200
+--- Content-Type        : text/x-vCalendar;charset=UTF-8
+--- Content-Disposition : inline; filename=20260928.1.vcs
+--- WWW-Authenticate     : 
+--- response bytes      : 222
+--- response sha256     : 7389b3a6ac8a5fec
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID:Val Q. Verifier, 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog lines for this request:
+
+===== CASE basic-clerk-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=basic:clerk
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      header = "Authorization: Basic <b64 clerk:pw>"
+--- HTTP status         : 403
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 33
+--- response sha256     : a1cdeffeb286fc61
+--- response body (redacted, first 30 lines):
+    Not authorized for that provider.
+--- syslog lines for this request:
+    2026-09-28 18:40:55 <133>Sep 28 18:40:55 freemed[41]: vCalendar [get] provider 1 refused for user 2
+
+===== CASE basic-admin-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=basic:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      header = "Authorization: Basic <b64 admin:pw>"
+--- HTTP status         : 200
+--- Content-Type        : text/x-vCalendar;charset=UTF-8
+--- Content-Disposition : inline; filename=20260928.1.vcs
+--- WWW-Authenticate     : 
+--- response bytes      : 222
+--- response sha256     : 7389b3a6ac8a5fec
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID:Val Q. Verifier, 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog lines for this request:
+
+===== CASE anonymous-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=none
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      # no credentials
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : Basic realm="FreeMED v0.8.8 vCalendar"
+--- response bytes      : 0
+--- response body       : <empty, 0 bytes>
+--- syslog lines for this request:
+
+===== CASE basic-admin-physician-2
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=2  auth=basic:admin
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=2"
+      header = "Authorization: Basic <b64 admin:pw>"
+--- HTTP status         : 200
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 1613
+--- response sha256     : d0b8ca4f7c72b44a
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined array key 0 in <b>/var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php</b> on line <b>190</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>55</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>56</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>57</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>58</b><br />
+    <br />
+    <b>Warning</b>:  Trying to access array offset on null in <b>/var/www/html/lib/org/freemedsoftware/core/Physician.class.php</b> on line <b>78</b><br />
+    <br />
+    <b>Warning</b>:  Cannot modify header information - headers already sent by (output started at /var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php:190) in <b>/var/www/html/vcalendar.php</b> on line <b>259</b><br />
+    <br />
+    <b>Warning</b>:  Cannot modify header information - headers already sent by (output started at /var/www/html/lib/org/freemedsoftware/core/FreemedDb.class.php:190) in <b>/var/www/html/vcalendar.php</b> on line <b>260</b><br />
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID: , 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog lines for this request:
+
+===== CASE phys-self-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=physbasic:vcphys
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      header = "Authorization: Basic <b64 vcphys:pw>"
+--- HTTP status         : 200
+--- Content-Type        : text/x-vCalendar;charset=UTF-8
+--- Content-Disposition : inline; filename=20260928.1.vcs
+--- WWW-Authenticate     : 
+--- response bytes      : 222
+--- response sha256     : 7389b3a6ac8a5fec
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID:Val Q. Verifier, 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog lines for this request:
+
+===== CASE phys-self-no-param
+--- request (redacted)  : http://localhost:38081/vcalendar.php  auth=physbasic:vcphys
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php"
+      header = "Authorization: Basic <b64 vcphys:pw>"
+--- HTTP status         : 200
+--- Content-Type        : text/x-vCalendar;charset=UTF-8
+--- Content-Disposition : inline; filename=20260928.1.vcs
+--- WWW-Authenticate     : 
+--- response bytes      : 222
+--- response sha256     : 7389b3a6ac8a5fec
+--- response body (redacted, first 30 lines):
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID:Val Q. Verifier, 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog lines for this request:
+
+===== CASE phys-other-physician-2
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=2  auth=physbasic:vcphys
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=2"
+      header = "Authorization: Basic <b64 vcphys:pw>"
+--- HTTP status         : 403
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 33
+--- response sha256     : a1cdeffeb286fc61
+--- response body (redacted, first 30 lines):
+    Not authorized for that provider.
+--- syslog lines for this request:
+    2026-09-28 18:41:06 <133>Sep 28 18:41:06 freemed[41]: vCalendar [get] provider 2 refused for user 3
+
+===== CASE phys-wrong-password
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=physbad:vcphys
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      header = "Authorization: Basic <b64 vcphys:wrong>"
+--- HTTP status         : 401
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 15
+--- response sha256     : ff41f41055fd86c7
+--- response body (redacted, first 30 lines):
+    Not authorized.
+--- syslog lines for this request:
+
+===== CASE clerk-as-physician-1
+--- request (redacted)  : http://localhost:38081/vcalendar.php?physician=1  auth=basic:clerk
+--- curl config (redacted):
+      url = "http://localhost:38081/vcalendar.php?physician=1"
+      header = "Authorization: Basic <b64 clerk:pw>"
+--- HTTP status         : 403
+--- Content-Type        : text/html; charset=UTF-8
+--- Content-Disposition : 
+--- WWW-Authenticate     : 
+--- response bytes      : 33
+--- response sha256     : a1cdeffeb286fc61
+--- response body (redacted, first 30 lines):
+    Not authorized for that provider.
+--- syslog lines for this request:
+    2026-09-28 18:41:09 <133>Sep 28 18:41:09 freemed[46]: vCalendar [get] provider 1 refused for user 2
+
+######## raw artefacts: /home/jbuchbinder/.hermes/cache/scratch/freemed-verify/vcal-work/raw-post ########
+
+3. The vcals_legacy_hash escape hatch (default OFF — hash path dead)
+######## PROBE A: vcals_legacy_hash escape hatch (must default OFF)
+config_rows_before
+0
+
+===== PROBE A1 config absent (default)
+--- request (redacted): http://localhost:38081/vcalendar.php?user=clerk&hash=<correct md5>
+--- HTTP status: 401
+--- Content-Type: text/html; charset=UTF-8
+--- bytes: 0
+--- body (redacted):
+
+--- syslog:
+
+===== PROBE A2 config absent, bogus digest
+--- request (redacted): http://localhost:38081/vcalendar.php?user=admin&hash=<32-hex digest>
+--- HTTP status: 401
+--- Content-Type: text/html; charset=UTF-8
+--- bytes: 0
+--- body (redacted):
+
+--- syslog:
+c_option	c_value	c_type
+vcals_legacy_hash	on	YesNo
+
+===== PROBE A3 config ON (opt-in)
+--- request (redacted): http://localhost:38081/vcalendar.php?user=clerk&hash=<correct md5>
+--- HTTP status: 200
+--- Content-Type: text/html; charset=UTF-8
+--- bytes: 32
+--- body (redacted):
+    Not enough information provided.
+--- syslog:
+    2026-09-28 18:39:05 <133>Sep 28 18:39:05 freemed[41]: vCalendar [get] DEPRECATED hash authentication used (vcals_legacy_hash=on), claimed username = clerk, remote = 192.168.128.1
+
+===== PROBE A4 config ON, bogus digest
+--- request (redacted): http://localhost:38081/vcalendar.php?user=admin&hash=<32-hex digest>
+--- HTTP status: 401
+--- Content-Type: text/html; charset=UTF-8
+--- bytes: 0
+--- body (redacted):
+
+--- syslog:
+    2026-09-28 18:39:06 <133>Sep 28 18:39:06 freemed[42]: vCalendar [get] DEPRECATED hash authentication used (vcals_legacy_hash=on), claimed username = admin, remote = 192.168.128.1
+
+===== PROBE A5 config ON, correct digest, admin (physician=1 default)
+--- request (redacted): http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>
+--- HTTP status: 200
+--- Content-Type: text/x-vCalendar;charset=UTF-8
+--- bytes: 222
+--- body (redacted):
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID:Val Q. Verifier, 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog:
+    2026-09-28 18:39:06 <133>Sep 28 18:39:06 freemed[46]: vCalendar [get] DEPRECATED hash authentication used (vcals_legacy_hash=on), claimed username = admin, remote = 192.168.128.1
+
+===== PROBE A6 config removed again -> dead
+--- request (redacted): http://localhost:38081/vcalendar.php?user=clerk&hash=<correct md5>
+--- HTTP status: 401
+--- Content-Type: text/html; charset=UTF-8
+--- bytes: 0
+--- body (redacted):
+
+--- syslog:
+
+######## PROBE B: populated scheduler - is event data (PHI shape) emitted?
+--------------
+INSERT INTO scheduler (id, caldateof, caltype, calphysician, calpatient, calhour, calminute, calduration, calprenote, calstatus) VALUES (1, CURDATE(), 'pat', 1, 1, 9, 30, 30, 'verification appointment note', 'scheduled')
+--------------
+
+ERROR 1452 (23000) at line 1: Cannot add or update a child row: a foreign key constraint fails (`freemed`.`patient_emr`, CONSTRAINT `patient_emr_ibfk_1` FOREIGN KEY (`patient`) REFERENCES `patient` (`id`) ON DELETE CASCADE)
+
+===== PROBE B1 admin, own provider, with one event
+--- request (redacted): http://localhost:38081/vcalendar.php
+--- HTTP status: 200
+--- Content-Type: text/x-vCalendar;charset=UTF-8
+--- bytes: 222
+--- body (redacted):
+    <br />
+    <b>Warning</b>:  Undefined variable $buffer in <b>/var/www/html/lib/org/freemedsoftware/core/vCalendar.class.php</b> on line <b>61</b><br />
+    BEGIN:VCALENDAR
+    VERSION:1.0
+    PRODID:Val Q. Verifier, 
+    TZ:-07
+    END:VCALENDAR
+
+--- syslog:
+scheduler_rows_after
+0
+
+4. tests/security/repro-vcalendar-hash.sh — verdicts, verbatim
+   The repo's own hostile probe, run four ways against the live harness.
+
+4.1 fail-closed control: FREEMED_TEST_PW unset (exit 2, nothing measured)
+   $ env -u FREEMED_TEST_PW bash tests/security/repro-vcalendar-hash.sh
+repro: INCONCLUSIVE - FREEMED_TEST_PW is empty, so there is nothing to hash.
+
+This probe replays MD5(FREEMED_TEST_PW) as the `hash` parameter. With an empty
+password it would send MD5('') and report "not vulnerable" without ever sending
+a real credential - a false clean. Refusing to run.
+
+  FREEMED_TEST_USER=admin FREEMED_TEST_PW=<password> BASE=<url> repro-vcalendar-hash.sh
+
+Never hardcode the password here: it belongs in the environment only.
+
+4.2 BEFORE — the true pre-fix tree (vcalendar.php and Physician.class.php both at 8938de83)
+   $ bash tests/security/repro-vcalendar-hash.sh          (exit 2)
+repro: vcalendar.php pass-the-hash (GET hash = MD5(password)) + negative control
+base=http://localhost:38081  user=admin  pw=<set>  hash=<correct md5> (the replayed digest - this IS the attack payload)
+note: a response body is printed only when it carries no calendar marker AND the
+      request it answers is not classified as accepted; every withheld body is
+      reported by size and marker name instead, never printed.
+note: the digest and the payload never appear in curl argv (the URL goes in on
+      stdin via `curl -K -`).
+
+GET http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>
+HTTP 200
+Content-Type: text/html; charset=UTF-8  bytes=1809
+
+-- negative control: digest that cannot match any credential
+GET http://localhost:38081/vcalendar.php?user=admin&hash=<32-hex digest>
+HTTP 200
+Content-Type: text/html; charset=UTF-8  bytes=625
+body(no calendar marker matched, excerpt as received): <br /> <b>Warning</b>:  Undefined array key "argc" in <b>/var/www/html/vcalendar.php</b> on line <b>28</b><br /> <br /> <b>Warning</b>:  Trying to access array 
+
+-- differential: accepted-credential HTTP 200 / text/html; charset=UTF-8 / 1809 bytes (rejection marker: absent);
+   control HTTP 200 / text/html; charset=UTF-8 / 625 bytes (rejection marker: absent)
+>>> RESULT: INCONCLUSIVE - the two responses differ, but NEITHER the accepted-credential
+    request nor the negative control carries a rejection marker (HTTP 200 vs 200, 1809 vs
+    625 bytes), so no accept/reject pattern is established and nothing was measured.
+    Do NOT read this as "not vulnerable": check the endpoint by hand (syslog/error log,
+    or a request that reaches the calendar code with its physician/type/day parameters)
+    before treating vcalendar as fixed.
+
+4.3 BEFORE, variant — pre-fix authentication with the count() guard from 7a60d3ab applied,
+    i.e. the tree in which the calendar is actually reachable (exit 1, EXPLOITED)
+   $ bash tests/security/repro-vcalendar-hash.sh
+repro: vcalendar.php pass-the-hash (GET hash = MD5(password)) + negative control
+base=http://localhost:38081  user=admin  pw=<set>  hash=<correct md5> (the replayed digest - this IS the attack payload)
+note: a response body is printed only when it carries no calendar marker AND the
+      request it answers is not classified as accepted; every withheld body is
+      reported by size and marker name instead, never printed.
+note: the digest and the payload never appear in curl argv (the URL goes in on
+      stdin via `curl -K -`).
+
+GET http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>
+HTTP 200
+Content-Type: text/html; charset=UTF-8  bytes=1886
+
+>>> EXPLOITED: iCalendar payload served without the plaintext password
+body(1886 bytes): WITHHELD - a leak marker matched, so no calendar bytes are printed
+>>> RESULT: EXPLOITED - vcalendar.php accepts the stored MD5 digest as proof of identity
+    What was measured: the request carrying only MD5(FREEMED_TEST_PW) as `hash`
+    returned a calendar payload (HTTP 200, Content-Type text/html; charset=UTF-8).
+    What was NOT measured: how far that access reaches - the body is withheld.
+
+4.4 AFTER — the fixed tree (574ac616 + 7a60d3ab + 62af8f2b) (exit 2)
+   $ bash tests/security/repro-vcalendar-hash.sh
+repro: vcalendar.php pass-the-hash (GET hash = MD5(password)) + negative control
+base=http://localhost:38081  user=admin  pw=<set>  hash=<correct md5> (the replayed digest - this IS the attack payload)
+note: a response body is printed only when it carries no calendar marker AND the
+      request it answers is not classified as accepted; every withheld body is
+      reported by size and marker name instead, never printed.
+note: the digest and the payload never appear in curl argv (the URL goes in on
+      stdin via `curl -K -`).
+
+GET http://localhost:38081/vcalendar.php?user=admin&hash=<correct md5>
+HTTP 401
+Content-Type: text/html; charset=UTF-8  bytes=0
+
+-- negative control: digest that cannot match any credential
+GET http://localhost:38081/vcalendar.php?user=admin&hash=<32-hex digest>
+HTTP 401
+Content-Type: text/html; charset=UTF-8  bytes=0
+body(no calendar marker matched, excerpt as received): 
+
+>>> RESULT: INCONCLUSIVE - the accepted-credential response and the negative control are
+    indistinguishable (both HTTP 401, Content-Type text/html; charset=UTF-8, identical 0-byte body),
+    so this endpoint cannot show whether the digest was accepted or rejected here.
+    Nothing was measured: do NOT read this as "not vulnerable".
+    Check the endpoint by hand (syslog/error log, or a request that reaches the
+    calendar code, e.g. with the physician/type/day parameters this file expects)
+    before treating vcalendar as fixed.
+
+   Reading of 4.2/4.4: the probe's INCONCLUSIVE is its fail-closed answer, not a clean bill of
+   health. In 4.2 the PHP 8.3 count() fatal masked the payload so neither response carried a
+   rejection marker; in 4.4 both the replayed digest and the impossible digest are rejected with
+   a byte-identical 401, which the probe cannot tell apart either. The measurements that do
+   distinguish the two states are in sections 1 and 2 above.
+
+5. Does the emitted body contain PHI-shaped content?
+   No. The body is the vCalendar envelope only:
+       BEGIN:VCALENDAR / VERSION:1.0 / PRODID:<provider name> / TZ:-07 / END:VCALENDAR
+   `PRODID` carries the PROVIDER's name (the seeded verification provider), not a patient's.
+   There are no event entries because `scheduler` is empty, and it cannot be populated in this
+   harness: the scheduler_Insert trigger writes a patient_emr row (MODULE='scheduler',
+   PATIENT=NEW.calpatient) and patient_emr.patient has a foreign key to `patient`, a pinned,
+   currently empty table. Inserting one appointment therefore fails with
+   "Cannot add or update a child row: a foreign key constraint fails (`freemed`.`patient_emr`,
+   CONSTRAINT `patient_emr_ibfk_1` ...)" unless the pinned `patient` table is seeded, which is
+   out of bounds for this task. Consequence for the advisory, stated conservatively: the
+   endpoint is demonstrated to AUTHENTICATE on the digest alone and to emit that provider's
+   calendar envelope; what a populated install would additionally disclose (calpatient,
+   calprenote/calpostnote per appointment) is NOT demonstrated here and must not be reported as
+   demonstrated.
+   Two further pre-existing PHP 8.3 defects sit between this and a client-parseable calendar,
+   both left alone as out of scope:
+     * vCalendar.class.php:61 — "$buffer" is never initialised, so the E_WARNING is printed into
+       the payload. With display_errors=On (this harness, and the stock php:8.3-apache image
+       which ships no php.ini) the body opens with a warning line and a strict client would
+       reject it; with display_errors=Off (php.ini-production) the payload would carry no
+       warning line at all (inference from display_errors, not measured in this harness).
+     * Physician.class.php:83 — strpos() is handed the whole degree row (array) instead of its
+       text, so a provider whose phydegrees DOES resolve a degrees row dies with
+       "strpos(): Argument #1 ($haystack) must be of type string, array given". The seeded
+       provider deliberately has no degree reference, which is why the envelope above is emitted.
+       Recorded for a follow-up; the authorised bounded guard did not extend to it.
+
+6. FIX ROUND 1 — the SAPI guard (R23), the layout-independence proof, the timing measurement
+
+   Commits f0d53619 (SAPI guard), 12622abe (!empty($d) refinement), 6d264546 (the doc/ note).
+   Every row in sections 1-5 above is UNCHANGED: it is the historical capture, and it is accurate
+   for the tree that was served at the time. Everything below was measured after f0d53619 and
+   12622abe, with the served copy re-synced and verified byte-identical (md5sum) to the checkout.
+
+6.1 CLI entrypoint — still refused, and now by a test no ini setting can move
+
+   $ docker exec freemed-verify-apache php /var/www/html/vcalendar.php
+   (no output)
+   exit=255
+
+   Control: the same file with the guard's condition disabled (harness-only copy in the container,
+   /tmp/vcalendar-noguard.php; nothing in the checkout was touched):
+
+   $ docker exec -w /var/www/html freemed-verify-apache php /tmp/vcalendar-noguard.php
+   PHP Fatal error:  Uncaught Error: Call to undefined function getallheaders() in /tmp/vcalendar-noguard.php:68
+   Stack trace:
+   #0 /tmp/vcalendar-noguard.php(174): freemed_basic_auth()
+   #1 {main}
+     thrown in /tmp/vcalendar-noguard.php on line 68
+   exit=255
+
+   Reading: the guarded run halts at the guard, before ANY web-only code is reached; with the
+   guard disabled the same run gets past it and dies on getallheaders(), which does not exist in
+   the CLI SAPI. So "the CLI invocation hits the guard" is observed by the halt (255) and by that
+   differential — NOT by printed text. The guard's E_USER_ERROR message is suppressed by
+   lib/freemed.php:61's error_reporting(E_ERROR|E_WARNING|E_PARSE) in BOTH the old and the new
+   idiom; measured directly, so nobody has to take it on trust:
+
+   $ docker exec freemed-verify-apache php -r 'error_reporting(E_ERROR|E_WARNING|E_PARSE); ini_set("display_errors","1"); trigger_error("MASKED-E_USER_ERROR", E_USER_ERROR); echo "REACHED CODE AFTER THE GUARD\n";'
+   (no output)
+   exit=255
+
+   That mask is a property of this codebase's error configuration, not of this change — it is the
+   same mask that turned the guard's web misfire into a silent empty 200.
+
+6.2 Layout independence — register_argc_argv On and Off, Apache gracefully restarted between
+
+   The setting is /usr/local/etc/php/conf.d/zz-freemed-verify.ini:13, edited IN PLACE with sed
+   (not appended twice) and re-read after each change; `apache2ctl -k graceful` between runs. The
+   image still has no active php.ini:
+   $ docker exec freemed-verify-apache ls /usr/local/etc/php/php.ini
+   ls: cannot access '/usr/local/etc/php/php.ini': No such file or directory
+
+   vcalendar.php as fixed (SAPI guard), the six probes of vcal-fix1/probe-layout.sh:
+
+     request                                        register_argc_argv=On     =Off
+     /vcalendar.php                        anon     401 / 0 bytes             401 / 0 bytes
+     ?user=clerk&hash=<correct md5>        anon     401 / 0 bytes             401 / 0 bytes
+     ?physician=1                          clerk    403 / 33 bytes            403 / 33 bytes
+     ?type=fromdate&m=13&d=45&y=2026       admin    400 / 13 bytes            400 / 13 bytes
+     ?physician=1                          admin    200 / text/x-vCalendar     200 / text/x-vCalendar
+     (no query string)                     admin    200 / text/x-vCalendar     200 / text/x-vCalendar
+
+   Identical in both states, and identical to the section-2 post-fix rows. That is the whole point
+   of R23: the fix no longer depends on an ini setting.
+
+   Control — vcalendar-oldguard.php (this same file at the previous round's state, i.e.
+   `if (isset($_SERVER['argc']) and $_SERVER['argc'])`), with register_argc_argv=On:
+
+     request                                        argv-guard copy, =On
+     /vcalendar.php                        anon     401 / 0 bytes
+     ?user=clerk&hash=<correct md5>        anon     200 / 0 bytes   <-- empty 200, no status, no body
+     ?physician=1                          clerk    200 / 0 bytes   <-- idem
+     ?type=fromdate&m=13&d=45&y=2026       admin    200 / 0 bytes   <-- idem
+     ?physician=1                          admin    200 / 0 bytes   <-- idem
+     (no query string)                     admin    200 / 220 bytes text/x-vCalendar (reaches the endpoint)
+
+   The finding from the review is therefore reproduced end to end, not merely restated: with the
+   argv guard, EVERY query-string request is answered by an empty 200 with no status and no body,
+   while the request without a query string (argc 0) reaches the endpoint normally. On that
+   layout neither the vulnerability nor the 401/403/400 above is observable, and
+   ?physician=/?type=fromdate clients cannot use the endpoint at all.
+
+6.3 The credential-comparison timing measurement (Minor-4 — the brief's Verification line)
+
+   Driver vcal-fix1/timing.sh: 50 sequential requests per branch, same endpoint, same account,
+   differing only in whether the supplied password is the correct one. Raw per-request times are
+   in vcal-fix1/timing-raw/{correct,wrong}.txt.
+
+     branch A: correct password (hash_equals matches -> 200)   50/50 responses 200
+     branch B: wrong password   (hash_equals fails   -> 401)   50/50 responses 401
+
+     correct password                   n=50  min=0.001541  median=0.002053  mean=0.002101  max=0.004688
+     wrong password                     n=50  min=0.001292  median=0.001667  mean=0.001654  max=0.002023
+
+     median(correct)=0.002053  median(wrong)=0.001667  |diff|=0.000386 s
+
+   Reading, stated so nobody over-reads it: the branches are NOT the same amount of work. The
+   correct credential proceeds into the calendar render - object construction, queries, the
+   vCalendar body - while a rejected one returns at the 401. The 0.39 ms difference measures the
+   successful branch's downstream work, so it cannot be read as a comparison cost, and this
+   measurement is nowhere near precise enough to resolve one: %{time_total} is a whole round trip
+   over loopback through Apache and the FreeMED bootstrap (settings.php, lib/freemed.php, the DB
+   connection), ~ms, while a hash_equals() over two 32-character ASCII strings is ~ns.
+
+   The property the brief is asking about is constant-time BY CONSTRUCTION, and that is where it
+   holds, exactly as the reviewer wrote: both branches execute exactly ONE hash_equals() over two
+   32-character strings - the stored MD5 hex digest and md5($pass) - so the compared lengths are
+   equal on every request, including a wrong password, and there is no early-exit inside the
+   comparison that a rejected credential can take. That replaced the previous SQL
+   `userpassword = MD5('<pass>')` comparison. The measurement above was taken because the brief
+   asks for it; it is evidence that no gross difference exists, not evidence of the constant-time
+   property, which is an inspection result (hash_equals is documented constant-time for equal
+   lengths).
+
+
+===============================================================================
+2026-09-28 — FINAL FIX WAVE, PART 1: the Task 3.1 rows re-measured (review I-2)
+===============================================================================
+
+The auth lookup this file's sections 1-6 measure was the last pre-authentication
+`addslashes()`-inside-hand-written-quotes splice on the branch. Both sites in
+`vcalendar.php` now use the driver's quote() with the hand-written quotes removed
+(commit 153abfbd); the full re-measurement, including the eleven Task 3.2
+acceptance cases and the falsification that shows the old form's WHERE clause
+defeated under NO_BACKSLASH_ESCAPES, is recorded in
+tests/security/evidence/vcalendar-provider-scope.txt under the same dated
+heading, so it is not restated here.
+
+  The rows THIS file owns, re-measured in that run (driver: the committed
+  vcal-work/transcript.sh, PHASE=post, unmodified):
+
+     anonymous                     401   WWW-Authenticate: Basic realm="FreeMED v0.8.8 vCalendar"
+     GET-hash, correct digest      401
+     GET-hash, bogus digest        401
+     GET-hash, no hash             401
+     Basic admin, correct password 200
+     Basic admin, wrong password   401
+     Basic clerk, correct password 200
+     curl -u admin                 200
+     anonymous ?physician=1        401   WWW-Authenticate: Basic realm="FreeMED v0.8.8 vCalendar"
+     clerk ?physician=1            403
+
+  The challenge is unchanged, character for character, and the legacy GET-hash
+  path is still refused (401) with the option absent, exactly as section 1
+  recorded it. The seeded verification rows were removed again and the pinned
+  fingerprint was re-checked unchanged.

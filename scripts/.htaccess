@@ -1,3 +1,27 @@
-<Files *>
-deny from *
-</Files>
+# Deny all web access to this directory.
+#
+# This is a SECOND layer. The rule that is load-bearing is the one in the server
+# configuration (doc/freemed.apache.conf for Apache, docker/nginx.conf for
+# nginx): nginx reads no .htaccess at all, and a vhost with `AllowOverride None`
+# ignores this file. It is kept because it also covers an Apache vhost that
+# serves this tree without doc/freemed.apache.conf.
+#
+# The previous content was `<Files *> deny from * </Files>`, which matches no
+# client at all: the argument of a Deny is a host or environment, not a
+# wildcard, so the rule allowed everything it was meant to deny. Measured at
+# HEAD, on Apache and on nginx alike: GET /scripts/security-sql-concat-check.sh
+# returned the script's SOURCE (3107 bytes, HTTP 200) and
+# GET /scripts/security-path-guard-check.sh 8563 bytes.
+#
+# Both access-control syntaxes are present and module-guarded so the file loads
+# on Apache 2.2 and 2.4 alike: `Require all denied` needs mod_authz_core (2.4),
+# `Order deny,allow` needs mod_access_compat (2.2, and 2.4 with the
+# compatibility module - which is how the 2.2 form is measured working on this
+# stack, where data/schema/.htaccess uses it and answers 403).
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	order deny,allow
+	deny from all
+</IfModule>

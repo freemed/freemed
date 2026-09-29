@@ -1,0 +1,134 @@
+# scripts/security-sql-concat-allowlist.txt
+#
+# Entries for scripts/security-sql-concat-check.sh. Matching is a fixed-string
+# SUBSTRING test (grep -F), and every hit line is "<path>:<line>:<source>", so an
+# entry of the form "./path/to/File.php:123:" allows exactly that one hit.
+#
+# Seeded with the CURRENT hits at Task 2.7 time (ruling R2) so the gate is green
+# while the sweep has not happened yet. The application entry this header used to
+# describe ("the APPLICATION section must be empty except for the documented
+# raw-expression case") is gone: as of batch C there is NO application entry left
+# at all -- the sections below are VENDORED (5), tests (4) and THIRD-PARTY phpGACL
+# (67), and an entry naming api/**, core/**, module/** or a root script would be a
+# review red flag, not a fix. The vendored, test and phpGACL entries may stay:
+# those trees are not swept.
+#
+# Regenerate (and shrink) this file with the same command that produced it:
+#   <the gate's grep chain> | sed 's/:\([^:]*\)$//'   # path:line: only
+#
+# 2026-09-28, sweep batch A (task 2.6b part 1): the 34 entries for
+# lib/org/freemedsoftware/api/** and lib/org/freemedsoftware/core/** were
+# removed here after the lines behind them were fixed (driver quote()/
+# intval() for values, SqlIdent::name()/columns() for identifiers, and
+# sprintf-assembled clause fragments). The application entries that remain
+# belong to module/** (batch B), lib/API.php and the gacl ACL library.
+#
+# 2026-09-28, sweep batch B (task 2.6b part 2): all 54 entries for
+# lib/org/freemedsoftware/module/** were removed here after the lines behind
+# them were fixed the same way (quote() for values, intval() for ids,
+# SqlIdent::name()/columns() for declared table/column identifiers with a
+# log-and-refuse on refusal, str_replace placeholders where a statement
+# contains DATE_FORMAT specifiers that sprintf would consume).
+#
+# 2026-09-28, sweep batch C (task 2.6b part 3, the final batch): the last
+# application entry, ./lib/API.php:1386, was removed. That line is
+# fm_phone_assemble(), which builds no SQL at all - the gate matched a '.'
+# next to a quote in a computed variable-variable plus the word " and " on
+# the same line. It was rewritten as a no-op (the part read into a local) so
+# no exemption is needed; see the comment beside it. Nothing in this file
+# refers to swept application code any more. The remaining entries are the
+# vendored libraries (5), the security tests (4) and the third-party phpGACL
+# ACL library (67), which the 2.6b sweep does not rewrite - see the section
+# headings below.
+#
+# ---- vendored / third-party libraries (5): not swept, false positives ----
+./lib/agata7/classes/fpdf151/fpdf.php:912:
+./lib/agata7/classes/pclzip/pclzip.lib.php:4992:
+./lib/agata7/classes/util/nusoap.php:4050:
+./lib/agata7/classes/util/nusoap.php:4126:
+./lib/agata7/classes/util/nusoap.php:5535:
+
+# ---- tests (4): three SQL fixtures and one filesystem line ----
+# ./tests/security/sql_ident.test.php:122, :123, :184 are deliberately hostile
+# SQL shapes: the validator's own danger proof (a token spliced naively into
+# `ORDER BY`/`SELECT`) and its execution rows.
+# ./tests/security/help_path.test.php:219 builds NO SQL at all - it is
+# `is_file( $c . '/ui/gwt/help/en_US/main.en_US.html' )`, a filesystem lookup,
+# and it trips this gate only because the path literal contains the word " and "
+# (the keyword filter). Kept rather than rewritten so the four entries are not
+# read as four hostile-SQL exemptions.
+./tests/security/help_path.test.php:219:
+./tests/security/sql_ident.test.php:122:
+./tests/security/sql_ident.test.php:123:
+./tests/security/sql_ident.test.php:184:
+
+# ---- THIRD-PARTY APPLICATION LIBRARY (67): phpGACL, not swept by 2.6b ----
+# (batch C removed the last entry that belonged to FreeMED's own code,
+#  ./lib/API.php:1386: - see the header note above)
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1052:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1134:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:113:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1232:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1243:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1244:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:127:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1292:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1445:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1509:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1574:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1624:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1664:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1716:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1816:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1841:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1860:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1869:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:1939:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2016:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2046:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2104:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2219:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2311:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2336:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2384:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2404:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2424:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2432:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2440:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2448:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2455:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2466:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2474:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2482:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2490:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2498:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2506:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2513:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2528:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2536:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2544:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2552:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2559:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2633:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2692:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2756:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2831:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:2962:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3031:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3220:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3321:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3348:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3442:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3513:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3517:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3906:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:3956:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:4050:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:4110:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:4204:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:714:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:726:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:742:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:758:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:775:
+./lib/org/freemedsoftware/acl/gacl_api.class.php:781:
