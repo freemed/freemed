@@ -2,7 +2,9 @@
 
 ## Installation
 
-This package has been updated to require PHP 8.3. Reference implementation has been on Debian.
+This package has been updated to require PHP 8.3.36 or later (8.3.36 is the
+PHP2SHELL fix floor, CVE-2026-109618 / CVE-2026-109619; see
+`doc/PHP2SHELL_AUDIT`). Reference implementation has been on Debian.
 
 Instructions are available in the wiki under [Installation](https://github.com/freemed/freemed/wiki/Installation).
 

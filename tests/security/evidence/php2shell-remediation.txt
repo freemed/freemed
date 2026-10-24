@@ -1,0 +1,191 @@
+php2shell-remediation.txt - measured evidence for the PHP2SHELL runtime fix
+
+Scope: the remediation of doc/PHP2SHELL_AUDIT sections 6(a)-6(f) on branch
+security/mitigation-2026-09, measured 2026-10-24 on this host. Every row below
+is a command's output, pasted as produced. Rows that were NOT measured say so
+in section 5; nothing here is inferred from another row.
+
+Vulnerability: PHP2Shell, CVE-2026-109618 (cleanup after an allocation failure
+during request parsing) and CVE-2026-109619 (stale request-owned state reused by
+a later request on the same worker). Unauthenticated RCE, CVSS v4.0 9.2. Fixed
+in PHP 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12. No application code can mitigate
+either one: the request is parsed before any entrypoint runs.
+
+Artifacts:
+  docker/Dockerfile            new; FROM php:8.3.36-fpm pinned by digest
+  docker/docker-compose.yml    builds that image; ini drop-in mount corrected
+  docker/php-custom.ini        mitigation lines + corrected unit/syntax bugs
+  docker/nginx.conf            client_max_body_size 10000M -> 64M
+  doc/freemed.apache.conf      LimitRequestBody 67108864
+  debian/control               php5 -> php8.3 (module, cgi, gd, curl, cli, dev)
+  scripts/php-runtime-check.sh new gate; wired into `make security-check`
+
+
+1. INTERPRETER VERSIONS
+
+  old shipped image : PHP 8.3.31 (cli) (built: May 19 2026 23:11:55) (NTS)
+  new image         : PHP 8.3.36 (cli) (built: Oct 21 2026 15:59:09) (NTS)
+  harness apache    : PHP 8.3.36 (cli) (built: Oct 21 2026 15:57:18) (NTS)
+  harness fpm       : PHP 8.3.36 (cli) (built: Oct 21 2026 15:59:09) (NTS)
+
+  Commands:
+    docker run --rm --entrypoint sh jbuchbinder/moodle-php-8.3-fpm -c 'php -v | head -1'
+    docker run --rm --entrypoint php freemed-php:8.3.36 -v
+    docker run --rm --entrypoint php freemed-verify-php:apache -v
+    docker run --rm --entrypoint php freemed-verify-php:fpm -v
+
+  The harness images were rebuilt FROM php:8.3-apache / php:8.3-fpm (both
+  tags resolve to 8.3.36 as of 2026-10-23) with mysqli, gd, exif, soap, xsl,
+  zip, and a build-time assertion `version_compare(PHP_VERSION, "8.3.36",
+  ">=")`. The previous 8.3.35 builds are retained as
+  freemed-verify-php:8.3.35-apache / :8.3.35-fpm so the "gate bites" row below
+  stays reproducible.
+
+
+2. THE INI DROP-IN: BEFORE AND AFTER
+
+  Ablation, OLD image + OLD compose mount target (/opt/bitnami/...), i.e. the
+  state the audit measured. This file was never read:
+
+    max_file_uploads => 20 => 20
+    memory_limit => 128M => 128M
+    post_max_size => 8M => 8M
+    register_argc_argv => On => On
+    session.upload_progress.enabled => On => On
+
+    docker run --rm \
+      -v "$PWD/docker/php-custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini:ro" \
+      --entrypoint php jbuchbinder/moodle-php-8.3-fpm -i | grep -E '^(memory_limit|...)'
+
+  Same read-back, NEW image + NEW compose mount target
+  (/usr/local/etc/php/conf.d/zz-freemed.ini):
+
+    max_file_uploads => 128 => 128
+    memory_limit => 2048M => 2048M
+    post_max_size => 64M => 64M
+    register_argc_argv => On => On
+    session.upload_progress.enabled => Off => Off
+
+    docker run --rm \
+      -v "$PWD/docker/php-custom.ini:/usr/local/etc/php/conf.d/zz-freemed.ini:ro" \
+      --entrypoint php freemed-php:8.3.36 -i | grep -E '^(memory_limit|...)'
+
+  register_argc_argv reads On in THIS row because the SAPI is `php` (CLI), and
+  the CLI SAPI reports it On whatever the ini says - the same caveat
+  doc/DEPLOYMENT_HARDENING section 5 and docker/php-custom.ini already record.
+  The web SAPI is measured in section 3.
+
+  `php --ini` in the new image lists the drop-in last:
+    /usr/local/etc/php/conf.d/zz-freemed.ini
+
+
+3. LIVE STACK: THE SHIPPED docker/docker-compose.yml, BUILT AND RUN
+
+  Harness: a copy of the tree at /home/jbuchbinder/.hermes/cache/scratch/
+  freemed-php2shell, served from the SHIPPED compose file (nginx:alpine on
+  :38080 -> freemed-php:8.3.36 php-fpm -> mariadb:10.11), MariaDB loaded from
+  data/schema/mysql (209 tables; the *_Upgrade procedures still fail to compile
+  on the `offset` keyword, which is pre-existing and unrelated), and a probe
+  page php2shell-probe.php added to the SERVED COPY only - nothing was added to
+  the repository tree. The probe echoes PHP_VERSION, the SAPI and the ini values
+  the request actually ran under.
+
+  GET /freemed/php2shell-probe.php      (FPM SAPI, not CLI)
+
+    {"php_version":"8.3.36","sapi":"fpm-fcgi","session_upload_progress":"",
+     "fatal_error_backtraces":false,"register_argc_argv":"","post_max_size":"64M",
+     "memory_limit":"2048M","max_file_uploads":"128","mysqli":true,"files":[]}
+
+    Reading of the empty/false values: ini_get() returns "" for an Off boolean
+    (session.upload_progress.enabled, register_argc_argv), and
+    fatal_error_backtraces does not exist before PHP 8.5, so it reads false on
+    8.3 - the directive is shipped unconditionally and ignored here, which is
+    what docker/php-custom.ini documents.
+
+  Multipart upload through the same stack - the parser still works after the
+  mitigation, and $_FILES is populated:
+
+    curl -F "file=@/tmp/up1m.bin" -F note=hello .../php2shell-probe.php
+    {"php_version":"8.3.36",...,"files":{"file":{"name":"up1m.bin","size":1048576,"error":0}}}
+
+  70 MiB body - the new edge cap refuses before PHP parses it:
+
+    dd if=/dev/zero of=/tmp/up70m.bin bs=1M count=70
+    curl -F "file=@/tmp/up70m.bin" .../php2shell-probe.php   ->  status=413
+
+  Existing deployment-hardening rules, unchanged by this work:
+
+    /freemed/lib/API.php                              -> 403
+    /freemed/help.php/../scripts/security-...sh       -> 403   (curl --path-as-is)
+
+  The application executes on the new interpreter, with a DB and without
+  SKIP_SQL_INIT:
+
+    GET /freemed/index.php
+      status=302  redirect=/freemed/ui/gwt/www/FreemedInterface.html
+      X-Powered-By: PHP/8.3.36
+      Set-Cookie: SessionID=...; path=/
+    GET /freemed/relay.php/json/NosuchMethod   ->  INVALID_SESSION
+
+    The 302 is the bootstrap's normal redirect (the compiled GWT UI is not in a
+    source checkout, so its target 404s); INVALID_SESSION is the relay's own
+    session gate answering from PHP 8.3.36, i.e. the app-level path runs rather
+    than dying at include time.
+
+
+4. GATES
+
+  scripts/php-runtime-check.sh --self-test
+
+    self-test 8.3.36       expect 0 got 0  OK
+    self-test 8.3.35       expect 1 got 1  OK
+    self-test 8.2.34       expect 1 got 1  OK
+    self-test 8.4.27       expect 0 got 0  OK
+    self-test 9.0.0        expect 0 got 0  OK
+    self-test 8.3.36-dev   expect 0 got 0  OK
+    self-test x.y.z        expect 2 got 2  OK
+    self-test PASSED (comparison accepts the floor, refuses 8.3.35, and fails
+    closed on junk)
+
+  The gate against real interpreters - it bites on the old release and passes
+  on the fixed one, so a green run is a measurement and not decoration:
+
+    freemed-verify-php:8.3.35-apache:  php-runtime-check: VULNERABLE - PHP 8.3.35
+                                       ... exit=1 (expect 1)
+    php:8.3-cli (8.3.36):              php-runtime-check: OK - PHP 8.3.36 ...
+                                       exit=0 (expect 0)
+
+  Hermetic security suites, unchanged, inside the new image (which also has
+  mysqli, so this is the image that can run the DB-backed suites too):
+
+    PHP 8.3.36 (cli)
+    relay_allowlist    PASS
+    help_path          PASS
+    sql_ident          PASS
+
+  `make security-check` (both static scanners, both of their --self-tests, and
+  the new php-runtime-check step) exits 0 at HEAD with these changes.
+
+
+5. NOT MEASURED
+
+  * No exploit payload was built, sent, or replayed. Every "fixed" claim here
+    is version + configuration + live-behaviour evidence, not a demonstrated
+    pre/post exploitation pair. A PoC A/B against this stack is a separate,
+    separately-authorised exercise.
+  * No production host was inspected. A distro PHP with a backported fix can
+    still report 8.3.x below 8.3.36; for those installs the distro advisory is
+    authoritative, and the gate's floor can be relaxed deliberately by passing
+    a MIN_VERSION argument (record the override and its reason in the
+    deployment notes; do not relax it silently).
+  * tests/security/module_smoke.php was NOT run: the probe database has an
+    empty `modules` registry, so every relayed method would return the vacuous
+    "no rows" negative the harness notes describe. The hermetic suites and the
+    live entrypoint rows above are what carry the weight instead.
+  * The Apache/mod_php layout was not re-measured: no php5 or php8.3 mod_php
+    host exists here. doc/freemed.apache.conf's LimitRequestBody is a
+    configuration change whose effect was verified on the nginx side only
+    (the 413 row); Apache's own enforcement of the same directive is documented
+    behaviour, not something this host measured.
+  * xdebug's removal from the runtime image (docker/Dockerfile) is a hardening
+    choice, not a PHP2SHELL control; nothing measured its performance effect.

@@ -8,8 +8,8 @@ Standards-Version: 3.6.0
 Package: freemed
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Depends: openssh-server, openssh-client, subversion, mysql-server-5.1, php5-mysql, apache2, libapache2-mod-php5, libcgi-session-perl, libxml-parser-perl, libtext-iconv-perl, djvulibre-bin, netpbm, graphicsmagick-imagemagick-compat, cupsys, cupsys-client, gs-common, php5-cgi, php5-gd, php5-curl, xpdf-utils, bzip2, pdfjam, php5-cli, gs, dcmtk, gettext, tetex-bin, tetex-extra, vim, build-essential, libjpeg62-dev, libpng12-dev, zlib1g-dev, sudo, lynx, pv, php5-dev, re2c, hylafax-client, hylafax-server, ghfaxviewer, libfax-hylafax-client-perl, wv, 
-Depends: mysql-client-5.1, mysql-server-5.1, php5-mysql, apache2, libapache2-mod-php5, libxml-parser-perl, libtext-iconv-perl, djvulibre-bin, netpbm, graphicsmagick-imagemagick-compat, cupsys, cupsys-client, gs-common, php5-cgi, php5-gd, php5-curl, xpdf-utils, bzip2, pdfjam, php5-cli, gs, dcmtk, gettext, texinfo, openjdk-6-jdk, ant, msttcorefonts, sudo, dbconfig-common
+Depends: openssh-server, openssh-client, subversion, mysql-server-5.1, php8.3-mysql, apache2, libapache2-mod-php8.3, libcgi-session-perl, libxml-parser-perl, libtext-iconv-perl, djvulibre-bin, netpbm, graphicsmagick-imagemagick-compat, cupsys, cupsys-client, gs-common, php8.3-cgi, php8.3-gd, php8.3-curl, xpdf-utils, bzip2, pdfjam, php8.3-cli, gs, dcmtk, gettext, tetex-bin, tetex-extra, vim, build-essential, libjpeg62-dev, libpng12-dev, zlib1g-dev, sudo, lynx, pv, php8.3-dev, re2c, hylafax-client, hylafax-server, ghfaxviewer, libfax-hylafax-client-perl, wv, 
+Depends: mysql-client-5.1, mysql-server-5.1, php8.3-mysql, apache2, libapache2-mod-php8.3, libxml-parser-perl, libtext-iconv-perl, djvulibre-bin, netpbm, graphicsmagick-imagemagick-compat, cupsys, cupsys-client, gs-common, php8.3-cgi, php8.3-gd, php8.3-curl, xpdf-utils, bzip2, pdfjam, php8.3-cli, gs, dcmtk, gettext, texinfo, openjdk-6-jdk, ant, msttcorefonts, sudo, dbconfig-common
 Conficts: php5-suhosin
 Suggests: remitt, cdrecord, mkisofs, php5-eaccelerator
 Description: FreeMED Opensource Electronic Medical Record System

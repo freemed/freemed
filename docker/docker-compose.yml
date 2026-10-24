@@ -1,6 +1,10 @@
 services:
   freemed-db:
-    image: mariadb:latest
+    # Pinned, not `latest`: the tree's schema and the verification harness are
+    # measured on MariaDB 10.11 (doc/PHP2SHELL_AUDIT section 2), and a moving
+    # major silently changes what loads (mariadb:latest has been measured to
+    # leave ~35 tables uncreated in this tree's schema).
+    image: mariadb:10.11
     environment:
       - MARIADB_USER=freemed
       - MARIADB_ROOT_PASSWORD=freemed
@@ -13,7 +17,14 @@ services:
       - ./freemeddb.sql:/tmp/freemed.sql
 
   freemed:
-    image: jbuchbinder/moodle-php-8.3-fpm
+    # Built from docker/Dockerfile, whose FROM is pinned by digest at PHP
+    # 8.3.36 - the PHP2SHELL fix floor (CVE-2026-109618 / CVE-2026-109619).
+    # This service used to run jbuchbinder/moodle-php-8.3-fpm:latest, which
+    # resolved to PHP 8.3.31 built 2026-05-27. See doc/PHP2SHELL_AUDIT.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: freemed-php:8.3.36
     user: "101:101"
     environment:
       - TZ=America/New_York
@@ -21,7 +32,11 @@ services:
       - PHP_ENABLE_OPCACHE=1
     volumes:
       - ./freemed:/usr/share/freemed
-      - ./php-custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini:ro
+      # The image's scan path is /usr/local/etc/php/conf.d (PHP_INI_DIR).
+      # The previous target, /opt/bitnami/php/etc/conf.d/custom.ini, did not
+      # exist in the image, so this file was never read and none of its
+      # settings - including the PHP2SHELL mitigations - had any effect.
+      - ./php-custom.ini:/usr/local/etc/php/conf.d/zz-freemed.ini:ro
     depends_on:
       - freemed-db 
 

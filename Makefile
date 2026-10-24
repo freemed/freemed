@@ -72,6 +72,22 @@ security-check: scripts/security-sql-concat-check.sh scripts/security-path-guard
 	./scripts/security-sql-concat-check.sh --self-test
 	./scripts/security-path-guard-check.sh
 	./scripts/security-path-guard-check.sh --self-test
+	$(MAKE) php-runtime-check
+
+# PHP2SHELL (CVE-2026-109618 / CVE-2026-109619) - the interpreter version is the
+# only control that matters for that class, so the gate checks it. Runs the
+# check in the container image when the host has no php (the normal case here);
+# PHP_BIN overrides the binary, PHP_IMAGE the image.
+PHP_BIN ?=
+PHP_IMAGE ?= php:8.3-cli
+php-runtime-check:
+	./scripts/php-runtime-check.sh --self-test
+	@if [ -n "$(PHP_BIN)" ] || command -v php >/dev/null 2>&1; then \
+		PHP_BIN="$(PHP_BIN)" ./scripts/php-runtime-check.sh; \
+	else \
+		echo "php-runtime-check: no host php - checking $(PHP_IMAGE)"; \
+		docker run --rm -v "$(CURDIR)":/app -w /app $(PHP_IMAGE) sh scripts/php-runtime-check.sh; \
+	fi
 
 phpcs.report.html: phpcs.report.xml
 	xsltproc doc/phpcs.xsl phpcs.report.xml > phpcs.report.html
