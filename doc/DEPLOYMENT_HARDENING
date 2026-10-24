@@ -213,16 +213,36 @@ Deployment hardening - what the shipped web-server configuration now refuses
    on the VERIFICATION image (freemed-verify-php:apache, built FROM php:8.3-
    apache in this project's throwaway harness, drop-ins read from
    /usr/local/etc/php/conf.d/), NOT on the image this project's
-   docker/docker-compose.yml ships, which is jbuchbinder/moodle-php-8.3-fpm
-   (Bitnami layout) and which was not available to inspect. What that means for
-   the shipped container, precisely: the drop-in mount
-   (/opt/bitnami/php/etc/conf.d/custom.ini) predates this change and carries
-   settings the deployment has been using (memory_limit, max_input_vars), so the
-   mechanism is in use - but a Bitnami or php.ini-production install normally
-   loads a php.ini that already sets register_argc_argv = Off, so on the shipped
-   image the directive may be the second statement of the same fact rather than
-   the only one. The explicit `Off` is still the right line to ship: wherever
-   the file is read it wins, and it is the half of the pair that is verifiable.
+   docker/docker-compose.yml ships, which is jbuchbinder/moodle-php-8.3-fpm.
+   That image was then inspected (2026-10-23, digest sha256:1fbebcaa...), and
+   the result is NOT what this paragraph used to assume:
+
+     * it is a stock docker-library PHP 8.3-fpm build (PHP_INI_DIR =
+       /usr/local/etc/php, `Loaded Configuration File: (none)`), not a Bitnami
+       layout - /opt/bitnami does not exist in it;
+     * the compose mount target (/opt/bitnami/php/etc/conf.d/custom.ini) is
+       therefore outside the scanned ini directory, so THIS FILE IS NEVER READ
+       by the shipped container. Ablation: running that image with the compose
+       mount in place still reports memory_limit=128M, post_max_size=8M,
+       max_file_uploads=20 and register_argc_argv=On, i.e. the mount changes
+       nothing;
+     * the only custom.ini the container loads is one baked into the image and
+       it contains a single line (max_input_vars = 10000).
+
+   So the explicit `Off` below had never taken effect in the container layout,
+   and the "the mechanism is in use" reading this section used to carry was an
+   assumption the image itself refutes. A site running its own php.ini is
+   unaffected by all of this.
+
+   FIXED 2026-10-24: the mount target is now
+   /usr/local/etc/php/conf.d/zz-freemed.ini, the image is built from
+   docker/Dockerfile (PHP 8.3.36, pinned by digest) instead of the third-party
+   :latest, and the values read back from the running container are this file's
+   values - `php --ini` lists zz-freemed.ini and the live FPM SAPI reports
+   register_argc_argv Off, session.upload_progress.enabled Off, post_max_size
+   64M, memory_limit 2048M. The same file now also carries the two PHP2SHELL
+   mitigations; doc/PHP2SHELL_AUDIT section 10 is the change record and
+   tests/security/evidence/php2shell-remediation.txt the measurements.
 
    Measured with this exact docker/php-custom.ini mounted as a conf.d drop-in in
    that verification image, php 8.3.35, web SAPI (cli-server), request

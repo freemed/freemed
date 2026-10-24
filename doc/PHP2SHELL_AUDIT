@@ -1,0 +1,366 @@
+PHP2SHELL: AUDIT OF THIS TREE'S PHP RUNTIMES
+
+FreeMED 0.9.x - PHP interpretation-layer RCE, CVE-2026-109618 / CVE-2026-109619
+Audited 2026-10-23 on branch security/mitigation-2026-09 at d4484882.
+
+This file is an INVENTORY AND EXPOSURE AUDIT. It changes no code. Every number
+in it was measured on this host on 2026-10-23 unless the row says "cited"; the
+command that produced it is next to it. Where something could not be measured
+it says so in section 8 instead of being inferred.
+
+
+1. WHAT THE VULNERABILITY IS, AND WHY APPLICATION CODE CANNOT MITIGATE IT
+
+Two critical flaws in PHP's request-processing layer, published 2026-10-20/21:
+
+  CVE-2026-109618  RCE after a memory allocation failure interrupts request
+                   initialisation (form/multipart parsing); PHP's cleanup then
+                   treats the half-built hash bucket as a valid value.
+  CVE-2026-109619  RCE via stale request-owned global state reused by a later
+                   request on the same worker (fatal-error backtraces on 8.5;
+                   session upload processing on mod_php AND php-fpm).
+
+Both are unauthenticated RCE with the privileges of the web-server account,
+CVSS v4.0 9.2 each. Fixed releases:
+
+  8.2 -> 8.2.35 | 8.3 -> 8.3.36 | 8.4 -> 8.4.27 | 8.5 -> 8.5.12
+  (cited: PHP release announcement; CERT-EU advisory 2026-018; NCSC-NL
+   php2shell repository, README, status 2026-10-23.)
+
+Affected SAPIs, cited from the PHP announcement: mod_php, PHP-FPM, php-cgi,
+FrankenPHP, LiteSpeed. PHP rates mod_php as the highest risk because the
+request is parsed inside the server process before application code runs.
+PHP 8.1 and older are out of support; the PHP project published source
+backports for 7.4, 8.0 and 8.1 only. PHP 5.x has no upstream fix.
+
+CONSEQUENCE FOR THIS TREE: no edit to any .php file in this repository can
+close either CVE. The payload is consumed by libphp/php-fpm before index.php,
+relay.php or lib/freemed.php is entered, so sessions, ACLs, the relay
+allowlist, the SQL gates and every other control this branch built are all
+downstream of the vulnerable code. The only remediation is the interpreter
+version (plus, as a stopgap, the mitigations in section 6). Anyone reading a
+FreeMED security review should see that stated, because SECURITY.md and
+doc/SECURITY_ADVISORY otherwise read as though the application is the whole
+attack surface.
+
+Temporary mitigations, cited (PHP guidance, restated by CERT-EU and Datadog).
+Neither is a fix:
+  109618: memory_limit=-1 plus decoded-body size limits at the front end and
+          memory limits on the container; do NOT use RLIMIT_AS/RLIMIT_DATA.
+  109619: session.upload_progress.enabled=0 and, on PHP 8.5,
+          fatal_error_backtraces=0; the settings must be in configuration that
+          loads before the request is parsed, and every worker must be
+          restarted afterwards.
+
+
+2. INVENTORY - EVERY PHP RUNTIME THIS TREE DECLARES OR SHIPS
+
+| # | Layout | Named in | Runtime, as measured | State |
+|---|--------|----------|----------------------|-------|
+| 1 | Container stack (the shipped docker deployment) | docker/docker-compose.yml:16 | image jbuchbinder/moodle-php-8.3-fpm:latest, digest sha256:1fbebcaa7475e2da9e1e14d9f6155aaba6c6a460cfecb65c011358d064967841, image created 2026-05-27, `php -v` = PHP 8.3.31 (cli) built 2026-05-19 | VULNERABLE: 8.3.31 < 8.3.36 |
+| 2 | Debian package | debian/control:11 and :12 | `Depends: ... php5-mysql ... libapache2-mod-php5 ...` = PHP 5.x as an Apache module; no version floor anywhere in the file | VULNERABLE and UNPATCHABLE at that version: PHP 5.x is within the reported affected range and has no upstream fix. README.md:5 says the package "has been updated to require PHP 8.3", so the packaging metadata contradicts the README |
+| 3 | Apache reference layout | doc/freemed.apache.conf | declares no PHP version at all - it is a vhost fragment over AddType application/x-httpd-php, so the interpreter is whatever the operator installed | UNKNOWN per site; mod_php is the SAPI PHP rates highest risk |
+| 4 | Verification harness images | tests/security/*.php, tests/security/evidence/*.md | freemed-verify-php:apache and :fpm (built FROM php:8.3-apache / php:8.3-fpm) = PHP 8.3.35; php:8.3-cli as cached locally = 8.3.35 | STALE (8.3.35 < 8.3.36). Not internet-facing, but evidence produced inside them comes from a vulnerable interpreter |
+| 5 | The rebuild path itself | (no Dockerfile in this tree - `find . -name 'Dockerfile*'` returns nothing outside ui/) | php:8.3-cli / php:8.3-fpm / php:8.3-apache re-pulled 2026-10-23 | FIXED: all three report PHP 8.3.36 |
+
+Commands behind rows 1, 4 and 5:
+
+  docker pull jbuchbinder/moodle-php-8.3-fpm
+  docker run --rm --entrypoint sh jbuchbinder/moodle-php-8.3-fpm -c 'php -v; php --ini'
+  docker run --rm freemed-verify-php:apache php -v          -> PHP 8.3.35
+  docker run --rm --entrypoint php freemed-verify-php:fpm -v -> PHP 8.3.35
+  docker pull php:8.3-cli  && docker run --rm php:8.3-cli  php -v -> PHP 8.3.36
+  docker pull php:8.3-fpm  && docker run --rm --entrypoint php php:8.3-fpm  -v -> PHP 8.3.36
+  docker pull php:8.3-apache && docker run --rm php:8.3-apache php -v -> PHP 8.3.36
+
+POST-REMEDIATION STATUS (2026-10-24): rows 1, 2, 4 and 5 no longer describe the
+tree. Section 10 records what changed and what was measured after the change;
+tests/security/evidence/php2shell-remediation.txt holds the rows. The table
+above is kept as the audit's original finding, not as current state.
+
+At audit time there was no version gate anywhere in the tree: no target in the
+Makefile, no check in tests/security/, and no assertion in the evidence files
+recorded which interpreter a measurement came from. `make security-check` ran
+two shell scanners and never started PHP, so it was green on any interpreter
+version. It now runs scripts/php-runtime-check.sh as well (section 10).
+
+
+3. THE SHIPPED CONTAINER'S EFFECTIVE CONFIGURATION (MEASURED, NOT INFERRED)
+
+  $ docker run --rm --entrypoint sh jbuchbinder/moodle-php-8.3-fpm -c 'php --ini'
+  Configuration File (php.ini) Path: /usr/local/etc/php
+  Loaded Configuration File:         (none)
+  Additional .ini files parsed: /usr/local/etc/php/conf.d/custom.ini,
+                                .../docker-fpm.ini, .../docker-php-ext-*.ini
+
+Effective values in that image:
+
+  memory_limit                 128M
+  post_max_size                8M
+  max_file_uploads             20
+  max_input_vars               10000        (the only line in the baked custom.ini)
+  session.upload_progress.enabled  On
+  register_argc_argv           On
+  pm = dynamic, pm.max_children = 5        (/usr/local/etc/php-fpm.d/www.conf)
+  zend_extension=xdebug.so                 (xdebug is loaded in the shipped image)
+
+3.1 THIS TREE'S INI FILE IS NOT READ BY THE SHIPPED CONTAINER
+
+docker/docker-compose.yml mounts:
+
+  ./php-custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini:ro
+
+/opt/bitnami does not exist in that image (`ls /opt/bitnami` -> "No such file
+or directory"); the image is a stock docker-library PHP 8.3-fpm whose ini
+directory is /usr/local/etc/php/conf.d. Docker creates the missing mountpoint
+and mounts the file there, and PHP never scans it. Ablation - run the shipped
+image with the compose mount in place and read the values back:
+
+  docker run --rm \
+    -v "$PWD/docker/php-custom.ini:/opt/bitnami/php/etc/conf.d/custom.ini:ro" \
+    --entrypoint php jbuchbinder/moodle-php-8.3-fpm -i \
+    | grep -E '^(memory_limit|post_max_size|max_file_uploads|register_argc_argv|session.upload_progress.enabled)'
+
+  memory_limit                  128M     (php-custom.ini says 2048M)
+  post_max_size                 8M
+  max_file_uploads              20       (php-custom.ini says 128M)
+  register_argc_argv            On       (php-custom.ini says Off)
+  session.upload_progress.enabled On
+
+i.e. the mount changes nothing. Two consequences, both of which matter here:
+
+  * CORRECTION to doc/DEPLOYMENT_HARDENING:211-225. That block says the drop-in
+    "predates this change and carries settings the deployment has been using
+    (memory_limit, max_input_vars), so the mechanism is in use". The image is
+    now inspectable: the repo's php-custom.ini is not read by it, and the
+    deployment is running PHP's compiled defaults (plus max_input_vars=10000
+    from a custom.ini baked into the image itself). The register_argc_argv = Off
+    line this branch shipped has therefore never taken effect in this layout.
+    The behaviour the branch fixed (vcalendar's SAPI test) is unaffected, but the
+    ini claim needs the same treatment: measured, not assumed.
+  * Any PHP2Shell mitigation written into docker/php-custom.ini today would be
+    inert for exactly the same reason. Fixing the mount path is a prerequisite
+    for mitigation 109619, not a tidy-up.
+
+3.2 NO REQUEST-SIZE CONTROL AT EITHER EDGE
+
+  docker/nginx.conf      client_max_body_size 10000M          (10 GB)
+  doc/freemed.apache.conf  no LimitRequestBody directive anywhere in the tree
+                           (`grep -rn LimitRequestBody .` -> no hits)
+
+PHP's own post_max_size=8M is the only cap on a decoded body, and it is a
+compiled default that the repo's own ini (if it were ever loaded) does not set
+- while the same file raises max_file_uploads to 128M. 109618's documented
+mitigation is a decoded-body limit at the front end; there is none.
+
+
+4. EXPOSURE OF THE TWO CVEs IN THESE LAYOUTS
+
+CVE-2026-109619 (stale worker state) - LIVE in both web layouts:
+  * session.upload_progress.enabled is On (PHP default, and the shipped ini does
+    not touch it). PHP enables upload-progress tracking by default and it runs
+    even when the application never calls session_start(); this application
+    does call it in lib/freemed.php on every request and has four upload
+    modules (UnfiledDocuments, PhotographicIdentification, DicomModule,
+    ScannedDocuments) that consume $_FILES.
+  * The same-worker requirement is eased by the pool size: pm.max_children = 5.
+    A small pool raises the per-attempt success rate (cited: Datadog writeup).
+  * 8.3.31 is affected; the 8.5-only fatal_error_backtraces half does not apply
+    to this branch, but the upload half is confirmed by PHP to give command
+    execution on FPM as well as mod_php.
+
+CVE-2026-109618 (memory-exhaustion during parse) - reachable in both web
+layouts, with an accidental and undocumented bound:
+  * Nothing in PHP or the edges refuses a hostile multipart body: nginx allows
+    10 GB, Apache's layout sets no LimitRequestBody, and no rate or request-size
+    control exists in this tree.
+  * The effective cap is post_max_size=8M with max_input_vars=10000 and
+    memory_limit=128M - compiled defaults, not controls. An operator who follows
+    the repo's own ini (memory_limit=2048M, max_file_uploads=128M) or who raises
+    post_max_size for document uploads moves the parse window. Treat the current
+    posture as "not deliberately bounded", not as "mitigated".
+  * The Debian layout is the worse of the two for this CVE: PHP rates mod_php
+    highest risk because the parse happens in the server process, and php5 is
+    unpatchable.
+
+For both: application authentication is irrelevant. Nothing before section 6 of
+this document changes exploitability by a single request.
+
+
+5. VERDICT PER LAYOUT
+
+  1. docker/docker-compose.yml (shipped container)  WAS VULNERABLE - PHP 8.3.31.
+     Fix = rebuild on >= 8.3.36; five patch releases behind, referenced as
+     :latest with no digest. FIXED: section 10 (a), image built from the new
+     docker/Dockerfile at 8.3.36.
+  2. debian/ (package)  WAS VULNERABLE AND WITHOUT A PATCH PATH - php5 + mod_php.
+     The dependency line had to move to a supported interpreter.
+     FIXED: section 10 (e), dependency line now php8.3 / libapache2-mod-php8.3.
+  3. doc/freemed.apache.conf (reference vhost)  STILL UNDETERMINED - it names no
+     PHP version. Any site using it with a distro PHP is vulnerable unless the
+     distro package carries the backport; distro backports often do not change
+     the upstream version string, so check the distro advisory, not `php -v`.
+     Its body cap and the two ini lines the operator must carry are now in the
+     file (section 10 (d)).
+  4. Harness images / local php:8.3-cli cache  WAS STALE - 8.3.35, and nothing
+     in this tree would notice. FIXED: section 10 (f), rebuilt at 8.3.36 with a
+     build-time assertion and a runtime gate in `make security-check`.
+  5. Application code (this branch's security work)  NOT THE FIX and not at
+     fault: no application-level change can close either CVE.
+
+
+6. REMEDIATION, IN ORDER
+
+  a. Rebuild the shipped image on php:8.3.36 or later 8.3.x, publish a new tag,
+     and pin it in docker/docker-compose.yml by digest (a floating :latest is
+     how a 2026-05-27 build stayed in service through 2026-10-21).
+  b. Correct the ini mount to a path the image scans:
+     ./php-custom.ini:/usr/local/etc/php/conf.d/zz-freemed.ini:ro
+     Then verify from INSIDE the container (`php --ini`, `php -i`); a mount at
+     the wrong path fails silently, which is what section 3.1 measures.
+  c. Add to that ini, before relying on it:
+       session.upload_progress.enabled = Off
+       fatal_error_backtraces = 0        ; PHP 8.5 only; harmless elsewhere
+     and restart every worker - the settings are read at process start.
+     Where the site runs its own php.ini (Debian, Apache layout), the same two
+     lines go there; docker/php-custom.ini covers the container only.
+  d. Put a real body cap at each edge: nginx client_max_body_size (10 GB today)
+     with per-location exceptions for the upload endpoints, and LimitRequestBody
+     in doc/freemed.apache.conf.
+  e. Move debian/control off php5 (php8.3-* packages / libapache2-mod-php8.3),
+     or state in README.md and the package description that the Debian path is
+     unsupported.
+  f. Rebuild freemed-verify-php:apache and :fpm, and add a version assertion to
+     the guard scripts so a measurement taken on a vulnerable interpreter fails
+     loudly. tests/security/evidence headers should record `php -v`.
+  g. Operationally: after the image swap, restart/replace workers - an old fpm
+     worker keeps the old binary resident.
+
+
+7. WHAT WAS CHECKED ABOUT THE UPGRADE ITSELF
+
+  * Hermetic security suites, unchanged, on PHP 8.3.36:
+      docker run --rm -v "$PWD":/app -w /app php:8.3-cli \
+        sh -c 'for t in relay_allowlist help_path sql_ident; do php tests/security/$t.test.php; done'
+    -> relay_allowlist PASS, help_path PASS, sql_ident PASS.
+  * Lint sweep, non-vendored tree, PHP 8.3.36 vs 8.3.35:
+      1 parse error, tests/xmr.php:89 ("unexpected variable $elements"), identical
+      on 8.3.35 - pre-existing, not introduced by the patch release.
+      Otherwise only pre-existing "Using ${var} in strings is deprecated"
+      notices (install.php:41,51; controller.php:44,48,68; chtml.php:54,55;
+      tests/cda_export.php:39).
+    So 8.3.36 is a drop-in replacement for 8.3.31/8.3.35 as far as this tree's
+    static and hermetic checks can see.
+
+
+8. NOT MEASURED / OUT OF SCOPE FOR THIS AUDIT
+
+  * No exploit payload was built or sent. Nothing here is a PoC; the "live"
+    judgements in section 4 are the prerequisites (version, SAPI, ini values,
+    pool size, upload handling) each confirmed by its own command, plus the
+    vendor/CNCERT statement that the path is pre-script.
+  * No production host was inspected. If the real deployment runs a distro PHP
+    with a backported fix, its `php -v` will still look vulnerable; check the
+    distro advisory before applying section 5 row 3.
+  * PHP 5.x: affected per the published version ranges; no upstream fix exists
+    and none was tested here (no php5 image was run).
+  * CVSS was not recomputed for these layouts. The vendor score is 9.2 for the
+    interpreter; a per-layout score for FreeMED would be a separate exercise.
+  * xdebug being loaded in a production image (section 3) is noted as incident-
+    al hardening debt, not assessed further here.
+
+
+9. SOURCES
+
+  PHP release announcement (fixed versions, affected SAPIs) - cited via:
+  CERT-EU Security Advisory 2026-018; CISA alert 2026-10-21;
+  NCSC-NL/php2shell repository README (operational status 2026-10-23);
+  Datadog Security Labs, "PHP2Shell - critical vulnerabilities in PHP
+  (CVE-2026-109618, CVE-2026-109619)" 2026-10-21, updated 2026-10-23
+  (exploitation walkthrough, mitigations, detection signatures).
+
+
+10. REMEDIATION LANDED (2026-10-24)
+
+  Measured evidence for every row in this section, with the commands that
+  produced it: tests/security/evidence/php2shell-remediation.txt.
+
+  (a) INTERPRETER. docker/Dockerfile is new: FROM php:8.3.36-fpm pinned by
+      digest (php@sha256:c435accaeb7c535cacf8d6d188fc310431f4fc54545b1694a7930
+      69185271dcb, the digest php:8.3-fpm resolved to on 2026-10-23), extensions
+      exif/gd/intl/mysqli/opcache/soap/sodium/xsl/zip, xdebug deliberately NOT
+      installed, and a build-time assertion that fails the build when
+      version_compare(PHP_VERSION, "8.3.36", ">=") is false. The image labels
+      record the version and both CVE ids so `docker inspect` can answer
+      "what interpreter is this" without a shell. docker/docker-compose.yml now
+      builds that file as freemed-php:8.3.36 instead of pulling
+      jbuchbinder/moodle-php-8.3-fpm:latest, and pins the database at
+      mariadb:10.11 (the tree's schema is measured there; `latest` has been
+      measured to leave ~35 tables uncreated).
+
+      Measured: image `php -v` = PHP 8.3.36; old image 8.3.31.
+
+  (b) INI MOUNT. docker/docker-compose.yml mounts the file at
+      /usr/local/etc/php/conf.d/zz-freemed.ini, the directory the image
+      actually scans. Measured after the change: `php --ini` lists
+      zz-freemed.ini, and the values read back are the file's values
+      (section 3.1's ablation now passes in the other direction).
+
+  (c) MITIGATION LINES. docker/php-custom.ini carries
+      session.upload_progress.enabled = Off and fatal_error_backtraces = 0
+      (the second is an 8.5 directive; on 8.3 it is accepted and ignored,
+      measured: ini_get() returns false and there is no diagnostic). Also in
+      that file, two pre-existing defects are corrected: `max_file_uploads =
+      128M` (a COUNT of files, so 128M was being read as 134217728) is now
+      `128`, and the Apache-only `php_value[memory_limit]` line, inert in an
+      ini file, is removed. post_max_size is set explicitly to 64M - the value
+      lib/freemed.php asks for, though its ini_set() at request time cannot
+      deliver it (post_max_size is PHP_INI_PERDIR).
+
+      Measured on the live FPM SAPI through the shipped compose stack:
+      session.upload_progress.enabled = "" (Off), register_argc_argv = "" (Off),
+      post_max_size = 64M, memory_limit = 2048M, max_file_uploads = 128,
+      mysqli loaded.
+
+  (d) BODY CAPS. docker/nginx.conf client_max_body_size 10000M -> 64M;
+      doc/freemed.apache.conf gains LimitRequestBody 67108864 inside the
+      /usr/share/freemed <Directory>, plus the two ini lines an operator must
+      put in the SYSTEM php.ini (not a <Directory>, which is applied after the
+      request is parsed). Both are matched to PHP's post_max_size.
+
+      Measured: a 70 MiB multipart upload through the shipped nginx now
+      answers 413; a 1 MiB multipart upload still parses ($_FILES populated,
+      error 0), so the mitigation did not break uploads. The existing
+      hardening rules are unchanged and still answer 403 for /lib/API.php and
+      for a PATH_INFO traversal.
+
+  (e) DEBIAN. debian/control now depends on php8.3-mysql, php8.3-cgi, php8.3-gd,
+      php8.3-curl, php8.3-cli, php8.3-dev and libapache2-mod-php8.3 instead of
+      the php5 equivalents. Non-PHP debt in that file (mysql-server-5.1,
+      openjdk-6-jdk, cupsys, tetex) is untouched and remains a packaging
+      problem of its own; this change removes the interpreter that has no
+      upstream fix, not every stale dependency.
+
+  (f) GATES. scripts/php-runtime-check.sh asserts the SAPI is at or above the
+      fix floor, with exit 0 / 1 (vulnerable) / 2 (INCONCLUSIVE - never a
+      pass) and a --self-test that pins the comparison. It runs as part of
+      `make security-check`, using PHP_IMAGE (php:8.3-cli) when the host has no
+      php. Measured: exit 1 against 8.3.35, exit 0 against 8.3.36, and the
+      self-test's seven rows pass. The harness images are rebuilt at 8.3.36
+      (the 8.3.35 builds are kept as :8.3.35-apache / :8.3.35-fpm so the
+      "gate bites" row stays reproducible).
+
+  STILL OPEN, and not something this pass could close:
+
+  * A production host has to be re-created from the new image; an fpm worker
+    already running keeps the old binary resident until it is replaced. This
+    repository cannot do that step, and nothing here proves any particular
+    deployment has done it.
+  * A distro PHP with a backported fix is invisible to a version check. The
+    front-end layout in row 3 of section 5 is still the operator's problem,
+    now with the body cap and the ini lines in the file they copy.
+  * The upstream pattern the vendors patched around (state metadata updated
+    before the allocation it describes) is still present in 8.3.36; the
+    vendors themselves expect further instances. This audit closes the two
+    published CVEs, not the class.
+

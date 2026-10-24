@@ -65,3 +65,18 @@ and they will be ranked, not treated as emergencies.
 This repository has no `CHANGELOG` or release-notes file. The per-change release
 note text ships in the operator documents themselves (`doc/RELAY_ALLOWLIST` §4,
 `doc/VCALENDAR_AUTHENTICATION` §5).
+
+## Interpreter-level vulnerabilities
+
+Some reports are about PHP itself rather than this code base (the 2026
+`PHP2Shell` pair, CVE-2026-109618 / CVE-2026-109619, is the current example).
+No change to a `.php` file here can fix one of those: the payload is consumed by
+libphp/php-fpm before any entrypoint runs, so application authentication, the
+relay allowlist and the SQL gates are all downstream of the vulnerable code. For
+that class the answer is the interpreter version and the runtime configuration.
+`doc/PHP2SHELL_AUDIT` inventories every PHP runtime this tree declares or ships
+(container image, Debian package, Apache reference layout, harness images), with
+the version measured for each, the container's effective ini values, and the
+ordered remediation. When reporting an interpreter-level issue, include the
+`php -v` of the SAPI that serves the site and how it was installed; the
+application version alone does not determine exposure.
